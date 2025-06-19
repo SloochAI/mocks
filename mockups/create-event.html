@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sloochai - Tworzenie Wydarzenia</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      .header h1 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .form-container {
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-bottom: 30px;
+      }
+
+      .form-steps {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+        gap: 20px;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        border-radius: 25px;
+        background: #f0f0f0;
+        color: #666;
+        transition: all 0.3s ease;
+      }
+
+      .step.active {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .step.completed {
+        background: #28a745;
+        color: white;
+      }
+
+      .step-number {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .form-section {
+        margin-bottom: 40px;
+        display: none;
+      }
+
+      .form-section.active {
+        display: block;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .event-type-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .event-type {
+        border: 2px solid #e0e0e0;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .event-type:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      .event-type.selected {
+        border-color: #667eea;
+        background: #f0f0ff;
+      }
+
+      .event-type input[type="radio"] {
+        display: none;
+      }
+
+      .event-type-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .event-type-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .event-type-desc {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .poster-upload {
+        border: 2px dashed #ddd;
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .poster-upload:hover {
+        border-color: #667eea;
+        background: #f9f9ff;
+      }
+
+      .poster-upload.dragover {
+        border-color: #667eea;
+        background: #f0f0ff;
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 15px;
+      }
+
+      .upload-text {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .poster-preview {
+        max-width: 300px;
+        max-height: 400px;
+        border-radius: 10px;
+        margin: 20px auto;
+        display: none;
+      }
+
+      .ticket-types {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .ticket-type {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        gap: 15px;
+      }
+
+      .ticket-type:last-child {
+        border-bottom: none;
+      }
+
+      .ticket-info {
+        flex: 1;
+      }
+
+      .ticket-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .ticket-description {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .ticket-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .ticket-price {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .ticket-price input {
+        width: 80px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+      }
+
+      .ticket-quantity input {
+        width: 80px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+      }
+
+      .add-ticket-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .add-ticket-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .streaming-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .streaming-option {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .streaming-option h4 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .streaming-config {
+        text-align: left;
+      }
+
+      .streaming-config input,
+      .streaming-config select {
+        margin-bottom: 10px;
+      }
+
+      .form-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #f0f0f0;
+      }
+
+      .nav-btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .nav-btn.primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .nav-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .nav-btn.secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .nav-btn.secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+      }
+
+      .nav-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .notification {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        display: none;
+      }
+
+      .notification.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .notification.warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .preview-card {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 20px;
+      }
+
+      .preview-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .event-preview {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .preview-poster {
+        width: 100%;
+        height: 250px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+      }
+
+      .preview-details {
+        color: #333;
+      }
+
+      .preview-details h3 {
+        margin-bottom: 10px;
+        font-size: 1.3rem;
+      }
+
+      .preview-details p {
+        margin-bottom: 8px;
+        color: #666;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        .form-container {
+          padding: 20px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .form-steps {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .event-preview {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .preview-poster {
+          height: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎟️ Utwórz Wydarzenie</h1>
+        <p>Zorganizuj koncert na żywo lub wydarzenie online</p>
+      </div>
+
+      <!-- Notifications -->
+      <div id="successNotification" class="notification success">
+        ✅ Wydarzenie zostało pomyślnie utworzone!
+      </div>
+
+      <div id="errorNotification" class="notification error">
+        ❌ Wystąpił błąd podczas tworzenia wydarzenia. Sprawdź wymagane pola.
+      </div>
+
+      <div id="warningNotification" class="notification warning">
+        ⚠️ Niektóre pola wymagają uzupełnienia.
+      </div>
+
+      <div class="form-container">
+        <!-- Form Steps -->
+        <div class="form-steps">
+          <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <span>Typ Wydarzenia</span>
+          </div>
+          <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <span>Szczegóły</span>
+          </div>
+          <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <span>Bilety</span>
+          </div>
+          <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <span>Transmisja</span>
+          </div>
+          <div class="step" data-step="5">
+            <div class="step-number">5</div>
+            <span>Podgląd</span>
+          </div>
+        </div>
+
+        <form id="eventForm">
+          <!-- Step 1: Event Type -->
+          <div class="form-section active" data-section="1">
+            <div class="section-title">🎭 Wybierz Typ Wydarzenia</div>
+
+            <div class="event-type-selector">
+              <div class="event-type selected" data-type="live">
+                <input type="radio" name="eventType" value="live" checked />
+                <div class="event-type-icon">🎤</div>
+                <div class="event-type-title">Koncert Na Żywo</div>
+                <div class="event-type-desc">
+                  Występ z publicznością w konkretnym miejscu
+                </div>
+              </div>
+
+              <div class="event-type" data-type="online">
+                <input type="radio" name="eventType" value="online" />
+                <div class="event-type-icon">💻</div>
+                <div class="event-type-title">Wydarzenie Online</div>
+                <div class="event-type-desc">
+                  Transmisja na żywo przez internet
+                </div>
+              </div>
+
+              <div class="event-type" data-type="hybrid">
+                <input type="radio" name="eventType" value="hybrid" />
+                <div class="event-type-icon">🌐</div>
+                <div class="event-type-title">Wydarzenie Hybrydowe</div>
+                <div class="event-type-desc">
+                  Koncert na żywo z transmisją online
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Event Details -->
+          <div class="form-section" data-section="2">
+            <div class="section-title">📝 Szczegóły Wydarzenia</div>
+
+            <div class="form-group">
+              <label for="eventTitle">Nazwa Wydarzenia *</label>
+              <input
+                type="text"
+                id="eventTitle"
+                name="eventTitle"
+                required
+                placeholder="np. Akustyczny Wieczór z Martą"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="eventDescription">Opis Wydarzenia</label>
+              <textarea
+                id="eventDescription"
+                name="eventDescription"
+                placeholder="Opisz swoje wydarzenie, repertuar, specjalnych gości..."
+              ></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="eventDate">Data Wydarzenia *</label>
+                <input
+                  type="datetime-local"
+                  id="eventDate"
+                  name="eventDate"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="duration">Przewidywany Czas Trwania</label>
+                <select id="duration" name="duration">
+                  <option value="30">30 minut</option>
+                  <option value="60" selected>1 godzina</option>
+                  <option value="90">1.5 godziny</option>
+                  <option value="120">2 godziny</option>
+                  <option value="180">3 godziny</option>
+                  <option value="custom">Inny</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" id="venueGroup">
+              <label for="venue">Miejsce Wydarzenia</label>
+              <input
+                type="text"
+                id="venue"
+                name="venue"
+                placeholder="np. Klub Muzyczny Pod Sceną, ul. Główna 15, Warszawa"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Plakat Wydarzenia (zalecane: 1080x1350px)</label>
+              <div class="poster-upload" id="posterUpload">
+                <div class="upload-icon">🎨</div>
+                <div class="upload-text">
+                  Przeciągnij i upuść plakat lub kliknij aby wybrać
+                </div>
+                <input
+                  type="file"
+                  id="posterFile"
+                  accept="image/*"
+                  style="display: none"
+                />
+                <img
+                  id="posterPreview"
+                  class="poster-preview"
+                  alt="Podgląd plakatu"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Tickets -->
+          <div class="form-section" data-section="3">
+            <div class="section-title">🎫 Ustawienia Biletów</div>
+
+            <div class="ticket-types" id="ticketTypes">
+              <div class="ticket-type">
+                <div class="ticket-info">
+                  <div class="ticket-name">Bilet Standardowy</div>
+                  <div class="ticket-description">
+                    Podstawowy dostęp do wydarzenia
+                  </div>
+                </div>
+                <div class="ticket-controls">
+                  <div class="ticket-price">
+                    <span>Cena:</span>
+                    <input type="number" min="0" value="25" step="0.01" />
+                    <span>PLN</span>
+                  </div>
+                  <div class="ticket-quantity">
+                    <span>Ilość:</span>
+                    <input type="number" min="1" value="100" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="ticket-type">
+                <div class="ticket-info">
+                  <div class="ticket-name">Bilet VIP</div>
+                  <div class="ticket-description">
+                    Miejsca w pierwszych rzędach + meet & greet
+                  </div>
+                </div>
+                <div class="ticket-controls">
+                  <div class="ticket-price">
+                    <span>Cena:</span>
+                    <input type="number" min="0" value="75" step="0.01" />
+                    <span>PLN</span>
+                  </div>
+                  <div class="ticket-quantity">
+                    <span>Ilość:</span>
+                    <input type="number" min="1" value="20" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="add-ticket-btn" id="addTicketBtn">
+              + Dodaj Typ Biletu
+            </button>
+
+            <div class="form-group" style="margin-top: 30px">
+              <label>
+                <input
+                  type="checkbox"
+                  id="freeEvent"
+                  style="margin-right: 10px"
+                />
+                To jest darmowe wydarzenie
+              </label>
+            </div>
+          </div>
+
+          <!-- Step 4: Streaming -->
+          <div class="form-section" data-section="4">
+            <div class="section-title">📡 Ustawienia Transmisji</div>
+
+            <div class="streaming-options">
+              <div class="streaming-option">
+                <h4>🎥 Jakość Wideo</h4>
+                <div class="streaming-config">
+                  <select name="videoQuality">
+                    <option value="720p">720p HD</option>
+                    <option value="1080p" selected>1080p Full HD</option>
+                    <option value="4k">4K Ultra HD</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="streaming-option">
+                <h4>🎵 Jakość Audio</h4>
+                <div class="streaming-config">
+                  <select name="audioQuality">
+                    <option value="standard">Standardowa</option>
+                    <option value="high" selected>Wysokiej jakości</option>
+                    <option value="lossless">Bezstratna</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="streaming-option">
+                <h4>💬 Chat na Żywo</h4>
+                <div class="streaming-config">
+                  <label>
+                    <input type="checkbox" name="enableChat" checked />
+                    Włącz chat dla widzów
+                  </label>
+                  <label>
+                    <input type="checkbox" name="moderateChat" />
+                    Moderacja wiadomości
+                  </label>
+                </div>
+              </div>
+
+              <div class="streaming-option">
+                <h4>🎁 Wsparcie</h4>
+                <div class="streaming-config">
+                  <label>
+                    <input type="checkbox" name="enableDonations" checked />
+                    Przyjmuj wsparcie finansowe
+                  </label>
+                  <label>
+                    <input type="checkbox" name="showDonations" />
+                    Pokazuj wsparcie na ekranie
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 30px">
+              <label for="streamDescription">Opis dla Transmisji</label>
+              <textarea
+                id="streamDescription"
+                name="streamDescription"
+                placeholder="Krótki opis, który będzie widoczny podczas transmisji..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Step 5: Preview -->
+          <div class="form-section" data-section="5">
+            <div class="section-title">👀 Podgląd Wydarzenia</div>
+
+            <div class="preview-card">
+              <div class="preview-title">
+                Tak będzie wyglądać Twoje wydarzenie:
+              </div>
+
+              <div class="event-preview">
+                <div class="preview-poster" id="previewPoster">🎵</div>
+
+                <div class="preview-details">
+                  <h3 id="previewTitle">Akustyczny Wieczór z Martą</h3>
+                  <p><strong>Data:</strong> <span id="previewDate">-</span></p>
+                  <p>
+                    <strong>Czas:</strong>
+                    <span id="previewDuration">1 godzina</span>
+                  </p>
+                  <p>
+                    <strong>Miejsce:</strong>
+                    <span id="previewVenue">Online</span>
+                  </p>
+                  <p>
+                    <strong>Typ:</strong>
+                    <span id="previewType">Koncert Na Żywo</span>
+                  </p>
+                  <p>
+                    <strong>Bilety:</strong>
+                    <span id="previewTickets">od 25 PLN</span>
+                  </p>
+                  <div style="margin-top: 15px">
+                    <p id="previewDescription">
+                      Opisz swoje wydarzenie, repertuar, specjalnych gości...
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="form-navigation">
+            <button
+              type="button"
+              class="nav-btn secondary"
+              id="prevBtn"
+              disabled
+            >
+              ← Poprzedni
+            </button>
+            <button type="button" class="nav-btn primary" id="nextBtn">
+              Następny →
+            </button>
+            <button
+              type="submit"
+              class="nav-btn primary"
+              id="submitBtn"
+              style="display: none"
+            >
+              Utwórz Wydarzenie
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let currentStep = 1;
+      const totalSteps = 5;
+
+      // Step navigation
+      function showStep(step) {
+        // Hide all sections
+        document.querySelectorAll(".form-section").forEach((section) => {
+          section.classList.remove("active");
+        });
+
+        // Show current section
+        document
+          .querySelector(`[data-section="${step}"]`)
+          .classList.add("active");
+
+        // Update step indicators
+        document.querySelectorAll(".step").forEach((stepEl, index) => {
+          stepEl.classList.remove("active", "completed");
+          if (index + 1 < step) {
+            stepEl.classList.add("completed");
+          } else if (index + 1 === step) {
+            stepEl.classList.add("active");
+          }
+        });
+
+        // Update navigation buttons
+        document.getElementById("prevBtn").disabled = step === 1;
+        document.getElementById("nextBtn").style.display =
+          step === totalSteps ? "none" : "inline-block";
+        document.getElementById("submitBtn").style.display =
+          step === totalSteps ? "inline-block" : "none";
+
+        // Update preview when on step 5
+        if (step === 5) {
+          updatePreview();
+        }
+      }
+
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        if (currentStep < totalSteps) {
+          currentStep++;
+          showStep(currentStep);
+        }
+      });
+
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        if (currentStep > 1) {
+          currentStep--;
+          showStep(currentStep);
+        }
+      });
+
+      // Event type selection
+      document.querySelectorAll(".event-type").forEach((type) => {
+        type.addEventListener("click", () => {
+          document
+            .querySelectorAll(".event-type")
+            .forEach((t) => t.classList.remove("selected"));
+          type.classList.add("selected");
+          type.querySelector('input[type="radio"]').checked = true;
+
+          // Show/hide venue field based on event type
+          const venueGroup = document.getElementById("venueGroup");
+          const eventType = type.dataset.type;
+
+          if (eventType === "online") {
+            venueGroup.style.display = "none";
+          } else {
+            venueGroup.style.display = "block";
+          }
+        });
+      });
+
+      // Poster upload functionality
+      const posterUpload = document.getElementById("posterUpload");
+      const posterFile = document.getElementById("posterFile");
+      const posterPreview = document.getElementById("posterPreview");
+
+      posterUpload.addEventListener("click", () => posterFile.click());
+
+      posterUpload.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        posterUpload.classList.add("dragover");
+      });
+
+      posterUpload.addEventListener("dragleave", () => {
+        posterUpload.classList.remove("dragover");
+      });
+
+      posterUpload.addEventListener("drop", (e) => {
+        e.preventDefault();
+        posterUpload.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFileUpload(files[0]);
+        }
+      });
+
+      posterFile.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleFileUpload(e.target.files[0]);
+        }
+      });
+
+      function handleFileUpload(file) {
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            posterPreview.src = e.target.result;
+            posterPreview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Free event toggle
+      document.getElementById("freeEvent").addEventListener("change", (e) => {
+        const ticketTypes = document.getElementById("ticketTypes");
+        const addTicketBtn = document.getElementById("addTicketBtn");
+
+        if (e.target.checked) {
+          ticketTypes.style.display = "none";
+          addTicketBtn.style.display = "none";
+        } else {
+          ticketTypes.style.display = "block";
+          addTicketBtn.style.display = "block";
+        }
+      });
+
+      // Add ticket type
+      document.getElementById("addTicketBtn").addEventListener("click", () => {
+        const ticketTypes = document.getElementById("ticketTypes");
+        const newTicket = document.createElement("div");
+        newTicket.className = "ticket-type";
+        newTicket.innerHTML = `
+                <div class="ticket-info">
+                    <input type="text" class="ticket-name" placeholder="Nazwa biletu" value="Nowy Bilet">
+                    <input type="text" class="ticket-description" placeholder="Opis biletu">
+                </div>
+                <div class="ticket-controls">
+                    <div class="ticket-price">
+                        <span>Cena:</span>
+                        <input type="number" min="0" value="0" step="0.01">
+                        <span>PLN</span>
+                    </div>
+                    <div class="ticket-quantity">
+                        <span>Ilość:</span>
+                        <input type="number" min="1" value="50">
+                    </div>
+                    <button type="button" class="remove-ticket" style="margin-left: 10px; color: #e74c3c; background: none; border: none; cursor: pointer;">✕</button>
+                </div>
+            `;
+        ticketTypes.appendChild(newTicket);
+
+        // Add remove functionality
+        newTicket
+          .querySelector(".remove-ticket")
+          .addEventListener("click", () => {
+            newTicket.remove();
+          });
+      });
+
+      // Update preview
+      function updatePreview() {
+        const title =
+          document.getElementById("eventTitle").value ||
+          "Akustyczny Wieczór z Martą";
+        const date = document.getElementById("eventDate").value;
+        const duration = document.getElementById("duration").value;
+        const venue = document.getElementById("venue").value;
+        const description =
+          document.getElementById("eventDescription").value ||
+          "Opisz swoje wydarzenie, repertuar, specjalnych gości...";
+        const eventType = document.querySelector(
+          'input[name="eventType"]:checked'
+        ).value;
+        const freeEvent = document.getElementById("freeEvent").checked;
+
+        document.getElementById("previewTitle").textContent = title;
+        document.getElementById("previewDate").textContent = date
+          ? new Date(date).toLocaleString("pl-PL")
+          : "-";
+        document.getElementById("previewDuration").textContent =
+          duration === "custom" ? "Nieokreślony" : duration + " minut";
+        document.getElementById("previewVenue").textContent =
+          venue || (eventType === "online" ? "Online" : "Nieokreślone");
+        document.getElementById("previewDescription").textContent = description;
+
+        const typeNames = {
+          live: "Koncert Na Żywo",
+          online: "Wydarzenie Online",
+          hybrid: "Wydarzenie Hybrydowe",
+        };
+        document.getElementById("previewType").textContent =
+          typeNames[eventType];
+
+        // Update tickets preview
+        if (freeEvent) {
+          document.getElementById("previewTickets").textContent = "Darmowe";
+        } else {
+          const prices = Array.from(
+            document.querySelectorAll(".ticket-price input")
+          ).map((input) => parseFloat(input.value) || 0);
+          const minPrice = Math.min(...prices);
+          const maxPrice = Math.max(...prices);
+
+          if (minPrice === maxPrice) {
+            document.getElementById(
+              "previewTickets"
+            ).textContent = `${minPrice} PLN`;
+          } else {
+            document.getElementById(
+              "previewTickets"
+            ).textContent = `od ${minPrice} PLN`;
+          }
+        }
+
+        // Update poster preview
+        if (posterPreview.src && posterPreview.style.display === "block") {
+          document.getElementById(
+            "previewPoster"
+          ).style.backgroundImage = `url(${posterPreview.src})`;
+          document.getElementById("previewPoster").style.backgroundSize =
+            "cover";
+          document.getElementById("previewPoster").style.backgroundPosition =
+            "center";
+          document.getElementById("previewPoster").textContent = "";
+        }
+      }
+
+      // Form submission
+      document.getElementById("eventForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("eventTitle").value.trim();
+        const date = document.getElementById("eventDate").value;
+
+        if (!title) {
+          showNotification("error", "Nazwa wydarzenia jest wymagana");
+          return;
+        }
+
+        if (!date) {
+          showNotification("error", "Data wydarzenia jest wymagana");
+          return;
+        }
+
+        // Simulate event creation
+        showNotification("success", "Wydarzenie zostało pomyślnie utworzone!");
+
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = "events.html";
+        }, 2000);
+      });
+
+      // Notification system
+      function showNotification(type, message) {
+        document.querySelectorAll(".notification").forEach((notif) => {
+          notif.style.display = "none";
+        });
+
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          if (message) {
+            notification.textContent =
+              notification.textContent.split(" ")[0] + " " + message;
+          }
+          notification.style.display = "block";
+
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 5000);
+        }
+      }
+
+      // Set minimum date to today
+      const now = new Date();
+      const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      document.getElementById("eventDate").min = minDate;
+    </script>
+  </body>
+</html>

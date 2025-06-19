@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Settings - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .settings-header {
+        margin-bottom: 2rem;
+      }
+
+      .settings-header h2 {
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .settings-header p {
+        color: #666;
+      }
+
+      .settings-nav {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #ddd;
+        overflow-x: auto;
+      }
+
+      .settings-nav-item {
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        transition: all 0.3s;
+      }
+
+      .settings-nav-item.active {
+        border-bottom-color: #667eea;
+        color: #667eea;
+        font-weight: 600;
+      }
+
+      .settings-nav-item:hover {
+        background-color: #f5f5f5;
+      }
+
+      .settings-content {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .settings-section {
+        display: none;
+        padding: 2rem;
+      }
+
+      .settings-section.active {
+        display: block;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+      }
+
+      .notification {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+
+      .notification.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .notification.warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .notification.show {
+        display: block;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #667eea;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .setting-item:last-child {
+        border-bottom: none;
+      }
+
+      .setting-info h4 {
+        margin-bottom: 0.25rem;
+        color: #333;
+      }
+
+      .setting-info p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .profile-picture {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .danger-zone {
+        border: 1px solid #dc3545;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .danger-zone h3 {
+        color: #dc3545;
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+          <a href="login.html">Logout</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="settings-header">
+        <h2>Account Settings</h2>
+        <p>Manage your account preferences and privacy settings</p>
+      </div>
+
+      <div id="notification" class="notification">
+        <span id="notification-text"></span>
+      </div>
+
+      <!-- Account security notifications -->
+      <div id="passwordChangeSuccessNotification" class="notification success">
+        ✅ Hasło zostało pomyślnie zmienione. Zaloguj się ponownie na innych
+        urządzeniach.
+      </div>
+
+      <div id="passwordChangeErrorNotification" class="notification error">
+        ❌ Nie można zmienić hasła. Sprawdź czy obecne hasło jest poprawne.
+      </div>
+
+      <div id="securityAlertNotification" class="notification warning">
+        ⚠️ Wykryto podejrzane logowanie z nowego urządzenia. Sprawdź aktywność
+        konta.
+      </div>
+
+      <div id="emailChangeNotification" class="notification success">
+        ✅ Link weryfikacyjny został wysłany na nowy adres e-mail.
+      </div>
+
+      <div id="subscriptionErrorNotification" class="notification error">
+        ❌ Błąd płatności. Nie można odnowić subskrypcji Premium.
+      </div>
+
+      <div id="dataExportNotification" class="notification success">
+        ✅ Zgłoszenie eksportu danych zostało przyjęte. Otrzymasz e-mail w ciągu
+        48h.
+      </div>
+
+      <div class="settings-nav">
+        <div class="settings-nav-item active" data-section="profile">
+          Profile
+        </div>
+        <div class="settings-nav-item" data-section="account">Account</div>
+        <div class="settings-nav-item" data-section="privacy">Privacy</div>
+        <div class="settings-nav-item" data-section="notifications">
+          Notifications
+        </div>
+        <div class="settings-nav-item" data-section="music">Music</div>
+        <div class="settings-nav-item" data-section="premium">Premium</div>
+      </div>
+
+      <div class="settings-content">
+        <!-- Profile Settings -->
+        <div id="profile-section" class="settings-section active">
+          <div class="form-section">
+            <h3>Profile Information</h3>
+            <div class="profile-picture">JD</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" value="John" />
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" value="Doe" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" value="johndoe" />
+            </div>
+
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea id="bio" placeholder="Tell us about yourself...">
+Music lover and aspiring artist</textarea
+              >
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="country">Country</label>
+                <select id="country">
+                  <option>United States</option>
+                  <option>Canada</option>
+                  <option>United Kingdom</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="language">Language</label>
+                <select id="language">
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                  <option>German</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveProfile()">
+              Save Changes
+            </button>
+          </div>
+        </div>
+
+        <!-- Account Settings -->
+        <div id="account-section" class="settings-section">
+          <div class="form-section">
+            <h3>Account Information</h3>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" value="john.doe@example.com" />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" value="+1234567890" />
+            </div>
+
+            <button class="btn btn-primary" onclick="updateAccount()">
+              Update Account
+            </button>
+          </div>
+
+          <div class="form-section">
+            <h3>Change Password</h3>
+
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input type="password" id="currentPassword" />
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input type="password" id="newPassword" />
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirm New Password</label>
+              <input type="password" id="confirmPassword" />
+            </div>
+
+            <button class="btn btn-secondary" onclick="changePassword()">
+              Change Password
+            </button>
+          </div>
+
+          <div class="danger-zone">
+            <h3>Danger Zone</h3>
+            <p>
+              Once you delete your account, there is no going back. Please be
+              certain.
+            </p>
+            <button class="btn btn-danger" onclick="deleteAccount()">
+              Delete Account
+            </button>
+          </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div id="privacy-section" class="settings-section">
+          <div class="form-section">
+            <h3>Privacy Settings</h3>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Private Profile</h4>
+                <p>Make your profile visible only to approved followers</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Show Listening Activity</h4>
+                <p>Let others see what you're currently listening to</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Show Recently Played</h4>
+                <p>Display your recently played songs on your profile</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Allow Direct Messages</h4>
+                <p>Let anyone send you direct messages</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div id="notifications-section" class="settings-section">
+          <div class="form-section">
+            <h3>Email Notifications</h3>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>New Followers</h4>
+                <p>Get notified when someone follows you</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>New Releases</h4>
+                <p>Get notified about new releases from artists you follow</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Playlist Updates</h4>
+                <p>Get notified when playlists you follow are updated</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Push Notifications</h3>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Live Stream Alerts</h4>
+                <p>Get notified when artists you follow go live</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Event Reminders</h4>
+                <p>Get reminded about upcoming events you're interested in</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Music Settings -->
+        <div id="music-section" class="settings-section">
+          <div class="form-section">
+            <h3>Playback Settings</h3>
+
+            <div class="form-group">
+              <label for="audioQuality">Audio Quality</label>
+              <select id="audioQuality">
+                <option>Automatic</option>
+                <option>High (320kbps)</option>
+                <option>Normal (160kbps)</option>
+                <option>Low (96kbps)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Crossfade</h4>
+                <p>Smooth transition between songs</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Autoplay</h4>
+                <p>Continue playing similar songs when your playlist ends</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Premium Settings -->
+        <div id="premium-section" class="settings-section">
+          <div class="form-section">
+            <h3>Subscription Status</h3>
+            <p><strong>Plan:</strong> Sloochai Free</p>
+            <p><strong>Status:</strong> Active</p>
+            <p><strong>Next Billing:</strong> N/A</p>
+
+            <button class="btn btn-primary" onclick="upgradeToPremium()">
+              Upgrade to Premium
+            </button>
+          </div>
+
+          <div class="form-section">
+            <h3>Premium Features</h3>
+            <ul style="margin-left: 1.5rem">
+              <li>Ad-free listening</li>
+              <li>Unlimited skips</li>
+              <li>High-quality audio</li>
+              <li>Offline downloads</li>
+              <li>Exclusive content</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notification-text");
+
+        notificationText.textContent = message;
+        notification.className = `notification ${type} show`;
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      function switchSection(sectionName) {
+        // Hide all sections
+        document.querySelectorAll(".settings-section").forEach((section) => {
+          section.classList.remove("active");
+        });
+
+        // Remove active class from nav items
+        document.querySelectorAll(".settings-nav-item").forEach((item) => {
+          item.classList.remove("active");
+        });
+
+        // Show selected section
+        document
+          .getElementById(sectionName + "-section")
+          .classList.add("active");
+
+        // Add active class to nav item
+        document
+          .querySelector(`[data-section="${sectionName}"]`)
+          .classList.add("active");
+      }
+
+      function saveProfile() {
+        showNotification("Profile updated successfully!", "success");
+      }
+
+      function updateAccount() {
+        showNotification("Account information updated!", "success");
+      }
+
+      function changePassword() {
+        const current = document.getElementById("currentPassword").value;
+        const newPass = document.getElementById("newPassword").value;
+        const confirm = document.getElementById("confirmPassword").value;
+
+        if (!current || !newPass || !confirm) {
+          showNotification("Please fill in all password fields.", "error");
+          return;
+        }
+
+        if (newPass !== confirm) {
+          showNotification("New passwords do not match.", "error");
+          return;
+        }
+
+        if (newPass.length < 8) {
+          showNotification(
+            "Password must be at least 8 characters long.",
+            "error"
+          );
+          return;
+        }
+
+        showNotification("Password changed successfully!", "success");
+
+        // Clear password fields
+        document.getElementById("currentPassword").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("confirmPassword").value = "";
+      }
+
+      function deleteAccount() {
+        if (
+          confirm(
+            "Are you sure you want to delete your account? This action cannot be undone."
+          )
+        ) {
+          if (
+            confirm(
+              "This will permanently delete all your data, playlists, and followers. Are you absolutely sure?"
+            )
+          ) {
+            showNotification(
+              "Account deletion initiated. You will receive a confirmation email.",
+              "warning"
+            );
+          }
+        }
+      }
+
+      function upgradeToPremium() {
+        window.location.href = "premium.html";
+      }
+
+      // Settings navigation
+      document.querySelectorAll(".settings-nav-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          const section = this.dataset.section;
+          switchSection(section);
+        });
+      });
+    </script>
+  </body>
+</html>

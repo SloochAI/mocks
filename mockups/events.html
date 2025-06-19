@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-title h2 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-title p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+
+      .btn-secondary:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+      }
+
+      .events-filters {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .filter-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
+      .filter-btn:hover {
+        border-color: #667eea;
+        color: #667eea;
+      }
+
+      .filter-btn.active:hover {
+        color: white;
+      }
+
+      .featured-event {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .featured-event::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .featured-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .featured-info {
+        flex: 1;
+      }
+
+      .featured-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+
+      .featured-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .featured-artist {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+      }
+
+      .featured-details {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .featured-detail {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .featured-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn-white {
+        background: white;
+        color: #667eea;
+      }
+
+      .btn-white:hover {
+        background: #f8f9fa;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-outline:hover {
+        background: white;
+        color: #667eea;
+      }
+
+      .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .event-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+
+      .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .event-image {
+        height: 200px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        position: relative;
+      }
+
+      .event-status {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+      }
+
+      .event-status.live {
+        background: #dc3545;
+      }
+
+      .event-status.upcoming {
+        background: #28a745;
+      }
+
+      .event-status.ended {
+        background: #6c757d;
+      }
+
+      .event-content {
+        padding: 1.5rem;
+      }
+
+      .event-date {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .event-title {
+        color: #333;
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .event-artist {
+        color: #666;
+        margin-bottom: 1rem;
+      }
+
+      .event-details {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .event-detail {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .event-description {
+        color: #555;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .event-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .event-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .event-btn.primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .event-btn.primary:hover {
+        background: #5a67d8;
+      }
+
+      .event-btn.secondary {
+        background: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+
+      .event-btn.secondary:hover {
+        background: #e9ecef;
+      }
+
+      .event-stats {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: #dc3545;
+        font-weight: 600;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #dc3545;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+      }
+
+      .empty-state .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .empty-state h3 {
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        max-width: 300px;
+      }
+
+      .notification.error {
+        background: #e74c3c;
+      }
+
+      .notification.success {
+        background: #27ae60;
+      }
+
+      .notification.warning {
+        background: #f39c12;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .page-header {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: stretch;
+        }
+
+        .header-actions {
+          justify-content: center;
+        }
+
+        .events-filters {
+          justify-content: center;
+        }
+
+        .featured-content {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .featured-details {
+          justify-content: center;
+        }
+
+        .events-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+          <a href="playlists.html">Playlists</a>
+          <a href="account-settings.html">Settings</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="page-header">
+        <div class="page-title">
+          <h2>Live Events</h2>
+          <p>Discover concerts, live streams, and music events</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary">🔍 Search Events</button>
+          <button
+            class="btn btn-primary"
+            onclick="window.location.href='create-event.html'"
+          >
+            ➕ Create Event
+          </button>
+        </div>
+      </div>
+
+      <div class="events-filters">
+        <button class="filter-btn active" data-filter="all">All Events</button>
+        <button class="filter-btn" data-filter="live">🔴 Live Now</button>
+        <button class="filter-btn" data-filter="upcoming">📅 Upcoming</button>
+        <button class="filter-btn" data-filter="concerts">🎤 Concerts</button>
+        <button class="filter-btn" data-filter="livestreams">
+          📺 Live Streams
+        </button>
+        <button class="filter-btn" data-filter="festivals">🎪 Festivals</button>
+        <button class="filter-btn" data-filter="my-events">👤 My Events</button>
+      </div>
+
+      <!-- Featured Event -->
+      <div class="featured-event">
+        <div class="featured-content">
+          <div class="featured-info">
+            <div class="featured-badge">🔴 LIVE NOW</div>
+            <div class="featured-title">Indie Night Live Session</div>
+            <div class="featured-artist">Sarah Johnson & The Midnight Band</div>
+            <div class="featured-details">
+              <div class="featured-detail">
+                <span>📅</span>
+                <span>Tonight, 8:00 PM EST</span>
+              </div>
+              <div class="featured-detail">
+                <span>👥</span>
+                <span>2.4K watching</span>
+              </div>
+              <div class="featured-detail">
+                <span>🎵</span>
+                <span>Acoustic Set</span>
+              </div>
+            </div>
+            <div class="featured-actions">
+              <button class="btn btn-white">🔴 Join Live</button>
+              <button class="btn btn-outline">🔔 Get Notified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="events-grid" id="eventsGrid">
+        <!-- Live Stream Event -->
+        <div class="event-card" data-category="live livestreams">
+          <div class="event-image">
+            <span>🎸</span>
+            <div class="event-status live">
+              <div class="live-indicator">
+                <div class="live-dot"></div>
+                LIVE
+              </div>
+            </div>
+          </div>
+          <div class="event-content">
+            <div class="event-date">Now • Live Stream</div>
+            <div class="event-title">Electric Nights Session</div>
+            <div class="event-artist">John Doe</div>
+            <div class="event-details">
+              <div class="event-detail">
+                <span>👥</span>
+                <span>1.8K viewers</span>
+              </div>
+              <div class="event-detail">
+                <span>⏱️</span>
+                <span>Started 45 min ago</span>
+              </div>
+            </div>
+            <div class="event-description">
+              Acoustic session featuring songs from the latest album "Dawn
+              Sessions". Interactive Q&A with fans.
+            </div>
+            <div class="event-actions">
+              <button class="event-btn primary">🔴 Join Live</button>
+              <div class="event-stats">
+                <span>❤️ 234</span>
+                <span>💬 89</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Concert -->
+        <div class="event-card" data-category="upcoming concerts">
+          <div class="event-image">
+            <span>🎤</span>
+            <div class="event-status upcoming">UPCOMING</div>
+          </div>
+          <div class="event-content">
+            <div class="event-date">Dec 15, 2023 • 7:30 PM</div>
+            <div class="event-title">Summer Vibes World Tour</div>
+            <div class="event-artist">Mike Wilson</div>
+            <div class="event-details">
+              <div class="event-detail">
+                <span>📍</span>
+                <span>Madison Square Garden</span>
+              </div>
+              <div class="event-detail">
+                <span>🎫</span>
+                <span>$45-120</span>
+              </div>
+            </div>
+            <div class="event-description">
+              Join Mike Wilson for an unforgettable night of music from his
+              chart-topping album "Summer Vibes".
+            </div>
+            <div class="event-actions">
+              <button class="event-btn primary">🎫 Get Tickets</button>
+              <div class="event-stats">
+                <span>👥 5.2K interested</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Music Festival -->
+        <div class="event-card" data-category="upcoming festivals">
+          <div class="event-image">
+            <span>🎪</span>
+            <div class="event-status upcoming">3 DAYS</div>
+          </div>
+          <div class="event-content">
+            <div class="event-date">Dec 20-22, 2023</div>
+            <div class="event-title">Indie Music Festival</div>
+            <div class="event-artist">Various Artists</div>
+            <div class="event-details">
+              <div class="event-detail">
+                <span>📍</span>
+                <span>Central Park, NYC</span>
+              </div>
+              <div class="event-detail">
+                <span>🎭</span>
+                <span>25+ Artists</span>
+              </div>
+            </div>
+            <div class="event-description">
+              Three days of incredible indie music featuring top artists and
+              emerging talents from around the world.
+            </div>
+            <div class="event-actions">
+              <button class="event-btn primary">🎫 Buy Pass</button>
+              <div class="event-stats">
+                <span>👥 12K going</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Virtual Concert -->
+        <div class="event-card" data-category="upcoming livestreams">
+          <div class="event-image">
+            <span>🌟</span>
+            <div class="event-status upcoming">TOMORROW</div>
+          </div>
+          <div class="event-content">
+            <div class="event-date">Dec 13, 2023 • 9:00 PM EST</div>
+            <div class="event-title">Virtual Reality Concert</div>
+            <div class="event-artist">Luna Shadow</div>
+            <div class="event-details">
+              <div class="event-detail">
+                <span>🥽</span>
+                <span>VR Experience</span>
+              </div>
+              <div class="event-detail">
+                <span>💰</span>
+                <span>Free</span>
+              </div>
+            </div>
+            <div class="event-description">
+              Experience music like never before in this immersive VR concert
+              featuring stunning visuals and spatial audio.
+            </div>
+            <div class="event-actions">
+              <button class="event-btn primary">🎮 Join VR</button>
+              <div class="event-stats">
+                <span>👥 3.1K interested</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Event -->
+        <div class="event-card" data-category="ended concerts">
+          <div class="event-image">
+            <span>🎷</span>
+            <div class="event-status ended">ENDED</div>
+          </div>
+          <div class="event-content">
+            <div class="event-date">Dec 8, 2023 • Jazz Club</div>
+            <div class="event-title">Jazz Classics Night</div>
+            <div class="event-artist">Sarah Wilson Quartet</div>
+            <div class="event-details">
+              <div class="event-detail">
+                <span>📍</span>
+                <span>Blue Note NYC</span>
+              </div>
+              <div class="event-detail">
+                <span>👥</span>
+                <span>300 attended</span>
+              </div>
+            </div>
+            <div class="event-description">
+              An intimate evening of classic jazz standards and contemporary
+              interpretations.
+            </div>
+            <div class="event-actions">
+              <button class="event-btn secondary">📹 Watch Replay</button>
+              <div class="event-stats">
+                <span>⭐ 4.8/5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User's Own Event -->
+        <div class="event-card" data-category="my-events upcoming livestreams">
+          <div class="event-image">
+            <span>🎹</span>
+            <div class="event-status upcoming">MY EVENT</div>
+          </div>
+          <div class="event-content">
+            <div class="event-date">Dec 18, 2023 • 6:00 PM EST</div>
+            <div class="event-title">Piano Practice Session</div>
+            <div class="event-artist">You</div>
+            <div class="event-details">
+              <div class="event-detail">
+                <span>📺</span>
+                <span>Live Stream</span>
+              </div>
+              <div class="event-detail">
+                <span>💰</span>
+                <span>Free</span>
+              </div>
+            </div>
+            <div class="event-description">
+              Join me for a casual piano practice session. Playing some
+              classical pieces and taking requests!
+            </div>
+            <div class="event-actions">
+              <button class="event-btn primary">✏️ Edit Event</button>
+              <div class="event-stats">
+                <span>👥 12 interested</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="emptyState" class="empty-state" style="display: none">
+        <div class="icon">🎪</div>
+        <h3>No events found</h3>
+        <p>Try adjusting your filters or check back later for new events!</p>
+      </div>
+
+      <!-- Event-specific notifications -->
+      <div id="eventBookingSuccessNotification" class="notification success">
+        🎟️ Pomyślnie zarezerwowano miejsce na wydarzenie!
+      </div>
+
+      <div id="eventBookingErrorNotification" class="notification error">
+        ❌ Nie można zarezerwować miejsca. Sprawdź dostępność lub spróbuj
+        ponownie.
+      </div>
+
+      <div id="eventFullNotification" class="notification warning">
+        ⚠️ To wydarzenie jest już pełne. Dodano Cię do listy rezerwowej.
+      </div>
+
+      <div id="eventCancelledNotification" class="notification error">
+        ❌ Wydarzenie zostało odwołane. Otrzymasz zwrot środków w ciągu 5 dni
+        roboczych.
+      </div>
+
+      <div id="paymentErrorNotification" class="notification error">
+        ❌ Błąd płatności. Sprawdź dane karty i spróbuj ponownie.
+      </div>
+
+      <div id="ageRestrictionNotification" class="notification warning">
+        🔞 To wydarzenie ma ograniczenia wiekowe. Potwierdź swój wiek aby
+        kontynuować.
+      </div>
+    </div>
+
+    <script>
+      let currentFilter = "all";
+
+      function filterEvents() {
+        const cards = document.querySelectorAll(".event-card");
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const category = card.dataset.category;
+          let shouldShow =
+            currentFilter === "all" || category.includes(currentFilter);
+
+          if (shouldShow) {
+            card.style.display = "block";
+            visibleCount++;
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        // Show empty state if no events match
+        const emptyState = document.getElementById("emptyState");
+        const eventsGrid = document.getElementById("eventsGrid");
+
+        if (visibleCount === 0) {
+          emptyState.style.display = "block";
+          eventsGrid.style.display = "none";
+        } else {
+          emptyState.style.display = "none";
+          eventsGrid.style.display = "grid";
+        }
+      }
+
+      // Filter buttons
+      document.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          document
+            .querySelectorAll(".filter-btn")
+            .forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+          currentFilter = this.dataset.filter;
+          filterEvents();
+        });
+      });
+
+      // Event interactions
+      document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("event-btn")) {
+          const btnText = e.target.textContent;
+          const eventTitle = e.target
+            .closest(".event-card")
+            .querySelector(".event-title").textContent;
+
+          if (btnText.includes("Join Live")) {
+            alert(`Joining live event: ${eventTitle}`);
+          } else if (btnText.includes("Get Tickets")) {
+            alert(`Redirecting to ticket purchase for: ${eventTitle}`);
+          } else if (btnText.includes("Buy Pass")) {
+            alert(`Redirecting to festival pass purchase for: ${eventTitle}`);
+          } else if (btnText.includes("Join VR")) {
+            alert(`Launching VR experience for: ${eventTitle}`);
+          } else if (btnText.includes("Watch Replay")) {
+            alert(`Playing replay of: ${eventTitle}`);
+          } else if (btnText.includes("Edit Event")) {
+            alert(`Editing your event: ${eventTitle}`);
+          }
+        }
+      });
+
+      // Simulate live viewer count updates
+      setInterval(() => {
+        const liveCards = document.querySelectorAll('[data-category*="live"]');
+        liveCards.forEach((card) => {
+          const viewerElement = card.querySelector(
+            '.event-detail span:contains("viewers")'
+          );
+          if (viewerElement) {
+            const currentViewers = parseInt(
+              viewerElement.textContent.replace(/[^\d]/g, "")
+            );
+            const change = Math.floor(Math.random() * 20) - 10; // Random change -10 to +10
+            const newViewers = Math.max(100, currentViewers + change);
+            viewerElement.textContent = `${(newViewers / 1000).toFixed(
+              1
+            )}K viewers`;
+          }
+        });
+      }, 5000);
+
+      // Auto-refresh live indicator animation
+      const liveIndicators = document.querySelectorAll(".live-indicator");
+      liveIndicators.forEach((indicator) => {
+        indicator.style.animation = "none";
+        setTimeout(() => {
+          indicator.style.animation = "pulse 2s infinite";
+        }, 100);
+      });
+    </script>
+  </body>
+</html>

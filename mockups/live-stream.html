@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sloochai - Transmisja Na Żywo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: #1a1a1a;
+        color: white;
+        overflow: hidden;
+      }
+
+      .stream-container {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        height: 100vh;
+      }
+
+      .video-section {
+        position: relative;
+        background: #000;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .video-player {
+        flex: 1;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .video-player:hover .video-overlay {
+        opacity: 1;
+      }
+
+      .play-controls {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .control-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 15px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .control-btn:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(1.1);
+      }
+
+      .stream-info {
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        border-top: 1px solid #333;
+      }
+
+      .stream-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .stream-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .stream-artist {
+        color: #667eea;
+        font-size: 1.1rem;
+      }
+
+      .stream-stats {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .stat {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #ccc;
+      }
+
+      .live-indicator {
+        background: #e74c3c;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .stream-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .action-btn {
+        flex: 1;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .action-btn.secondary {
+        background: #6c757d;
+      }
+
+      .action-btn.danger {
+        background: #e74c3c;
+      }
+
+      .chat-section {
+        background: #2a2a2a;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #333;
+      }
+
+      .chat-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+        background: #333;
+      }
+
+      .chat-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .chat-stats {
+        display: flex;
+        justify-content: space-between;
+        color: #ccc;
+        font-size: 0.9rem;
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .message {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px;
+        border-radius: 10px;
+        transition: background 0.3s ease;
+      }
+
+      .message:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .message.system {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        justify-content: center;
+        font-style: italic;
+      }
+
+      .message.donation {
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+      }
+
+      .message-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+
+      .message-content {
+        flex: 1;
+      }
+
+      .message-author {
+        font-weight: bold;
+        color: #667eea;
+        font-size: 0.9rem;
+        margin-bottom: 3px;
+      }
+
+      .message-text {
+        color: #ddd;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .message-time {
+        color: #888;
+        font-size: 0.8rem;
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+
+      .chat-input {
+        padding: 20px;
+        border-top: 1px solid #333;
+        background: #333;
+      }
+
+      .input-container {
+        display: flex;
+        gap: 10px;
+      }
+
+      .message-input {
+        flex: 1;
+        background: #444;
+        border: 1px solid #555;
+        border-radius: 20px;
+        padding: 12px 15px;
+        color: white;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .message-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .send-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .send-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .stream-controls {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+      }
+
+      .stream-control-btn {
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .stream-control-btn:hover {
+        background: rgba(0, 0, 0, 0.9);
+      }
+
+      .quality-selector {
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.9);
+        border-radius: 8px;
+        padding: 10px;
+        display: none;
+        z-index: 10;
+      }
+
+      .quality-option {
+        color: white;
+        padding: 8px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+      }
+
+      .quality-option:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .quality-option.active {
+        background: #667eea;
+      }
+
+      .donation-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #2a2a2a;
+        border-radius: 15px;
+        padding: 30px;
+        border: 1px solid #444;
+        display: none;
+        z-index: 1000;
+        min-width: 400px;
+      }
+
+      .donation-popup h3 {
+        color: #667eea;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .donation-amounts {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .amount-btn {
+        background: #444;
+        color: white;
+        border: 1px solid #555;
+        padding: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .amount-btn:hover {
+        background: #555;
+        border-color: #667eea;
+      }
+
+      .amount-btn.selected {
+        background: #667eea;
+        border-color: #667eea;
+      }
+
+      .custom-amount {
+        width: 100%;
+        background: #444;
+        border: 1px solid #555;
+        border-radius: 8px;
+        padding: 12px;
+        color: white;
+        margin-bottom: 20px;
+      }
+
+      .donation-message {
+        width: 100%;
+        background: #444;
+        border: 1px solid #555;
+        border-radius: 8px;
+        padding: 12px;
+        color: white;
+        margin-bottom: 20px;
+        min-height: 80px;
+        resize: vertical;
+      }
+
+      .donation-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        z-index: 999;
+      }
+
+      /* Notifications */
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        max-width: 300px;
+      }
+
+      .notification.show {
+        display: block;
+      }
+
+      .notification.error {
+        background: #e74c3c;
+      }
+
+      .notification.success {
+        background: #27ae60;
+      }
+
+      .notification.warning {
+        background: #f39c12;
+      }
+
+      @media (max-width: 768px) {
+        .stream-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr auto;
+        }
+
+        .chat-section {
+          height: 300px;
+          border-left: none;
+          border-top: 1px solid #333;
+        }
+
+        .donation-popup {
+          min-width: 300px;
+          margin: 20px;
+        }
+
+        .donation-amounts {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stream-container">
+      <!-- Video Section -->
+      <div class="video-section">
+        <div class="video-player">
+          🎵 LIVE STREAM
+          <div class="video-overlay">
+            <div class="play-controls">
+              <button class="control-btn" id="playPauseBtn">⏸️</button>
+              <button class="control-btn" id="volumeBtn">🔊</button>
+              <button class="control-btn" id="fullscreenBtn">⛶</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stream-controls">
+          <button class="stream-control-btn" id="qualityBtn">⚙️</button>
+          <button class="stream-control-btn" id="shareBtn">📤</button>
+        </div>
+
+        <div class="quality-selector" id="qualitySelector">
+          <div class="quality-option active">1080p</div>
+          <div class="quality-option">720p</div>
+          <div class="quality-option">480p</div>
+          <div class="quality-option">360p</div>
+        </div>
+
+        <div class="stream-info">
+          <div class="stream-header">
+            <div>
+              <div class="stream-title">
+                Akustyczny Wieczór - Covery i Autorskie
+              </div>
+              <div class="stream-artist">Marta Kowalska</div>
+            </div>
+            <div class="live-indicator">🔴 LIVE</div>
+          </div>
+
+          <div class="stream-stats">
+            <div class="stat">
+              <span>👁️</span>
+              <span id="viewerCount">1,247</span>
+            </div>
+            <div class="stat">
+              <span>❤️</span>
+              <span id="likeCount">89</span>
+            </div>
+            <div class="stat">
+              <span>⏱️</span>
+              <span id="streamTime">1:23:45</span>
+            </div>
+          </div>
+
+          <div class="stream-actions">
+            <button class="action-btn" id="likeBtn">❤️ Polub</button>
+            <button class="action-btn" id="donateBtn">💰 Wspomóż</button>
+            <button class="action-btn secondary" id="followBtn">
+              ➕ Obserwuj
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Section -->
+      <div class="chat-section">
+        <div class="chat-header">
+          <div class="chat-title">Chat na żywo</div>
+          <div class="chat-stats">
+            <span>1,247 widzów</span>
+            <span>Tryb: Wszystkich</span>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="message system">
+            <div class="message-content">
+              <div class="message-text">
+                Transmisja rozpoczęta! Witajcie w moim akustycznym wieczorze! 🎵
+              </div>
+            </div>
+          </div>
+
+          <div class="message">
+            <div class="message-avatar">JS</div>
+            <div class="message-content">
+              <div class="message-author">JanSluchacz</div>
+              <div class="message-text">
+                Witaj Marta! Świetnie, że znów grasz na żywo! 🎸
+              </div>
+            </div>
+            <div class="message-time">19:32</div>
+          </div>
+
+          <div class="message">
+            <div class="message-avatar">AM</div>
+            <div class="message-content">
+              <div class="message-author">AnnaMuzyka</div>
+              <div class="message-text">
+                Czy możesz zagrać "Wonderwall"? To moja ulubiona! 🙏
+              </div>
+            </div>
+            <div class="message-time">19:33</div>
+          </div>
+
+          <div class="message donation">
+            <div class="message-avatar">PG</div>
+            <div class="message-content">
+              <div class="message-author">PiotrGitara</div>
+              <div class="message-text">
+                💰 Wsparcie 20 PLN: "Świetny występ! Grasz pięknie!" 🎵✨
+              </div>
+            </div>
+            <div class="message-time">19:34</div>
+          </div>
+
+          <div class="message">
+            <div class="message-avatar">KM</div>
+            <div class="message-content">
+              <div class="message-author">KasiaMelomanka</div>
+              <div class="message-text">
+                Dźwięk jest super! Jaką gitarę używasz?
+              </div>
+            </div>
+            <div class="message-time">19:35</div>
+          </div>
+
+          <div class="message">
+            <div class="message-avatar">TF</div>
+            <div class="message-content">
+              <div class="message-author">TomekFan</div>
+              <div class="message-text">🔥🔥🔥 Niesamowite! Tak trzymaj!</div>
+            </div>
+            <div class="message-time">19:36</div>
+          </div>
+
+          <div class="message system">
+            <div class="message-content">
+              <div class="message-text">
+                Marta_Kowalska odpowiedziała na żywo: "Dziękuję za wsparcie!
+                Gram na Yamaha FG830" 🎸
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input">
+          <div class="input-container">
+            <input
+              type="text"
+              class="message-input"
+              placeholder="Napisz wiadomość..."
+              id="messageInput"
+              maxlength="200"
+            />
+            <button class="send-btn" id="sendBtn">Wyślij</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="donation-popup" id="donationPopup">
+      <h3>💰 Wspomóż Artystę</h3>
+
+      <div class="donation-amounts">
+        <button class="amount-btn" data-amount="5">5 PLN</button>
+        <button class="amount-btn" data-amount="10">10 PLN</button>
+        <button class="amount-btn" data-amount="20">20 PLN</button>
+        <button class="amount-btn" data-amount="50">50 PLN</button>
+        <button class="amount-btn" data-amount="100">100 PLN</button>
+        <button class="amount-btn" data-amount="custom">Inna kwota</button>
+      </div>
+
+      <input
+        type="number"
+        class="custom-amount"
+        placeholder="Wpisz kwotę (PLN)"
+        id="customAmount"
+        style="display: none"
+      />
+
+      <textarea
+        class="donation-message"
+        placeholder="Wiadomość dla artysty (opcjonalnie)"
+        id="donationMessage"
+      ></textarea>
+
+      <div class="donation-actions">
+        <button class="action-btn secondary" id="cancelDonation">Anuluj</button>
+        <button class="action-btn" id="confirmDonation">Wyślij Wsparcie</button>
+      </div>
+    </div>
+
+    <!-- Live stream specific notifications -->
+    <div id="streamErrorNotification" class="notification error">
+      ❌ Błąd połączenia ze streamem. Sprawdź połączenie internetowe.
+    </div>
+
+    <div id="streamQualityNotification" class="notification warning">
+      ⚠️ Niska jakość połączenia. Obniżono jakość wideo.
+    </div>
+
+    <div id="donationErrorNotification" class="notification error">
+      ❌ Nie udało się przetworzyć darowizny. Sprawdź dane płatności.
+    </div>
+
+    <div id="donationSuccessNotification" class="notification success">
+      ✅ Dziękujemy za wsparcie! Darowizna została wysłana.
+    </div>
+
+    <div id="chatBannedNotification" class="notification error">
+      🚫 Zostałeś zbanowany na tym kanale czatu.
+    </div>
+
+    <div id="streamEndedNotification" class="notification warning">
+      📺 Stream zakończył się. Przekierowywanie do repliki...
+    </div>
+
+    <script>
+      // Stream controls
+      let isPlaying = true;
+      let isMuted = false;
+      let isFullscreen = false;
+
+      document.getElementById("playPauseBtn").addEventListener("click", () => {
+        isPlaying = !isPlaying;
+        document.getElementById("playPauseBtn").textContent = isPlaying
+          ? "⏸️"
+          : "▶️";
+      });
+
+      document.getElementById("volumeBtn").addEventListener("click", () => {
+        isMuted = !isMuted;
+        document.getElementById("volumeBtn").textContent = isMuted
+          ? "🔇"
+          : "🔊";
+      });
+
+      document.getElementById("fullscreenBtn").addEventListener("click", () => {
+        if (!isFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+        isFullscreen = !isFullscreen;
+      });
+
+      // Quality selector
+      document.getElementById("qualityBtn").addEventListener("click", () => {
+        const selector = document.getElementById("qualitySelector");
+        selector.style.display =
+          selector.style.display === "block" ? "none" : "block";
+      });
+
+      document.querySelectorAll(".quality-option").forEach((option) => {
+        option.addEventListener("click", () => {
+          document
+            .querySelectorAll(".quality-option")
+            .forEach((opt) => opt.classList.remove("active"));
+          option.classList.add("active");
+          document.getElementById("qualitySelector").style.display = "none";
+        });
+      });
+
+      // Chat functionality
+      const chatMessages = document.getElementById("chatMessages");
+      const messageInput = document.getElementById("messageInput");
+      const sendBtn = document.getElementById("sendBtn");
+
+      function addMessage(author, text, type = "normal") {
+        const message = document.createElement("div");
+        message.className = `message ${type}`;
+
+        const time = new Date().toLocaleTimeString("pl-PL", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        if (type === "system") {
+          message.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-text">${text}</div>
+                    </div>
+                `;
+        } else {
+          const avatar = author.substring(0, 2).toUpperCase();
+          message.innerHTML = `
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">
+                        <div class="message-author">${author}</div>
+                        <div class="message-text">${text}</div>
+                    </div>
+                    <div class="message-time">${time}</div>
+                `;
+        }
+
+        chatMessages.appendChild(message);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      sendBtn.addEventListener("click", () => {
+        const text = messageInput.value.trim();
+        if (text) {
+          addMessage("TwojaNick", text);
+          messageInput.value = "";
+        }
+      });
+
+      messageInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendBtn.click();
+        }
+      });
+
+      // Simulate live chat messages
+      const sampleMessages = [
+        { author: "MuzycznyFan", text: "Piękny głos! 🎵" },
+        { author: "GuitarLover", text: "Czy możesz zagrać coś z The Beatles?" },
+        {
+          author: "LiveMusicFan",
+          text: "Pierwszy raz na Twoim streamie, jestem pod wrażeniem!",
+        },
+        { author: "AcousticVibes", text: "Ta aranżacja jest niesamowita! 🎸" },
+        { author: "MelodyMaster", text: "Brawo! Encore! 👏" },
+      ];
+
+      function simulateLiveChat() {
+        const randomMessage =
+          sampleMessages[Math.floor(Math.random() * sampleMessages.length)];
+        addMessage(randomMessage.author, randomMessage.text);
+
+        // Update viewer count
+        const currentCount = parseInt(
+          document.getElementById("viewerCount").textContent.replace(",", "")
+        );
+        const change = Math.floor(Math.random() * 10) - 5;
+        const newCount = Math.max(100, currentCount + change);
+        document.getElementById("viewerCount").textContent =
+          newCount.toLocaleString();
+      }
+
+      // Add chat messages every 10-30 seconds
+      setInterval(simulateLiveChat, Math.random() * 20000 + 10000);
+
+      // Stream interactions
+      document.getElementById("likeBtn").addEventListener("click", () => {
+        const likeCount = document.getElementById("likeCount");
+        const current = parseInt(likeCount.textContent);
+        likeCount.textContent = current + 1;
+
+        document.getElementById("likeBtn").style.background = "#e74c3c";
+        setTimeout(() => {
+          document.getElementById("likeBtn").style.background =
+            "linear-gradient(45deg, #667eea, #764ba2)";
+        }, 1000);
+      });
+
+      document.getElementById("followBtn").addEventListener("click", () => {
+        const btn = document.getElementById("followBtn");
+        if (btn.textContent.includes("Obserwuj")) {
+          btn.innerHTML = "✓ Obserwujesz";
+          btn.style.background = "#28a745";
+          addMessage("", "Dziękuję za obserwowanie! 🎵", "system");
+        } else {
+          btn.innerHTML = "➕ Obserwuj";
+          btn.style.background = "#6c757d";
+        }
+      });
+
+      // Donation modal
+      const donationPopup = document.getElementById("donationPopup");
+      const modalBackdrop = document.getElementById("modalBackdrop");
+      const donateBtn = document.getElementById("donateBtn");
+      const cancelDonation = document.getElementById("cancelDonation");
+      const confirmDonation = document.getElementById("confirmDonation");
+      const customAmount = document.getElementById("customAmount");
+
+      donateBtn.addEventListener("click", () => {
+        donationPopup.style.display = "block";
+        modalBackdrop.style.display = "block";
+      });
+
+      cancelDonation.addEventListener("click", closeDonationModal);
+      modalBackdrop.addEventListener("click", closeDonationModal);
+
+      function closeDonationModal() {
+        donationPopup.style.display = "none";
+        modalBackdrop.style.display = "none";
+      }
+
+      // Amount selection
+      document.querySelectorAll(".amount-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".amount-btn")
+            .forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+
+          if (btn.dataset.amount === "custom") {
+            customAmount.style.display = "block";
+            customAmount.focus();
+          } else {
+            customAmount.style.display = "none";
+          }
+        });
+      });
+
+      confirmDonation.addEventListener("click", () => {
+        const selectedBtn = document.querySelector(".amount-btn.selected");
+        const message = document.getElementById("donationMessage").value;
+
+        if (selectedBtn) {
+          let amount = selectedBtn.dataset.amount;
+          if (amount === "custom") {
+            amount = customAmount.value;
+          }
+
+          if (amount && amount > 0) {
+            // Simulate donation
+            const donationText = `💰 Wsparcie ${amount} PLN${
+              message ? ': "' + message + '"' : ""
+            } 🎵✨`;
+            addMessage("TwojaNick", donationText, "donation");
+
+            closeDonationModal();
+
+            // Reset form
+            document
+              .querySelectorAll(".amount-btn")
+              .forEach((b) => b.classList.remove("selected"));
+            customAmount.style.display = "none";
+            customAmount.value = "";
+            document.getElementById("donationMessage").value = "";
+
+            showNotification("donationSuccessNotification");
+          } else {
+            showNotification("donationErrorNotification");
+          }
+        }
+      });
+
+      // Share functionality
+      document.getElementById("shareBtn").addEventListener("click", () => {
+        if (navigator.share) {
+          navigator.share({
+            title: "Akustyczny Wieczór - Marta Kowalska",
+            text: "Oglądaj transmisję na żywo!",
+            url: window.location.href,
+          });
+        } else {
+          // Fallback to clipboard
+          navigator.clipboard.writeText(window.location.href);
+          alert("Link do transmisji skopiowany do schowka!");
+        }
+      });
+
+      // Update stream time
+      let streamStartTime =
+        Date.now() - (1 * 60 * 60 * 1000 + 23 * 60 * 1000 + 45 * 1000); // 1:23:45 ago
+
+      function updateStreamTime() {
+        const elapsed = Date.now() - streamStartTime;
+        const hours = Math.floor(elapsed / (1000 * 60 * 60));
+        const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+        document.getElementById("streamTime").textContent = `${hours}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      }
+
+      setInterval(updateStreamTime, 1000);
+
+      // Close quality selector when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !e.target.closest("#qualityBtn") &&
+          !e.target.closest("#qualitySelector")
+        ) {
+          document.getElementById("qualitySelector").style.display = "none";
+        }
+      });
+
+      // Notification handling
+      function showNotification(id) {
+        const notification = document.getElementById(id);
+        notification.classList.add("show");
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      // Initial setup
+      updateStreamTime();
+      setTimeout(() => simulateLiveChat(), 5000);
+    </script>
+  </body>
+</html>

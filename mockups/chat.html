@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .chat-container {
+        display: flex;
+        height: calc(100vh - 80px);
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .chat-sidebar {
+        width: 300px;
+        background: white;
+        border-right: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar-header {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sidebar-header h3 {
+        color: #333;
+      }
+
+      .new-chat-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+
+      .search-chats {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .search-chats input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 0.9rem;
+      }
+
+      .search-chats input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .chat-list {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .chat-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        border-bottom: 1px solid #f8f9fa;
+      }
+
+      .chat-item:hover {
+        background-color: #f8f9fa;
+      }
+
+      .chat-item.active {
+        background-color: #e8f1ff;
+        border-left: 3px solid #667eea;
+      }
+
+      .chat-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        margin-right: 1rem;
+        flex-shrink: 0;
+      }
+
+      .chat-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .chat-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: #333;
+      }
+
+      .chat-last-message {
+        color: #666;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chat-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.25rem;
+      }
+
+      .chat-time {
+        color: #999;
+        font-size: 0.8rem;
+      }
+
+      .unread-badge {
+        background: #667eea;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .online-indicator {
+        width: 12px;
+        height: 12px;
+        background: #28a745;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        border: 2px solid white;
+      }
+
+      .chat-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: white;
+      }
+
+      .chat-header {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .chat-user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .chat-user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        position: relative;
+      }
+
+      .chat-user-details h4 {
+        color: #333;
+        margin-bottom: 0.25rem;
+      }
+
+      .chat-user-status {
+        color: #28a745;
+        font-size: 0.9rem;
+      }
+
+      .chat-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .action-btn {
+        background: #f8f9fa;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+
+      .action-btn:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        background: #f8f9fa;
+      }
+
+      .message {
+        display: flex;
+        margin-bottom: 1rem;
+        align-items: flex-start;
+      }
+
+      .message.sent {
+        justify-content: flex-end;
+      }
+
+      .message.received {
+        justify-content: flex-start;
+      }
+
+      .message-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin: 0 0.5rem;
+      }
+
+      .message-content {
+        max-width: 70%;
+        position: relative;
+      }
+
+      .message-bubble {
+        padding: 0.75rem 1rem;
+        border-radius: 18px;
+        word-wrap: break-word;
+        position: relative;
+      }
+
+      .message.sent .message-bubble {
+        background: #667eea;
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+
+      .message.received .message-bubble {
+        background: white;
+        color: #333;
+        border: 1px solid #eee;
+        border-bottom-left-radius: 4px;
+      }
+
+      .message-time {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        margin-top: 0.25rem;
+        text-align: right;
+      }
+
+      .message.received .message-time {
+        text-align: left;
+      }
+
+      .message-input-container {
+        padding: 1rem;
+        border-top: 1px solid #eee;
+        background: white;
+      }
+
+      .message-input-wrapper {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 25px;
+        padding: 0.5rem;
+      }
+
+      .attachment-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: background-color 0.3s;
+      }
+
+      .attachment-btn:hover {
+        background: #e9ecef;
+      }
+
+      .message-input {
+        flex: 1;
+        border: none;
+        background: none;
+        padding: 0.75rem;
+        font-size: 1rem;
+        resize: none;
+        min-height: 20px;
+        max-height: 100px;
+        outline: none;
+      }
+
+      .send-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+      }
+
+      .send-btn:hover {
+        background: #5a67d8;
+        transform: scale(1.05);
+      }
+
+      .send-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .typing-indicator {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        color: #666;
+        font-style: italic;
+        font-size: 0.9rem;
+      }
+
+      .typing-indicator.show {
+        display: flex;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 2px;
+      }
+
+      .typing-dot {
+        width: 4px;
+        height: 4px;
+        background: #667eea;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          opacity: 0.3;
+        }
+        30% {
+          opacity: 1;
+        }
+      }
+
+      .empty-chat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #666;
+        text-align: center;
+      }
+
+      .empty-chat .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        max-width: 300px;
+      }
+
+      .notification.error {
+        background: #e74c3c;
+      }
+
+      .notification.success {
+        background: #27ae60;
+      }
+
+      .notification.warning {
+        background: #f39c12;
+      }
+
+      @media (max-width: 768px) {
+        .chat-container {
+          flex-direction: column;
+        }
+
+        .chat-sidebar {
+          width: 100%;
+          height: 40%;
+          border-right: none;
+          border-bottom: 1px solid #eee;
+        }
+
+        .chat-main {
+          height: 60%;
+        }
+
+        .message-content {
+          max-width: 85%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+          <a href="playlists.html">Playlists</a>
+          <a href="account-settings.html">Settings</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="chat-container">
+      <div class="chat-sidebar">
+        <div class="sidebar-header">
+          <h3>Messages</h3>
+          <button class="new-chat-btn" title="New Chat">+</button>
+        </div>
+
+        <div class="search-chats">
+          <input
+            type="text"
+            placeholder="Search conversations..."
+            id="searchChats"
+          />
+        </div>
+
+        <div class="chat-list">
+          <div class="chat-item active" data-user="sarah">
+            <div class="chat-avatar">
+              SJ
+              <div class="online-indicator"></div>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">Sarah Johnson</div>
+              <div class="chat-last-message">That new track is amazing! 🎵</div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">2:34 PM</div>
+              <div class="unread-badge">2</div>
+            </div>
+          </div>
+
+          <div class="chat-item" data-user="mike">
+            <div class="chat-avatar">MW</div>
+            <div class="chat-info">
+              <div class="chat-name">Mike Wilson</div>
+              <div class="chat-last-message">
+                Want to collaborate on a playlist?
+              </div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">1:15 PM</div>
+            </div>
+          </div>
+
+          <div class="chat-item" data-user="alex">
+            <div class="chat-avatar">
+              AB
+              <div class="online-indicator"></div>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">Alex Brown</div>
+              <div class="chat-last-message">Check out my latest song!</div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">11:42 AM</div>
+            </div>
+          </div>
+
+          <div class="chat-item" data-user="emma">
+            <div class="chat-avatar">ED</div>
+            <div class="chat-info">
+              <div class="chat-name">Emma Davis</div>
+              <div class="chat-last-message">
+                Thanks for the recommendation!
+              </div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">Yesterday</div>
+            </div>
+          </div>
+
+          <div class="chat-item" data-user="james">
+            <div class="chat-avatar">JT</div>
+            <div class="chat-info">
+              <div class="chat-name">James Taylor</div>
+              <div class="chat-last-message">See you at the concert!</div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">Monday</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-main">
+        <div class="chat-header">
+          <div class="chat-user-info">
+            <div class="chat-user-avatar">
+              SJ
+              <div class="online-indicator"></div>
+            </div>
+            <div class="chat-user-details">
+              <h4>Sarah Johnson</h4>
+              <div class="chat-user-status">Online</div>
+            </div>
+          </div>
+          <div class="chat-actions">
+            <button class="action-btn" title="Voice call">📞</button>
+            <button class="action-btn" title="Video call">📹</button>
+            <button class="action-btn" title="Share music">🎵</button>
+            <button class="action-btn" title="More options">⋯</button>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="message received">
+            <div class="message-avatar">SJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Hey! Did you listen to that new album I shared yesterday?
+              </div>
+              <div class="message-time">1:20 PM</div>
+            </div>
+          </div>
+
+          <div class="message sent">
+            <div class="message-content">
+              <div class="message-bubble">
+                Yes! It's incredible. The production quality is amazing 🎧
+              </div>
+              <div class="message-time">1:22 PM</div>
+            </div>
+            <div class="message-avatar">JD</div>
+          </div>
+
+          <div class="message received">
+            <div class="message-avatar">SJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Right?! I've been listening to track 3 on repeat. The guitar
+                solo is insane 🎸
+              </div>
+              <div class="message-time">1:25 PM</div>
+            </div>
+          </div>
+
+          <div class="message sent">
+            <div class="message-content">
+              <div class="message-bubble">
+                That's my favorite track too! Want to add it to our
+                collaborative playlist?
+              </div>
+              <div class="message-time">1:28 PM</div>
+            </div>
+            <div class="message-avatar">JD</div>
+          </div>
+
+          <div class="message received">
+            <div class="message-avatar">SJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Absolutely! I'll add it now. BTW, I just released a new track
+                myself
+              </div>
+              <div class="message-time">2:15 PM</div>
+            </div>
+          </div>
+
+          <div class="message received">
+            <div class="message-avatar">SJ</div>
+            <div class="message-content">
+              <div class="message-bubble">That new track is amazing! 🎵</div>
+              <div class="message-time">2:34 PM</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+          <div class="message-avatar">SJ</div>
+          <span>Sarah is typing</span>
+          <div class="typing-dots">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+
+        <div class="message-input-container">
+          <div class="message-input-wrapper">
+            <button class="attachment-btn" title="Attach file">📎</button>
+            <button class="attachment-btn" title="Share song">🎵</button>
+            <textarea
+              class="message-input"
+              id="messageInput"
+              placeholder="Type a message..."
+              rows="1"
+            ></textarea>
+            <button class="send-btn" id="sendBtn" disabled>➤</button>
+          </div>
+        </div>
+
+        <!-- Chat-specific error notifications -->
+        <div id="messageFailedNotification" class="notification error">
+          ❌ Nie udało się wysłać wiadomości. Sprawdź połączenie internetowe.
+        </div>
+
+        <div id="messageEditFailedNotification" class="notification error">
+          ❌ Nie można edytować wiadomości. Spróbuj ponownie za chwilę.
+        </div>
+
+        <div id="messageDeleteFailedNotification" class="notification error">
+          ❌ Nie można usunąć wiadomości. Spróbuj ponownie za chwilę.
+        </div>
+
+        <div id="reportSuccessNotification" class="notification success">
+          ✅ Wiadomość została zgłoszona do moderacji.
+        </div>
+
+        <div id="reportFailedNotification" class="notification error">
+          ❌ Nie udało się wysłać zgłoszenia. Spróbuj ponownie.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const messageInput = document.getElementById("messageInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const chatMessages = document.getElementById("chatMessages");
+      const typingIndicator = document.getElementById("typingIndicator");
+
+      // Auto-resize textarea
+      messageInput.addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = Math.min(this.scrollHeight, 100) + "px";
+
+        // Enable/disable send button
+        sendBtn.disabled = !this.value.trim();
+      });
+
+      // Send message
+      function sendMessage() {
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        // Add message to chat
+        const messageElement = document.createElement("div");
+        messageElement.className = "message sent";
+        messageElement.innerHTML = `
+                <div class="message-content">
+                    <div class="message-bubble">${message}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString(
+                      [],
+                      { hour: "2-digit", minute: "2-digit" }
+                    )}</div>
+                </div>
+                <div class="message-avatar">JD</div>
+            `;
+
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Clear input
+        messageInput.value = "";
+        messageInput.style.height = "auto";
+        sendBtn.disabled = true;
+
+        // Simulate typing indicator and response
+        setTimeout(() => {
+          typingIndicator.classList.add("show");
+        }, 1000);
+
+        setTimeout(() => {
+          typingIndicator.classList.remove("show");
+
+          // Auto-response
+          const responses = [
+            "That sounds great! 😊",
+            "I love that song too!",
+            "Thanks for sharing!",
+            "Let's listen to it together sometime",
+            "You have excellent taste in music! 🎵",
+          ];
+
+          const responseElement = document.createElement("div");
+          responseElement.className = "message received";
+          responseElement.innerHTML = `
+                    <div class="message-avatar">SJ</div>
+                    <div class="message-content">
+                        <div class="message-bubble">${
+                          responses[
+                            Math.floor(Math.random() * responses.length)
+                          ]
+                        }</div>
+                        <div class="message-time">${new Date().toLocaleTimeString(
+                          [],
+                          { hour: "2-digit", minute: "2-digit" }
+                        )}</div>
+                    </div>
+                `;
+
+          chatMessages.appendChild(responseElement);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 3000);
+      }
+
+      // Send button click
+      sendBtn.addEventListener("click", sendMessage);
+
+      // Enter to send (Shift+Enter for new line)
+      messageInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Chat item selection
+      document.querySelectorAll(".chat-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          // Remove active class from all items
+          document
+            .querySelectorAll(".chat-item")
+            .forEach((i) => i.classList.remove("active"));
+
+          // Add active class to clicked item
+          this.classList.add("active");
+
+          // Remove unread badge
+          const badge = this.querySelector(".unread-badge");
+          if (badge) badge.remove();
+
+          // Update chat header
+          const userName = this.querySelector(".chat-name").textContent;
+          const userAvatar =
+            this.querySelector(".chat-avatar").textContent.trim();
+          const isOnline = this.querySelector(".online-indicator");
+
+          document.querySelector(".chat-user-details h4").textContent =
+            userName;
+          document.querySelector(".chat-user-avatar").textContent = userAvatar;
+          document.querySelector(".chat-user-status").textContent = isOnline
+            ? "Online"
+            : "Last seen recently";
+
+          // Clear messages and load chat history (simplified)
+          chatMessages.innerHTML = `
+                    <div class="message received">
+                        <div class="message-avatar">${userAvatar}</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                Hey! How's it going?
+                            </div>
+                            <div class="message-time">12:30 PM</div>
+                        </div>
+                    </div>
+                `;
+        });
+      });
+
+      // Search chats
+      document
+        .getElementById("searchChats")
+        .addEventListener("input", function (e) {
+          const query = e.target.value.toLowerCase();
+          document.querySelectorAll(".chat-item").forEach((item) => {
+            const name = item
+              .querySelector(".chat-name")
+              .textContent.toLowerCase();
+            const message = item
+              .querySelector(".chat-last-message")
+              .textContent.toLowerCase();
+
+            if (name.includes(query) || message.includes(query)) {
+              item.style.display = "flex";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        });
+
+      // Scroll to bottom on load
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Focus message input
+      messageInput.focus();
+    </script>
+  </body>
+</html>

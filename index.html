@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sloochai - Music Streaming Platform Mockups</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        color: white;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .mockup-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .mockup-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .mockup-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .mockup-header {
+        padding: 20px;
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+      }
+
+      .mockup-header h3 {
+        font-size: 1.3rem;
+        margin-bottom: 5px;
+      }
+
+      .mockup-header p {
+        opacity: 0.9;
+        font-size: 0.9rem;
+      }
+
+      .mockup-content {
+        padding: 20px;
+      }
+
+      .mockup-link {
+        display: inline-block;
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      .mockup-link:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .category-title {
+        color: white;
+        font-size: 2rem;
+        margin: 40px 0 20px 0;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .feature-list {
+        list-style: none;
+        margin-top: 10px;
+      }
+
+      .feature-list li {
+        padding: 5px 0;
+        color: #666;
+      }
+
+      .feature-list li:before {
+        content: "✓ ";
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .mockup-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎵 Sloochai Music Platform</h1>
+        <p>
+          Kompleksowa platforma streamingu muzyki z funkcjami społecznościowymi
+        </p>
+      </div>
+
+      <h2 class="category-title">🔐 Autoryzacja i Konta</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Logowanie</h3>
+            <p>Strona logowania z opcjami zewnętrznych serwisów</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Formularz logowania email/hasło</li>
+              <li>Logowanie przez serwisy społecznościowe</li>
+              <li>Odzyskiwanie hasła</li>
+              <li>Walidacja formularzy</li>
+            </ul>
+            <a href="mockups/login.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Rejestracja</h3>
+            <p>Tworzenie nowego konta użytkownika</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Formularz rejestracyjny</li>
+              <li>Walidacja hasła (8+ znaków, znaki specjalne)</li>
+              <li>Akceptacja regulaminu</li>
+              <li>Weryfikacja email</li>
+            </ul>
+            <a href="mockups/register.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Ustawienia Konta</h3>
+            <p>Panel zarządzania kontem użytkownika</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Edycja danych osobowych</li>
+              <li>Zmiana hasła</li>
+              <li>Podłączanie kont zewnętrznych</li>
+              <li>Zarządzanie subskrypcją premium</li>
+            </ul>
+            <a href="mockups/account-settings.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <h2 class="category-title">🎵 Główne Interfejsy</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Dashboard Główny</h3>
+            <p>Strona główna po zalogowaniu</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Najnowsze posty obserwowanych</li>
+              <li>Rekomendowane utwory</li>
+              <li>Player muzyczny</li>
+              <li>Panel nawigacyjny</li>
+            </ul>
+            <a href="mockups/dashboard.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Profil Użytkownika</h3>
+            <p>Strona profilu z postami i utworami</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Informacje o użytkowniku</li>
+              <li>Lista utworów i albumów</li>
+              <li>Posty na profilu</li>
+              <li>Wirtualne przedmioty</li>
+            </ul>
+            <a href="mockups/profile.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Player Muzyczny</h3>
+            <p>Interface odtwarzania muzyki</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Kontrolki odtwarzania</li>
+              <li>Kolejka utworów</li>
+              <li>Tekst piosenki (lyrics)</li>
+              <li>Opcje udostępniania</li>
+            </ul>
+            <a href="mockups/music-player.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <h2 class="category-title">🎼 Zarządzanie Treścią</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Dodaj Utwór</h3>
+            <p>Formularz dodawania nowego utworu</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Upload pliku audio</li>
+              <li>Metadane utworu</li>
+              <li>Upload okładki</li>
+              <li>Ustawienia prywatności</li>
+            </ul>
+            <a href="mockups/add-song.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Zarządzanie Playlistami</h3>
+            <p>Tworzenie i edycja playlist</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Lista własnych playlist</li>
+              <li>Tworzenie nowej playlisty</li>
+              <li>Dodawanie utworów</li>
+              <li>Ustawienia widoczności</li>
+            </ul>
+            <a href="mockups/playlists.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Tworzenie Albumu</h3>
+            <p>Panel tworzenia nowego albumu</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Informacje o albumie</li>
+              <li>Dodawanie utworów</li>
+              <li>Ustawianie kolejności</li>
+              <li>Upload grafiki albumu</li>
+            </ul>
+            <a href="mockups/create-album.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <h2 class="category-title">💬 Funkcje Społecznościowe</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Wiadomości (Chat)</h3>
+            <p>System prywatnych wiadomości</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Lista konwersacji</li>
+              <li>Widok chatu</li>
+              <li>Reakcje na wiadomości</li>
+              <li>Zgłaszanie treści</li>
+            </ul>
+            <a href="mockups/chat.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Posty i Komentarze</h3>
+            <p>Interakcje społecznościowe</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Tworzenie postów</li>
+              <li>System komentarzy</li>
+              <li>Reakcje (like/dislike)</li>
+              <li>Udostępnianie</li>
+            </ul>
+            <a href="mockups/social-posts.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Wrapped (Statystyki)</h3>
+            <p>Roczne podsumowanie aktywności</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Najczęściej słuchane utwory</li>
+              <li>Ulubieni artyści</li>
+              <li>Statystyki czasowe</li>
+              <li>Udostępnianie wrapped</li>
+            </ul>
+            <a href="mockups/wrapped.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="category-title">🎟️ Wydarzenia i Bilety</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Kalendarz Wydarzeń</h3>
+            <p>Przegląd wydarzeń live</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Kalendarz wydarzeń</li>
+              <li>Filtry i wyszukiwanie</li>
+              <li>Szczegóły wydarzeń</li>
+              <li>Zakup biletów</li>
+            </ul>
+            <a href="mockups/events.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Live Streaming</h3>
+            <p>Interface transmisji na żywo</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Player strumieniowy</li>
+              <li>Chat na żywo</li>
+              <li>Statystyki widzów</li>
+              <li>Kontrolki dla artysty</li>
+            </ul>
+            <a href="mockups/live-stream.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Tworzenie Wydarzenia</h3>
+            <p>Panel organizacji wydarzenia live</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Dane wydarzenia</li>
+              <li>Ustawienia biletów</li>
+              <li>Promocja wydarzenia</li>
+              <li>Ustawienia transmisji</li>
+            </ul>
+            <a href="mockups/create-event.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <h2 class="category-title">⚖️ Moderacja i Administracja</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Panel Moderatora</h3>
+            <p>Interface moderacji treści</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Lista zgłoszeń</li>
+              <li>Narzędzia moderacji</li>
+              <li>Zarządzanie blokadami</li>
+              <li>Statystyki moderacji</li>
+            </ul>
+            <a href="mockups/moderation.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Zgłoszenia</h3>
+            <p>System zgłaszania treści</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Formularz zgłoszenia</li>
+              <li>Kategorie naruszeń</li>
+              <li>Status zgłoszenia</li>
+              <li>Historia komunikacji</li>
+            </ul>
+            <a href="mockups/reports.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="category-title">💎 Premium i Płatności</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Subskrypcja Premium</h3>
+            <p>Zakup i zarządzanie premium</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Plany cenowe</li>
+              <li>Porównanie funkcji</li>
+              <li>Formularz płatności</li>
+              <li>Anulowanie subskrypcji</li>
+            </ul>
+            <a href="mockups/premium.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Wsparcie Artystów</h3>
+            <p>System donacji dla twórców</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Wybór kwoty donacji</li>
+              <li>Wiadomość dla artysty</li>
+              <li>Historia wsparcia</li>
+              <li>Ranking wspierających</li>
+            </ul>
+            <a href="mockups/artist-support.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <h2 class="category-title">🔍 Odkrywanie i Wyszukiwanie</h2>
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Wyszukiwanie</h3>
+            <p>Zaawansowane wyszukiwanie treści</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Wyszukiwanie tekstowe</li>
+              <li>Filtry zaawansowane</li>
+              <li>Wyszukiwanie głosowe</li>
+              <li>Historia wyszukiwań</li>
+            </ul>
+            <a href="mockups/search.html" class="mockup-link">Zobacz mockup</a>
+          </div>
+        </div>
+
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3>Rekomendacje</h3>
+            <p>Sugerowane utwory i artyści</p>
+          </div>
+          <div class="mockup-content">
+            <ul class="feature-list">
+              <li>Algorytm rekomendacji</li>
+              <li>Podobni artyści</li>
+              <li>Trendy muzyczne</li>
+              <li>Personalizacja</li>
+            </ul>
+            <a href="mockups/recommendations.html" class="mockup-link"
+              >Zobacz mockup</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin: 50px 0; color: white">
+        <p>
+          © 2024 Sloochai Music Platform - Mockups based on comprehensive
+          documentation
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

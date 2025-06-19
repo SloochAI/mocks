@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Premium - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: white;
+      }
+
+      .header {
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+        opacity: 0.9;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        opacity: 1;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .hero-section {
+        text-align: center;
+        margin-bottom: 4rem;
+        padding: 2rem 0;
+      }
+
+      .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-section .subtitle {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+
+      .hero-features {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .hero-feature {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .hero-feature .icon {
+        font-size: 1.3rem;
+      }
+
+      .pricing-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+      }
+
+      .pricing-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .pricing-card.featured {
+        border: 2px solid #ffd700;
+        transform: scale(1.05);
+      }
+
+      .pricing-card.featured::before {
+        content: "MOST POPULAR";
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ffd700;
+        color: #333;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+
+      .plan-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+      }
+
+      .plan-price {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .plan-price .currency {
+        font-size: 1.5rem;
+        vertical-align: super;
+      }
+
+      .plan-price .period {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+
+      .plan-description {
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .plan-features {
+        list-style: none;
+        margin-bottom: 2rem;
+        text-align: left;
+      }
+
+      .plan-features li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .plan-features li .check {
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      .plan-features li .cross {
+        color: #dc3545;
+        font-weight: bold;
+      }
+
+      .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        width: 100%;
+      }
+
+      .btn-primary {
+        background: white;
+        color: #667eea;
+      }
+
+      .btn-primary:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-secondary:hover {
+        background: white;
+        color: #667eea;
+      }
+
+      .btn-gold {
+        background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+        color: #333;
+      }
+
+      .btn-gold:hover {
+        background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+        transform: translateY(-2px);
+      }
+
+      .features-comparison {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 4rem;
+      }
+
+      .features-comparison h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .comparison-table th {
+        font-weight: bold;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .comparison-table tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .faq-section {
+        margin-bottom: 4rem;
+      }
+
+      .faq-section h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+      }
+
+      .faq-item {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+
+      .faq-question {
+        padding: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.3s;
+      }
+
+      .faq-question:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .faq-answer {
+        padding: 0 1.5rem 1.5rem;
+        display: none;
+        line-height: 1.6;
+        opacity: 0.9;
+      }
+
+      .faq-answer.show {
+        display: block;
+      }
+
+      .guarantee-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .guarantee-section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .guarantee-section p {
+        opacity: 0.9;
+        line-height: 1.6;
+      }
+
+      /* Premium subscription notifications */
+      #subscriptionSuccessNotification {
+        display: none;
+      }
+
+      #paymentFailedNotification {
+        display: none;
+      }
+
+      #cardDeclinedNotification {
+        display: none;
+      }
+
+      #subscriptionCancelledNotification {
+        display: none;
+      }
+
+      #billingErrorNotification {
+        display: none;
+      }
+
+      #couponAppliedNotification {
+        display: none;
+      }
+
+      #invalidCouponNotification {
+        display: none;
+      }
+
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        max-width: 350px;
+      }
+
+      .notification.error {
+        background: #e74c3c;
+      }
+
+      .notification.success {
+        background: #27ae60;
+      }
+
+      .notification.warning {
+        background: #f39c12;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .hero-section h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-features {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .pricing-section {
+          grid-template-columns: 1fr;
+        }
+
+        .pricing-card.featured {
+          transform: none;
+        }
+
+        .comparison-table {
+          font-size: 0.9rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+          padding: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+          <a href="account-settings.html">Settings</a>
+          <a href="login.html">Logout</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="hero-section">
+        <h1>Upgrade to Premium</h1>
+        <div class="subtitle">Experience music like never before</div>
+        <div class="hero-features">
+          <div class="hero-feature">
+            <span class="icon">🚫</span>
+            <span>Ad-free listening</span>
+          </div>
+          <div class="hero-feature">
+            <span class="icon">⬇️</span>
+            <span>Offline downloads</span>
+          </div>
+          <div class="hero-feature">
+            <span class="icon">🎵</span>
+            <span>High-quality audio</span>
+          </div>
+          <div class="hero-feature">
+            <span class="icon">⏭️</span>
+            <span>Unlimited skips</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pricing-section">
+        <!-- Free Plan -->
+        <div class="pricing-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price">
+            <span class="currency">$</span>0
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-description">
+            Get started with basic music streaming
+          </div>
+          <ul class="plan-features">
+            <li><span class="check">✓</span> Stream millions of songs</li>
+            <li><span class="check">✓</span> Create playlists</li>
+            <li><span class="check">✓</span> Basic audio quality</li>
+            <li><span class="cross">✗</span> Ads between songs</li>
+            <li><span class="cross">✗</span> Limited skips (6 per hour)</li>
+            <li><span class="cross">✗</span> No offline downloads</li>
+          </ul>
+          <button class="btn btn-secondary">Current Plan</button>
+        </div>
+
+        <!-- Premium Plan -->
+        <div class="pricing-card featured">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">
+            <span class="currency">$</span>9.99
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-description">
+            Perfect for individual music lovers
+          </div>
+          <ul class="plan-features">
+            <li><span class="check">✓</span> Everything in Free</li>
+            <li><span class="check">✓</span> Ad-free listening</li>
+            <li><span class="check">✓</span> Unlimited skips</li>
+            <li><span class="check">✓</span> Offline downloads</li>
+            <li><span class="check">✓</span> High-quality audio (320kbps)</li>
+            <li><span class="check">✓</span> Exclusive content</li>
+          </ul>
+          <button class="btn btn-gold" onclick="upgradePlan('premium')">
+            Upgrade Now
+          </button>
+        </div>
+
+        <!-- Family Plan -->
+        <div class="pricing-card">
+          <div class="plan-name">Family</div>
+          <div class="plan-price">
+            <span class="currency">$</span>14.99
+            <span class="period">/month</span>
+          </div>
+          <div class="plan-description">
+            Share premium with up to 6 family members
+          </div>
+          <ul class="plan-features">
+            <li><span class="check">✓</span> Everything in Premium</li>
+            <li><span class="check">✓</span> 6 premium accounts</li>
+            <li><span class="check">✓</span> Individual profiles</li>
+            <li><span class="check">✓</span> Kid-safe mode</li>
+            <li><span class="check">✓</span> Family mix playlists</li>
+            <li><span class="check">✓</span> Shared payment</li>
+          </ul>
+          <button class="btn btn-primary" onclick="upgradePlan('family')">
+            Choose Family
+          </button>
+        </div>
+      </div>
+
+      <div class="features-comparison">
+        <h2>Compare All Plans</h2>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Free</th>
+              <th>Premium</th>
+              <th>Family</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Music streaming</td>
+              <td>✓</td>
+              <td>✓</td>
+              <td>✓</td>
+            </tr>
+            <tr>
+              <td>Ads</td>
+              <td>Yes</td>
+              <td>None</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td>Skips per hour</td>
+              <td>6</td>
+              <td>Unlimited</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <td>Audio quality</td>
+              <td>Basic (128kbps)</td>
+              <td>High (320kbps)</td>
+              <td>High (320kbps)</td>
+            </tr>
+            <tr>
+              <td>Offline downloads</td>
+              <td>✗</td>
+              <td>✓</td>
+              <td>✓</td>
+            </tr>
+            <tr>
+              <td>Accounts included</td>
+              <td>1</td>
+              <td>1</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>Exclusive content</td>
+              <td>✗</td>
+              <td>✓</td>
+              <td>✓</td>
+            </tr>
+            <tr>
+              <td>Live concerts</td>
+              <td>✗</td>
+              <td>✓</td>
+              <td>✓</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFAQ(this)">
+            <span>Can I cancel my subscription anytime?</span>
+            <span>+</span>
+          </div>
+          <div class="faq-answer">
+            Yes, you can cancel your Premium subscription at any time. You'll
+            continue to have Premium features until the end of your current
+            billing period, then you'll be switched back to our free service.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFAQ(this)">
+            <span>How many songs can I download for offline listening?</span>
+            <span>+</span>
+          </div>
+          <div class="faq-answer">
+            Premium subscribers can download up to 10,000 songs per device on up
+            to 5 different devices. Downloaded songs will remain available for
+            offline listening as long as you connect to the internet at least
+            once every 30 days.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFAQ(this)">
+            <span>What's the difference between Premium and Family plans?</span>
+            <span>+</span>
+          </div>
+          <div class="faq-answer">
+            Premium is for individual use with one account. Family includes all
+            Premium features for up to 6 people living at the same address, with
+            individual profiles and preferences for each family member.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFAQ(this)">
+            <span>Do you offer student discounts?</span>
+            <span>+</span>
+          </div>
+          <div class="faq-answer">
+            Yes! Students can get Premium for just $4.99/month. You'll need to
+            verify your student status through SheerID. The discount is
+            available for up to 4 years and can be renewed annually.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFAQ(this)">
+            <span>What payment methods do you accept?</span>
+            <span>+</span>
+          </div>
+          <div class="faq-answer">
+            We accept all major credit cards (Visa, Mastercard, American
+            Express), PayPal, Apple Pay, Google Pay, and bank transfers. Payment
+            is processed securely and you can change your payment method
+            anytime.
+          </div>
+        </div>
+      </div>
+
+      <div class="guarantee-section">
+        <h3>🎵 30-Day Money-Back Guarantee</h3>
+        <p>
+          Try Premium risk-free! If you're not completely satisfied within the
+          first 30 days, we'll refund your payment in full. No questions asked,
+          no cancellation fees.
+        </p>
+      </div>
+
+      <!-- Premium subscription notifications -->
+      <div id="subscriptionSuccessNotification" class="notification success">
+        ✅ Witaj w Sloochai Premium! Ciesz się muzyką bez reklam.
+      </div>
+
+      <div id="paymentFailedNotification" class="notification error">
+        ❌ Płatność nie powiodła się. Sprawdź dane karty i spróbuj ponownie.
+      </div>
+
+      <div id="cardDeclinedNotification" class="notification error">
+        ❌ Karta została odrzucona. Skontaktuj się z bankiem lub spróbuj innej
+        karty.
+      </div>
+
+      <div id="subscriptionCancelledNotification" class="notification warning">
+        ⚠️ Subskrypcja została anulowana. Zachowasz dostęp do Premium do końca
+        okresu rozliczeniowego.
+      </div>
+
+      <div id="billingErrorNotification" class="notification error">
+        ❌ Błąd systemu płatności. Spróbuj ponownie za chwilę.
+      </div>
+
+      <div id="couponAppliedNotification" class="notification success">
+        🎉 Kod promocyjny został zastosowany! Otrzymujesz zniżkę.
+      </div>
+
+      <div id="invalidCouponNotification" class="notification error">
+        ❌ Nieprawidłowy kod promocyjny lub kod wygasł.
+      </div>
+    </div>
+
+    <script>
+      function toggleFAQ(element) {
+        const answer = element.nextElementSibling;
+        const icon = element.querySelector("span:last-child");
+
+        if (answer.classList.contains("show")) {
+          answer.classList.remove("show");
+          icon.textContent = "+";
+        } else {
+          // Close all other FAQs
+          document
+            .querySelectorAll(".faq-answer")
+            .forEach((a) => a.classList.remove("show"));
+          document
+            .querySelectorAll(".faq-question span:last-child")
+            .forEach((i) => (i.textContent = "+"));
+
+          // Open clicked FAQ
+          answer.classList.add("show");
+          icon.textContent = "-";
+        }
+      }
+
+      function upgradePlan(planType) {
+        // Simulate payment process
+        const planNames = {
+          premium: "Premium ($9.99/month)",
+          family: "Family ($14.99/month)",
+        };
+
+        if (
+          confirm(
+            `Upgrade to ${planNames[planType]}?\n\nYou'll be redirected to our secure payment page.`
+          )
+        ) {
+          // Simulate loading state
+          const button = event.target;
+          const originalText = button.textContent;
+          button.textContent = "Processing...";
+          button.disabled = true;
+
+          setTimeout(() => {
+            // Simulate random payment success or failure
+            const isSuccess = Math.random() > 0.2; // 80% chance of success
+
+            if (isSuccess) {
+              document.getElementById(
+                "subscriptionSuccessNotification"
+              ).style.display = "block";
+              setTimeout(() => {
+                document.getElementById(
+                  "subscriptionSuccessNotification"
+                ).style.display = "none";
+              }, 5000);
+
+              button.textContent = originalText;
+              button.disabled = false;
+
+              // Redirect to dashboard or account page
+              window.location.href = "dashboard.html";
+            } else {
+              // Simulate specific payment errors
+              const errorType = Math.floor(Math.random() * 3);
+
+              switch (errorType) {
+                case 0:
+                  document.getElementById(
+                    "paymentFailedNotification"
+                  ).style.display = "block";
+                  setTimeout(() => {
+                    document.getElementById(
+                      "paymentFailedNotification"
+                    ).style.display = "none";
+                  }, 5000);
+                  break;
+                case 1:
+                  document.getElementById(
+                    "cardDeclinedNotification"
+                  ).style.display = "block";
+                  setTimeout(() => {
+                    document.getElementById(
+                      "cardDeclinedNotification"
+                    ).style.display = "none";
+                  }, 5000);
+                  break;
+                case 2:
+                  document.getElementById(
+                    "billingErrorNotification"
+                  ).style.display = "block";
+                  setTimeout(() => {
+                    document.getElementById(
+                      "billingErrorNotification"
+                    ).style.display = "none";
+                  }, 5000);
+                  break;
+              }
+
+              button.textContent = originalText;
+              button.disabled = false;
+            }
+          }, 2000);
+        }
+      }
+
+      // Add some visual effects
+      document.addEventListener("DOMContentLoaded", function () {
+        // Animate pricing cards on load
+        const cards = document.querySelectorAll(".pricing-card");
+        cards.forEach((card, index) => {
+          card.style.opacity = "0";
+          card.style.transform = "translateY(20px)";
+
+          setTimeout(() => {
+            card.style.transition = "all 0.6s ease";
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0)";
+          }, index * 200);
+        });
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          // Close any open FAQs
+          document
+            .querySelectorAll(".faq-answer")
+            .forEach((a) => a.classList.remove("show"));
+          document
+            .querySelectorAll(".faq-question span:last-child")
+            .forEach((i) => (i.textContent = "+"));
+        }
+      });
+    </script>
+  </body>
+</html>

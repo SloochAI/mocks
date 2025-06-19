@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sloochai - Panel Moderatora</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      .header h1 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-3px);
+      }
+
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .urgent {
+        color: #e74c3c !important;
+      }
+
+      .warning {
+        color: #f39c12 !important;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+      }
+
+      .sidebar {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        height: fit-content;
+      }
+
+      .sidebar h3 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 1.3rem;
+      }
+
+      .sidebar-menu {
+        list-style: none;
+      }
+
+      .sidebar-menu li {
+        margin-bottom: 10px;
+      }
+
+      .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #666;
+        text-decoration: none;
+        padding: 12px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .sidebar-menu a:hover,
+      .sidebar-menu a.active {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .content-area {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .content-title {
+        font-size: 1.8rem;
+        color: #333;
+      }
+
+      .filters {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .filter-select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        color: #333;
+      }
+
+      .reports-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .report-item {
+        border: 1px solid #e0e0e0;
+        border-radius: 15px;
+        padding: 25px;
+        transition: all 0.3s ease;
+      }
+
+      .report-item:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .report-item.urgent {
+        border-color: #e74c3c;
+        background: #fdf2f2;
+      }
+
+      .report-item.warning {
+        border-color: #f39c12;
+        background: #fefcf7;
+      }
+
+      .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+      }
+
+      .report-info {
+        flex: 1;
+      }
+
+      .report-id {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .report-type {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .report-target {
+        color: #667eea;
+        font-size: 0.9rem;
+      }
+
+      .report-status {
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-reviewing {
+        background: #cce5ff;
+        color: #004085;
+      }
+
+      .status-resolved {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .report-content {
+        margin-bottom: 20px;
+      }
+
+      .report-reason {
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+      }
+
+      .report-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+
+      .report-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .action-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .btn-view {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-approve {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-reject {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-warning {
+        background: #ffc107;
+        color: #212529;
+      }
+
+      .btn-ban {
+        background: #6c757d;
+        color: white;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+      }
+
+      .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .content-preview {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .content-type {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-details h4 {
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .user-details p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .action-form {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .form-group textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        resize: vertical;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .notification {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        display: none;
+      }
+
+      .notification.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          order: 2;
+        }
+
+        .content-area {
+          order: 1;
+        }
+
+        .filters {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .report-header {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .report-actions {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>⚖️ Panel Moderatora</h1>
+        <p>Zarządzanie treścią i bezpieczeństwem platformy</p>
+      </div>
+
+      <!-- Notifications -->
+      <div id="successNotification" class="notification success">
+        ✅ Akcja została wykonana pomyślnie!
+      </div>
+
+      <div id="errorNotification" class="notification error">
+        ❌ Wystąpił błąd podczas wykonywania akcji.
+      </div>
+
+      <!-- Loading state notification -->
+      <div id="loadingNotification" class="notification success">
+        ⏳ Ładowanie zgłoszeń...
+      </div>
+
+      <!-- Network error notification -->
+      <div id="networkErrorNotification" class="notification error">
+        ❌ Błąd sieci. Nie można pobrać zgłoszeń z serwisu. Sprawdź połączenie
+        internetowe.
+      </div>
+
+      <!-- Permission denied notification -->
+      <div id="permissionNotification" class="notification error">
+        🚫 Brak uprawnień do wykonania tej akcji. Skontaktuj się z
+        administratorem.
+      </div>
+
+      <!-- Dashboard Stats -->
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-icon">🚨</div>
+          <div class="stat-number urgent">24</div>
+          <div class="stat-label">Pilne Zgłoszenia</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">⏰</div>
+          <div class="stat-number warning">67</div>
+          <div class="stat-label">Oczekujące</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-number">156</div>
+          <div class="stat-label">Rozwiązane Dziś</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🚫</div>
+          <div class="stat-number">89</div>
+          <div class="stat-label">Zablokowane Konta</div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <h3>Menu Moderatora</h3>
+          <ul class="sidebar-menu">
+            <li>
+              <a href="#" class="active" data-section="reports"
+                >📋 Zgłoszenia</a
+              >
+            </li>
+            <li><a href="#" data-section="users">👥 Użytkownicy</a></li>
+            <li><a href="#" data-section="content">🎵 Treści</a></li>
+            <li><a href="#" data-section="banned">🚫 Zablokowane</a></li>
+            <li><a href="#" data-section="stats">📊 Statystyki</a></li>
+            <li><a href="#" data-section="settings">⚙️ Ustawienia</a></li>
+          </ul>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+          <div class="content-header">
+            <h2 class="content-title">Zgłoszenia Użytkowników</h2>
+            <div class="filters">
+              <select class="filter-select" id="statusFilter">
+                <option value="all">Wszystkie</option>
+                <option value="pending">Oczekujące</option>
+                <option value="reviewing">W trakcie</option>
+                <option value="resolved">Rozwiązane</option>
+              </select>
+
+              <select class="filter-select" id="priorityFilter">
+                <option value="all">Wszystkie priorytety</option>
+                <option value="urgent">Pilne</option>
+                <option value="high">Wysokie</option>
+                <option value="normal">Normalne</option>
+              </select>
+
+              <select class="filter-select" id="typeFilter">
+                <option value="all">Wszystkie typy</option>
+                <option value="harassment">Nękanie</option>
+                <option value="spam">Spam</option>
+                <option value="copyright">Prawa autorskie</option>
+                <option value="inappropriate">Nieodpowiednia treść</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="reports-list">
+            <!-- Report 1 - Urgent -->
+            <div class="report-item urgent">
+              <div class="report-header">
+                <div class="report-info">
+                  <div class="report-id">#MOD-2024-001247</div>
+                  <div class="report-type">Nękanie i mowa nienawiści</div>
+                  <div class="report-target">Komentarz → "Nowy hit rocka"</div>
+                </div>
+                <div class="report-status status-pending">Oczekujące</div>
+              </div>
+
+              <div class="report-content">
+                <div class="report-reason">
+                  <strong>Powód zgłoszenia:</strong> Użytkownik używa
+                  obraźliwego języka i grozi innym użytkownikom w komentarzach.
+                  Treść zawiera mowę nienawiści skierowaną przeciwko grupie
+                  etnicznej.
+                </div>
+
+                <div class="report-meta">
+                  <span>Zgłoszone przez: <strong>AnnaSafe</strong></span>
+                  <span>Data: 15.06.2024, 14:32</span>
+                  <span
+                    >Priorytet:
+                    <strong style="color: #e74c3c">PILNE</strong></span
+                  >
+                </div>
+              </div>
+
+              <div class="report-actions">
+                <button
+                  class="action-btn btn-view"
+                  onclick="viewReport('001247')"
+                >
+                  👁️ Zobacz
+                </button>
+                <button class="action-btn btn-warning">⚠️ Ostrzeż</button>
+                <button class="action-btn btn-ban">🚫 Zablokuj</button>
+                <button class="action-btn btn-approve">✅ Usuń treść</button>
+              </div>
+            </div>
+
+            <!-- Report 2 - Warning -->
+            <div class="report-item warning">
+              <div class="report-header">
+                <div class="report-info">
+                  <div class="report-id">#MOD-2024-001246</div>
+                  <div class="report-type">Naruszenie praw autorskich</div>
+                  <div class="report-target">
+                    Utwór → "Cover Song Without Permission"
+                  </div>
+                </div>
+                <div class="report-status status-reviewing">W trakcie</div>
+              </div>
+
+              <div class="report-content">
+                <div class="report-reason">
+                  <strong>Powód zgłoszenia:</strong> Utwór jest covarem znanej
+                  piosenki bez odpowiednich licencji. Właściciel praw autorskich
+                  składa oficjalne zgłoszenie DMCA.
+                </div>
+
+                <div class="report-meta">
+                  <span
+                    >Zgłoszone przez: <strong>RecordLabelOfficial</strong></span
+                  >
+                  <span>Data: 15.06.2024, 12:15</span>
+                  <span
+                    >Priorytet:
+                    <strong style="color: #f39c12">WYSOKIE</strong></span
+                  >
+                </div>
+              </div>
+
+              <div class="report-actions">
+                <button
+                  class="action-btn btn-view"
+                  onclick="viewReport('001246')"
+                >
+                  👁️ Zobacz
+                </button>
+                <button class="action-btn btn-approve">✅ Usuń utwór</button>
+                <button class="action-btn btn-reject">❌ Odrzuć</button>
+              </div>
+            </div>
+
+            <!-- Report 3 - Normal -->
+            <div class="report-item">
+              <div class="report-header">
+                <div class="report-info">
+                  <div class="report-id">#MOD-2024-001245</div>
+                  <div class="report-type">Spam w komentarzach</div>
+                  <div class="report-target">
+                    Komentarze → Profil "SpamBot123"
+                  </div>
+                </div>
+                <div class="report-status status-pending">Oczekujące</div>
+              </div>
+
+              <div class="report-content">
+                <div class="report-reason">
+                  <strong>Powód zgłoszenia:</strong> Użytkownik systematycznie
+                  publikuje identyczne komentarze z linkami do zewnętrznych
+                  stron pod różnymi utworami.
+                </div>
+
+                <div class="report-meta">
+                  <span>Zgłoszone przez: <strong>MusicLover2024</strong></span>
+                  <span>Data: 15.06.2024, 10:45</span>
+                  <span>Priorytet: <strong>NORMALNE</strong></span>
+                </div>
+              </div>
+
+              <div class="report-actions">
+                <button
+                  class="action-btn btn-view"
+                  onclick="viewReport('001245')"
+                >
+                  👁️ Zobacz
+                </button>
+                <button class="action-btn btn-warning">⚠️ Ostrzeż</button>
+                <button class="action-btn btn-ban">🚫 Zablokuj</button>
+                <button class="action-btn btn-reject">❌ Odrzuć</button>
+              </div>
+            </div>
+
+            <!-- Report 4 - Resolved -->
+            <div class="report-item">
+              <div class="report-header">
+                <div class="report-info">
+                  <div class="report-id">#MOD-2024-001244</div>
+                  <div class="report-type">Nieodpowiednia okładka</div>
+                  <div class="report-target">Album → "Summer Vibes 2024"</div>
+                </div>
+                <div class="report-status status-resolved">Rozwiązane</div>
+              </div>
+
+              <div class="report-content">
+                <div class="report-reason">
+                  <strong>Powód zgłoszenia:</strong> Okładka albumu zawiera
+                  treści nieodpowiednie dla młodszych użytkowników.
+                </div>
+
+                <div class="report-meta">
+                  <span>Zgłoszone przez: <strong>ParentConcerned</strong></span>
+                  <span>Data: 14.06.2024, 18:20</span>
+                  <span>Rozwiązane przez: <strong>ModeratorAlice</strong></span>
+                </div>
+              </div>
+
+              <div class="report-actions">
+                <button
+                  class="action-btn btn-view"
+                  onclick="viewReport('001244')"
+                >
+                  👁️ Zobacz historię
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Detail Modal -->
+    <div class="modal" id="reportModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Szczegóły Zgłoszenia #MOD-2024-001247</h3>
+          <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+
+        <div class="user-info">
+          <div class="user-avatar">MH</div>
+          <div class="user-details">
+            <h4>Zgłoszony użytkownik: MusicHater</h4>
+            <p>
+              Konto utworzone: 12.05.2024 • 15 utworów • 3 poprzednie
+              ostrzeżenia
+            </p>
+          </div>
+        </div>
+
+        <div class="content-preview">
+          <div class="content-type">KOMENTARZ</div>
+          <h4>Treść zgłoszona:</h4>
+          <p
+            style="
+              background: #ffe6e6;
+              padding: 15px;
+              border-radius: 8px;
+              margin: 10px 0;
+              border-left: 4px solid #e74c3c;
+            "
+          >
+            "Ta muzyka to śmieci, tak jak wszyscy z [grupa etniczna]. Powinni
+            zostać... [treść usunięta ze względu na brutalne groźby]"
+          </p>
+          <p>
+            <strong>Kontekst:</strong> Komentarz pod utworem "Nowy hit rocka"
+            użytkownika RockStar2024
+          </p>
+        </div>
+
+        <div class="action-form">
+          <div class="form-group">
+            <label for="moderatorNote">Uwagi moderatora:</label>
+            <textarea
+              id="moderatorNote"
+              placeholder="Dodaj uwagi dotyczące tej sprawy..."
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button class="action-btn btn-reject">❌ Odrzuć zgłoszenie</button>
+            <button class="action-btn btn-warning">
+              ⚠️ Wyślij ostrzeżenie
+            </button>
+            <button class="action-btn btn-ban">🚫 Zablokuj użytkownika</button>
+            <button class="action-btn btn-approve">✅ Usuń treść</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Modal functionality
+      function viewReport(reportId) {
+        document.getElementById("reportModal").style.display = "block";
+      }
+
+      function closeModal() {
+        document.getElementById("reportModal").style.display = "none";
+      }
+
+      // Close modal when clicking outside
+      window.addEventListener("click", (e) => {
+        const modal = document.getElementById("reportModal");
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Sidebar navigation
+      document.querySelectorAll(".sidebar-menu a").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          // Update active state
+          document
+            .querySelectorAll(".sidebar-menu a")
+            .forEach((l) => l.classList.remove("active"));
+          link.classList.add("active");
+
+          // Update content title based on section
+          const section = link.dataset.section;
+          const titles = {
+            reports: "Zgłoszenia Użytkowników",
+            users: "Zarządzanie Użytkownikami",
+            content: "Moderacja Treści",
+            banned: "Zablokowane Konta",
+            stats: "Statystyki Moderacji",
+            settings: "Ustawienia Moderacji",
+          };
+
+          document.querySelector(".content-title").textContent =
+            titles[section] || "Panel Moderatora";
+        });
+      });
+
+      // Filter functionality
+      document.querySelectorAll(".filter-select").forEach((select) => {
+        select.addEventListener("change", () => {
+          // In real app, this would filter the reports
+          console.log("Filtering reports by:", select.id, select.value);
+        });
+      });
+
+      // Action buttons functionality
+      document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("action-btn")) {
+          const action = e.target.textContent.toLowerCase();
+
+          if (action.includes("ostrzeż")) {
+            if (
+              confirm(
+                "Czy na pewno chcesz wysłać ostrzeżenie do tego użytkownika?"
+              )
+            ) {
+              showNotification("success", "Ostrzeżenie zostało wysłane");
+            }
+          } else if (action.includes("zablokuj")) {
+            if (confirm("Czy na pewno chcesz zablokować tego użytkownika?")) {
+              showNotification("success", "Użytkownik został zablokowany");
+              e.target.closest(".report-item").style.opacity = "0.5";
+            }
+          } else if (action.includes("usuń")) {
+            if (confirm("Czy na pewno chcesz usunąć tę treść?")) {
+              showNotification("success", "Treść została usunięta");
+              e.target
+                .closest(".report-item")
+                .querySelector(".report-status").textContent = "Rozwiązane";
+              e.target
+                .closest(".report-item")
+                .querySelector(".report-status").className =
+                "report-status status-resolved";
+            }
+          } else if (action.includes("odrzuć")) {
+            if (confirm("Czy na pewno chcesz odrzucić to zgłoszenie?")) {
+              showNotification("success", "Zgłoszenie zostało odrzucone");
+              e.target
+                .closest(".report-item")
+                .querySelector(".report-status").textContent = "Odrzucone";
+              e.target
+                .closest(".report-item")
+                .querySelector(".report-status").className =
+                "report-status status-rejected";
+            }
+          }
+        }
+      });
+
+      // Modal action buttons
+      document.querySelectorAll("#reportModal .action-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const action = btn.textContent.toLowerCase();
+          const note = document.getElementById("moderatorNote").value;
+
+          if (action.includes("usuń treść")) {
+            showNotification(
+              "success",
+              "Treść została usunięta i użytkownik otrzymał ostrzeżenie"
+            );
+            closeModal();
+          } else if (action.includes("zablokuj")) {
+            showNotification(
+              "success",
+              "Użytkownik został zablokowany na 7 dni"
+            );
+            closeModal();
+          } else if (action.includes("ostrzeżenie")) {
+            showNotification(
+              "success",
+              "Ostrzeżenie zostało wysłane do użytkownika"
+            );
+            closeModal();
+          } else if (action.includes("odrzuć")) {
+            showNotification("success", "Zgłoszenie zostało odrzucone");
+            closeModal();
+          }
+        });
+      });
+
+      // Notification system
+      function showNotification(type, message) {
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          notification.textContent =
+            notification.textContent.split(" ")[0] + " " + message;
+          notification.style.display = "block";
+
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 5000);
+        }
+      }
+
+      // Simulate real-time updates
+      function updateStats() {
+        const stats = document.querySelectorAll(".stat-number");
+        stats.forEach((stat) => {
+          if (Math.random() > 0.9) {
+            // 10% chance to update
+            const current = parseInt(stat.textContent);
+            const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+            const newValue = Math.max(0, current + change);
+            stat.textContent = newValue;
+          }
+        });
+      }
+
+      // Update stats every 30 seconds
+      setInterval(updateStats, 30000);
+
+      // Auto-refresh indicator
+      function showAutoRefresh() {
+        const header = document.querySelector(".content-title");
+        const originalText = header.textContent;
+        header.textContent = originalText + " (odświeżanie...)";
+
+        setTimeout(() => {
+          header.textContent = originalText;
+        }, 2000);
+      }
+
+      // Simulate auto-refresh every 5 minutes
+      setInterval(showAutoRefresh, 300000);
+    </script>
+  </body>
+</html>

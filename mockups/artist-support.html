@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wsparcie Artystów - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .support-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .support-form {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .support-form h2 {
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+      }
+
+      .artist-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .artist-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin-right: 15px;
+      }
+
+      .artist-details h3 {
+        margin-bottom: 5px;
+      }
+
+      .artist-stats {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .amount-selection {
+        margin-bottom: 20px;
+      }
+
+      .amount-selection h3 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .amount-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .amount-btn {
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        background: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .amount-btn:hover,
+      .amount-btn.selected {
+        border-color: #667eea;
+        background: #f0f4ff;
+        color: #667eea;
+      }
+
+      .custom-amount {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        margin-bottom: 20px;
+      }
+
+      .message-section {
+        margin-bottom: 30px;
+      }
+
+      .message-section h3 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .support-message {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        resize: vertical;
+        font-family: inherit;
+        min-height: 80px;
+      }
+
+      .payment-info {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .support-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .support-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .support-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .support-history {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .support-history h2 {
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+      }
+
+      .history-tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #e0e0e0;
+      }
+
+      .history-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        color: #666;
+        transition: all 0.3s ease;
+      }
+
+      .history-tab.active {
+        color: #667eea;
+        border-bottom-color: #667eea;
+      }
+
+      .support-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        transition: background 0.3s ease;
+      }
+
+      .support-item:hover {
+        background: #f8f9fa;
+      }
+
+      .support-item:last-child {
+        border-bottom: none;
+      }
+
+      .support-artist {
+        display: flex;
+        align-items: center;
+      }
+
+      .support-artist-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 10px;
+      }
+
+      .support-details {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      .support-amount {
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .support-date {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .leaderboard {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-top: 30px;
+      }
+
+      .leaderboard h2 {
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+      }
+
+      .leaderboard-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        transition: background 0.3s ease;
+      }
+
+      .leaderboard-item:hover {
+        background: #f8f9fa;
+      }
+
+      .leaderboard-rank {
+        width: 30px;
+        text-align: center;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .leaderboard-user {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        margin-left: 15px;
+      }
+
+      .leaderboard-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 10px;
+      }
+
+      .leaderboard-total {
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      .notification.success {
+        background: #27ae60;
+      }
+
+      .notification.error {
+        background: #e74c3c;
+      }
+
+      .notification.warning {
+        background: #f39c12;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .support-container {
+          grid-template-columns: 1fr;
+        }
+
+        .amount-buttons {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>💰 Wsparcie Artystów</h1>
+        <p>Wesprzyj swoich ulubionych twórców finansowo</p>
+      </div>
+
+      <!-- Notifications -->
+      <div id="successNotification" class="notification success">
+        ✅ Wsparcie zostało wysłane pomyślnie!
+      </div>
+
+      <div id="errorNotification" class="notification error">
+        ❌ Wystąpił błąd podczas przetwarzania płatności
+      </div>
+
+      <div id="warningNotification" class="notification warning">
+        ⚠️ Sprawdź dane i spróbuj ponownie
+      </div>
+
+      <div class="support-container">
+        <!-- Support Form -->
+        <div class="support-form">
+          <h2>💝 Wspomóż Artystę</h2>
+
+          <div class="artist-info">
+            <div class="artist-avatar">MK</div>
+            <div class="artist-details">
+              <h3>Marta Kowalska</h3>
+              <div class="artist-stats">
+                12 utworów • 2.5K obserwujących • 156 dotacji
+              </div>
+            </div>
+          </div>
+
+          <form id="supportForm">
+            <div class="amount-selection">
+              <h3>Wybierz kwotę wsparcia</h3>
+              <div class="amount-buttons">
+                <button type="button" class="amount-btn" data-amount="10">
+                  10 PLN
+                </button>
+                <button type="button" class="amount-btn" data-amount="25">
+                  25 PLN
+                </button>
+                <button type="button" class="amount-btn" data-amount="50">
+                  50 PLN
+                </button>
+                <button type="button" class="amount-btn" data-amount="100">
+                  100 PLN
+                </button>
+                <button type="button" class="amount-btn" data-amount="200">
+                  200 PLN
+                </button>
+                <button type="button" class="amount-btn" data-amount="custom">
+                  Inna kwota
+                </button>
+              </div>
+
+              <input
+                type="number"
+                class="custom-amount"
+                id="customAmount"
+                placeholder="Wpisz kwotę (10-500 PLN)"
+                min="10"
+                max="500"
+                style="display: none"
+              />
+            </div>
+
+            <div class="message-section">
+              <h3>Wiadomość dla artysty (opcjonalnie)</h3>
+              <textarea
+                class="support-message"
+                id="supportMessage"
+                placeholder="Napisz wiadomość motywującą dla artysty..."
+                maxlength="300"
+              ></textarea>
+            </div>
+
+            <div class="payment-info">
+              <p><strong>ℹ️ Informacje o płatności:</strong></p>
+              <p>• Płatność jest jednorazowa i nie podlega zwrotowi</p>
+              <p>• Artysta otrzyma 85% kwoty (15% prowizja serwisu)</p>
+              <p>• Środki zostaną przekazane w ciągu 1-2 dni roboczych</p>
+              <p>• Twoje dane zostaną zabezpieczone zgodnie z RODO</p>
+            </div>
+
+            <button type="submit" class="support-btn" id="supportBtn" disabled>
+              💳 Wspomóż za <span id="finalAmount">0</span> PLN
+            </button>
+          </form>
+        </div>
+
+        <!-- Support History -->
+        <div class="support-history">
+          <h2>📊 Historia Wsparcia</h2>
+
+          <div class="history-tabs">
+            <div class="history-tab active" data-tab="sent">Wysłane</div>
+            <div class="history-tab" data-tab="received">Otrzymane</div>
+          </div>
+
+          <div class="history-content" id="sentHistory">
+            <div class="support-item">
+              <div class="support-artist">
+                <div class="support-artist-avatar">MK</div>
+                <div>
+                  <div><strong>Marta Kowalska</strong></div>
+                  <div style="font-size: 0.8rem; color: #666">
+                    „Dziękuję za wsparcie!"
+                  </div>
+                </div>
+              </div>
+              <div class="support-details">
+                <div class="support-amount">50 PLN</div>
+                <div class="support-date">2 dni temu</div>
+              </div>
+            </div>
+
+            <div class="support-item">
+              <div class="support-artist">
+                <div class="support-artist-avatar">PG</div>
+                <div>
+                  <div><strong>Piotr Gitarzysta</strong></div>
+                  <div style="font-size: 0.8rem; color: #666">
+                    „Świetna muzyka!"
+                  </div>
+                </div>
+              </div>
+              <div class="support-details">
+                <div class="support-amount">25 PLN</div>
+                <div class="support-date">1 tydzień temu</div>
+              </div>
+            </div>
+
+            <div class="support-item">
+              <div class="support-artist">
+                <div class="support-artist-avatar">AN</div>
+                <div>
+                  <div><strong>Anna Nowak</strong></div>
+                  <div style="font-size: 0.8rem; color: #666">
+                    „Kontynuuj twórczość!"
+                  </div>
+                </div>
+              </div>
+              <div class="support-details">
+                <div class="support-amount">100 PLN</div>
+                <div class="support-date">2 tygodnie temu</div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="history-content"
+            id="receivedHistory"
+            style="display: none"
+          >
+            <div class="support-item">
+              <div class="support-artist">
+                <div class="support-artist-avatar">KM</div>
+                <div>
+                  <div><strong>Kasia Muzyka</strong></div>
+                  <div style="font-size: 0.8rem; color: #666">
+                    „Za piękne ballady"
+                  </div>
+                </div>
+              </div>
+              <div class="support-details">
+                <div class="support-amount">75 PLN</div>
+                <div class="support-date">3 dni temu</div>
+              </div>
+            </div>
+
+            <div class="support-item">
+              <div class="support-artist">
+                <div class="support-artist-avatar">TF</div>
+                <div>
+                  <div><strong>Tomek Fan</strong></div>
+                  <div style="font-size: 0.8rem; color: #666">
+                    „Więcej takiej muzyki!"
+                  </div>
+                </div>
+              </div>
+              <div class="support-details">
+                <div class="support-amount">30 PLN</div>
+                <div class="support-date">5 dni temu</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Supporters Leaderboard -->
+      <div class="leaderboard">
+        <h2>🏆 Ranking Największych Wspierających</h2>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">1</div>
+          <div class="leaderboard-user">
+            <div class="leaderboard-avatar">MB</div>
+            <div>
+              <div><strong>Michał Bogdan</strong></div>
+              <div style="font-size: 0.8rem; color: #666">
+                Wspiera od 8 miesięcy
+              </div>
+            </div>
+          </div>
+          <div class="leaderboard-total">1,250 PLN</div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">2</div>
+          <div class="leaderboard-user">
+            <div class="leaderboard-avatar">AS</div>
+            <div>
+              <div><strong>Agnieszka Skrzypek</strong></div>
+              <div style="font-size: 0.8rem; color: #666">
+                Wspiera od 5 miesięcy
+              </div>
+            </div>
+          </div>
+          <div class="leaderboard-total">890 PLN</div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">3</div>
+          <div class="leaderboard-user">
+            <div class="leaderboard-avatar">JK</div>
+            <div>
+              <div><strong>Jan Kowalczyk</strong></div>
+              <div style="font-size: 0.8rem; color: #666">
+                Wspiera od 3 miesięcy
+              </div>
+            </div>
+          </div>
+          <div class="leaderboard-total">670 PLN</div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">4</div>
+          <div class="leaderboard-user">
+            <div class="leaderboard-avatar">EN</div>
+            <div>
+              <div><strong>Ewa Nowacka</strong></div>
+              <div style="font-size: 0.8rem; color: #666">
+                Wspiera od 6 miesięcy
+              </div>
+            </div>
+          </div>
+          <div class="leaderboard-total">520 PLN</div>
+        </div>
+
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank">5</div>
+          <div class="leaderboard-user">
+            <div class="leaderboard-avatar">PW</div>
+            <div>
+              <div><strong>Paweł Wiśniewski</strong></div>
+              <div style="font-size: 0.8rem; color: #666">
+                Wspiera od 2 miesięcy
+              </div>
+            </div>
+          </div>
+          <div class="leaderboard-total">400 PLN</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedAmount = 0;
+
+      // Amount button selection
+      document.querySelectorAll(".amount-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // Remove selection from all buttons
+          document
+            .querySelectorAll(".amount-btn")
+            .forEach((b) => b.classList.remove("selected"));
+
+          // Add selection to clicked button
+          btn.classList.add("selected");
+
+          const amount = btn.getAttribute("data-amount");
+          const customAmountField = document.getElementById("customAmount");
+
+          if (amount === "custom") {
+            customAmountField.style.display = "block";
+            customAmountField.focus();
+            selectedAmount = 0;
+          } else {
+            customAmountField.style.display = "none";
+            customAmountField.value = "";
+            selectedAmount = parseInt(amount);
+          }
+
+          updateSupportButton();
+        });
+      });
+
+      // Custom amount input
+      document.getElementById("customAmount").addEventListener("input", (e) => {
+        const value = parseInt(e.target.value) || 0;
+        selectedAmount = value;
+        updateSupportButton();
+
+        // Validation
+        if (value < 10 && value > 0) {
+          e.target.style.borderColor = "#e74c3c";
+        } else if (value > 500) {
+          e.target.style.borderColor = "#e74c3c";
+        } else {
+          e.target.style.borderColor = "#e0e0e0";
+        }
+      });
+
+      // Update support button
+      function updateSupportButton() {
+        const btn = document.getElementById("supportBtn");
+        const amountSpan = document.getElementById("finalAmount");
+
+        if (selectedAmount >= 10 && selectedAmount <= 500) {
+          btn.disabled = false;
+          amountSpan.textContent = selectedAmount;
+        } else {
+          btn.disabled = true;
+          amountSpan.textContent = "0";
+        }
+      }
+
+      // History tabs
+      document.querySelectorAll(".history-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          // Remove active class from all tabs
+          document
+            .querySelectorAll(".history-tab")
+            .forEach((t) => t.classList.remove("active"));
+
+          // Add active class to clicked tab
+          tab.classList.add("active");
+
+          // Show corresponding content
+          const tabType = tab.getAttribute("data-tab");
+          document.getElementById("sentHistory").style.display =
+            tabType === "sent" ? "block" : "none";
+          document.getElementById("receivedHistory").style.display =
+            tabType === "received" ? "block" : "none";
+        });
+      });
+
+      // Form submission
+      document.getElementById("supportForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (selectedAmount < 10 || selectedAmount > 500) {
+          showNotification(
+            "warning",
+            "Kwota wsparcia musi być między 10 a 500 PLN"
+          );
+          return;
+        }
+
+        // Show loading state
+        const btn = document.getElementById("supportBtn");
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "⏳ Przetwarzanie...";
+        btn.disabled = true;
+
+        // Simulate payment processing
+        setTimeout(() => {
+          const success = Math.random() > 0.1; // 90% success rate
+
+          if (success) {
+            showNotification(
+              "success",
+              `Wsparcie ${selectedAmount} PLN zostało wysłane!`
+            );
+
+            // Reset form
+            document
+              .querySelectorAll(".amount-btn")
+              .forEach((b) => b.classList.remove("selected"));
+            document.getElementById("customAmount").style.display = "none";
+            document.getElementById("customAmount").value = "";
+            document.getElementById("supportMessage").value = "";
+            selectedAmount = 0;
+            updateSupportButton();
+
+            // Add to history (simulate)
+            addToHistory();
+          } else {
+            showNotification(
+              "error",
+              "Wystąpił błąd podczas przetwarzania płatności. Spróbuj ponownie."
+            );
+          }
+
+          // Restore button
+          btn.innerHTML = originalText;
+          btn.disabled = selectedAmount < 10 || selectedAmount > 500;
+        }, 2000);
+      });
+
+      // Add to history simulation
+      function addToHistory() {
+        const historyContainer = document.getElementById("sentHistory");
+        const newItem = document.createElement("div");
+        newItem.className = "support-item";
+        newItem.innerHTML = `
+                <div class="support-artist">
+                    <div class="support-artist-avatar">MK</div>
+                    <div>
+                        <div><strong>Marta Kowalska</strong></div>
+                        <div style="font-size: 0.8rem; color: #666;">"${
+                          document.getElementById("supportMessage").value ||
+                          "Dzięki za muzykę!"
+                        }"</div>
+                    </div>
+                </div>
+                <div class="support-details">
+                    <div class="support-amount">${selectedAmount} PLN</div>
+                    <div class="support-date">Teraz</div>
+                </div>
+            `;
+
+        historyContainer.insertBefore(newItem, historyContainer.firstChild);
+      }
+
+      // Notification system
+      function showNotification(type, message) {
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          notification.textContent = message;
+          notification.style.display = "block";
+
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 5000);
+        }
+      }
+
+      // Character counter for message
+      document
+        .getElementById("supportMessage")
+        .addEventListener("input", (e) => {
+          const remaining = 300 - e.target.value.length;
+          if (remaining < 0) {
+            e.target.value = e.target.value.substring(0, 300);
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playlists - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-title h2 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-title p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+
+      .btn-secondary:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+      }
+
+      .playlist-filters {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .filter-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
+      .filter-btn:hover {
+        border-color: #667eea;
+        color: #667eea;
+      }
+
+      .filter-btn.active:hover {
+        color: white;
+      }
+
+      .search-bar {
+        position: relative;
+        max-width: 400px;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .search-bar input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+      }
+
+      .playlists-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .playlist-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .playlist-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .playlist-cover {
+        width: 100%;
+        height: 200px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        margin-bottom: 1rem;
+        position: relative;
+      }
+
+      .playlist-cover .play-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .playlist-card:hover .play-overlay {
+        opacity: 1;
+      }
+
+      .playlist-info h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+      }
+
+      .playlist-meta {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .playlist-description {
+        color: #555;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .playlist-actions {
+        display: flex;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .playlist-card:hover .playlist-actions {
+        opacity: 1;
+      }
+
+      .action-btn {
+        background: #f8f9fa;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+      }
+
+      .action-btn:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .playlist-stats {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+      }
+
+      .empty-state .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .empty-state h3 {
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .create-playlist-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+      }
+
+      .create-playlist-modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        width: 90%;
+        max-width: 500px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-header h3 {
+        color: #333;
+        font-size: 1.5rem;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .page-header {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: stretch;
+        }
+
+        .header-actions {
+          justify-content: center;
+        }
+
+        .playlist-filters {
+          justify-content: center;
+        }
+
+        .playlists-grid {
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+          <a href="music-player.html">Player</a>
+          <a href="account-settings.html">Settings</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="page-header">
+        <div class="page-title">
+          <h2>My Playlists</h2>
+          <p>Organize your favorite music</p>
+        </div>
+        <div class="header-actions">
+          <div class="search-bar">
+            <div class="search-icon">🔍</div>
+            <input
+              type="text"
+              placeholder="Search playlists..."
+              id="searchInput"
+            />
+          </div>
+          <button class="btn btn-primary" onclick="showCreateModal()">
+            ➕ Create Playlist
+          </button>
+        </div>
+      </div>
+
+      <div class="playlist-filters">
+        <button class="filter-btn active" data-filter="all">
+          All Playlists
+        </button>
+        <button class="filter-btn" data-filter="created">Created by Me</button>
+        <button class="filter-btn" data-filter="liked">Liked Playlists</button>
+        <button class="filter-btn" data-filter="collaborative">
+          Collaborative
+        </button>
+        <button class="filter-btn" data-filter="public">Public</button>
+        <button class="filter-btn" data-filter="private">Private</button>
+      </div>
+
+      <div class="playlists-grid" id="playlistsGrid">
+        <!-- My Favorites -->
+        <div class="playlist-card" data-category="created public">
+          <div class="playlist-cover">
+            <span>❤️</span>
+            <div class="play-overlay">▶️</div>
+          </div>
+          <div class="playlist-stats">45 songs</div>
+          <div class="playlist-info">
+            <h3>My Favorites</h3>
+            <div class="playlist-meta">Created by you • Public</div>
+            <div class="playlist-description">
+              A collection of my all-time favorite songs from various genres and
+              artists.
+            </div>
+          </div>
+          <div class="playlist-actions">
+            <button class="action-btn" title="Play">▶️</button>
+            <button class="action-btn" title="Share">📤</button>
+            <button class="action-btn" title="Edit">✏️</button>
+            <button class="action-btn" title="More">⋯</button>
+          </div>
+        </div>
+
+        <!-- Late Night Chill -->
+        <div class="playlist-card" data-category="created private">
+          <div class="playlist-cover">
+            <span>🌙</span>
+            <div class="play-overlay">▶️</div>
+          </div>
+          <div class="playlist-stats">23 songs</div>
+          <div class="playlist-info">
+            <h3>Late Night Chill</h3>
+            <div class="playlist-meta">Created by you • Private</div>
+            <div class="playlist-description">
+              Perfect for those late-night study sessions or quiet moments of
+              reflection.
+            </div>
+          </div>
+          <div class="playlist-actions">
+            <button class="action-btn" title="Play">▶️</button>
+            <button class="action-btn" title="Share">📤</button>
+            <button class="action-btn" title="Edit">✏️</button>
+            <button class="action-btn" title="More">⋯</button>
+          </div>
+        </div>
+
+        <!-- Workout Mix -->
+        <div class="playlist-card" data-category="created public">
+          <div class="playlist-cover">
+            <span>🏃‍♂️</span>
+            <div class="play-overlay">▶️</div>
+          </div>
+          <div class="playlist-stats">67 songs</div>
+          <div class="playlist-info">
+            <h3>Workout Mix</h3>
+            <div class="playlist-meta">Created by you • Public</div>
+            <div class="playlist-description">
+              High-energy tracks to keep you motivated during your workout
+              sessions.
+            </div>
+          </div>
+          <div class="playlist-actions">
+            <button class="action-btn" title="Play">▶️</button>
+            <button class="action-btn" title="Share">📤</button>
+            <button class="action-btn" title="Edit">✏️</button>
+            <button class="action-btn" title="More">⋯</button>
+          </div>
+        </div>
+
+        <!-- Road Trip Vibes -->
+        <div class="playlist-card" data-category="liked">
+          <div class="playlist-cover">
+            <span>🚗</span>
+            <div class="play-overlay">▶️</div>
+          </div>
+          <div class="playlist-stats">89 songs</div>
+          <div class="playlist-info">
+            <h3>Road Trip Vibes</h3>
+            <div class="playlist-meta">By Alex Johnson • Public</div>
+            <div class="playlist-description">
+              The ultimate playlist for your next road trip adventure. Feel-good
+              classics and modern hits.
+            </div>
+          </div>
+          <div class="playlist-actions">
+            <button class="action-btn" title="Play">▶️</button>
+            <button class="action-btn" title="Unlike">💔</button>
+            <button class="action-btn" title="Share">📤</button>
+            <button class="action-btn" title="More">⋯</button>
+          </div>
+        </div>
+
+        <!-- Indie Discoveries -->
+        <div class="playlist-card" data-category="collaborative">
+          <div class="playlist-cover">
+            <span>🎸</span>
+            <div class="play-overlay">▶️</div>
+          </div>
+          <div class="playlist-stats">156 songs</div>
+          <div class="playlist-info">
+            <h3>Indie Discoveries</h3>
+            <div class="playlist-meta">Collaborative • 12 contributors</div>
+            <div class="playlist-description">
+              A collaborative playlist where we discover and share amazing indie
+              tracks from around the world.
+            </div>
+          </div>
+          <div class="playlist-actions">
+            <button class="action-btn" title="Play">▶️</button>
+            <button class="action-btn" title="Add Song">➕</button>
+            <button class="action-btn" title="Share">📤</button>
+            <button class="action-btn" title="More">⋯</button>
+          </div>
+        </div>
+
+        <!-- Jazz Classics -->
+        <div class="playlist-card" data-category="liked">
+          <div class="playlist-cover">
+            <span>🎷</span>
+            <div class="play-overlay">▶️</div>
+          </div>
+          <div class="playlist-stats">34 songs</div>
+          <div class="playlist-info">
+            <h3>Jazz Classics</h3>
+            <div class="playlist-meta">By Sarah Wilson • Public</div>
+            <div class="playlist-description">
+              Timeless jazz standards and modern interpretations from the
+              greatest artists in the genre.
+            </div>
+          </div>
+          <div class="playlist-actions">
+            <button class="action-btn" title="Play">▶️</button>
+            <button class="action-btn" title="Unlike">💔</button>
+            <button class="action-btn" title="Share">📤</button>
+            <button class="action-btn" title="More">⋯</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="emptyState" class="empty-state" style="display: none">
+        <div class="icon">📝</div>
+        <h3>No playlists found</h3>
+        <p>Try adjusting your search or filters, or create a new playlist!</p>
+      </div>
+    </div>
+
+    <!-- Create Playlist Modal -->
+    <div class="create-playlist-modal" id="createModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Create New Playlist</h3>
+          <button class="close-btn" onclick="hideCreateModal()">×</button>
+        </div>
+
+        <form id="createPlaylistForm">
+          <div class="form-group">
+            <label for="playlistName">Playlist Name *</label>
+            <input
+              type="text"
+              id="playlistName"
+              name="playlistName"
+              required
+              placeholder="Enter playlist name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="playlistDescription">Description</label>
+            <textarea
+              id="playlistDescription"
+              name="playlistDescription"
+              placeholder="Describe your playlist..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="playlistPrivacy">Privacy Setting</label>
+            <select id="playlistPrivacy" name="playlistPrivacy">
+              <option value="public">Public - Anyone can see and play</option>
+              <option value="unlisted">
+                Unlisted - Only people with the link can access
+              </option>
+              <option value="private">Private - Only you can access</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                id="allowCollaboration"
+                name="allowCollaboration"
+              />
+              Allow others to add songs to this playlist
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="hideCreateModal()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Create Playlist
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let currentFilter = "all";
+      let searchQuery = "";
+
+      function showCreateModal() {
+        document.getElementById("createModal").classList.add("show");
+      }
+
+      function hideCreateModal() {
+        document.getElementById("createModal").classList.remove("show");
+        document.getElementById("createPlaylistForm").reset();
+      }
+
+      function filterPlaylists() {
+        const cards = document.querySelectorAll(".playlist-card");
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const category = card.dataset.category;
+          const title = card.querySelector("h3").textContent.toLowerCase();
+          const description = card
+            .querySelector(".playlist-description")
+            .textContent.toLowerCase();
+
+          let matchesFilter =
+            currentFilter === "all" || category.includes(currentFilter);
+          let matchesSearch =
+            searchQuery === "" ||
+            title.includes(searchQuery) ||
+            description.includes(searchQuery);
+
+          if (matchesFilter && matchesSearch) {
+            card.style.display = "block";
+            visibleCount++;
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        // Show empty state if no playlists match
+        const emptyState = document.getElementById("emptyState");
+        const playlistsGrid = document.getElementById("playlistsGrid");
+
+        if (visibleCount === 0) {
+          emptyState.style.display = "block";
+          playlistsGrid.style.display = "none";
+        } else {
+          emptyState.style.display = "none";
+          playlistsGrid.style.display = "grid";
+        }
+      }
+
+      // Filter buttons
+      document.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          document
+            .querySelectorAll(".filter-btn")
+            .forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+          currentFilter = this.dataset.filter;
+          filterPlaylists();
+        });
+      });
+
+      // Search functionality
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", function (e) {
+          searchQuery = e.target.value.toLowerCase();
+          filterPlaylists();
+        });
+
+      // Create playlist form
+      document
+        .getElementById("createPlaylistForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("playlistName").value;
+          const description = document.getElementById(
+            "playlistDescription"
+          ).value;
+          const privacy = document.getElementById("playlistPrivacy").value;
+          const collaborative =
+            document.getElementById("allowCollaboration").checked;
+
+          // Create new playlist card (simplified for demo)
+          const playlistsGrid = document.getElementById("playlistsGrid");
+          const newCard = document.createElement("div");
+          newCard.className = "playlist-card";
+          newCard.dataset.category = `created ${privacy}`;
+
+          newCard.innerHTML = `
+                <div class="playlist-cover">
+                    <span>🎵</span>
+                    <div class="play-overlay">▶️</div>
+                </div>
+                <div class="playlist-stats">0 songs</div>
+                <div class="playlist-info">
+                    <h3>${name}</h3>
+                    <div class="playlist-meta">Created by you • ${
+                      privacy.charAt(0).toUpperCase() + privacy.slice(1)
+                    }</div>
+                    <div class="playlist-description">
+                        ${description || "No description provided."}
+                    </div>
+                </div>
+                <div class="playlist-actions">
+                    <button class="action-btn" title="Play">▶️</button>
+                    <button class="action-btn" title="Share">📤</button>
+                    <button class="action-btn" title="Edit">✏️</button>
+                    <button class="action-btn" title="More">⋯</button>
+                </div>
+            `;
+
+          playlistsGrid.insertBefore(newCard, playlistsGrid.firstChild);
+          hideCreateModal();
+
+          // Show success message (you could add a notification system)
+          alert("Playlist created successfully!");
+        });
+
+      // Playlist card interactions
+      document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("action-btn")) {
+          const title = e.target.title;
+          const playlistName = e.target
+            .closest(".playlist-card")
+            .querySelector("h3").textContent;
+
+          switch (title) {
+            case "Play":
+              alert(`Playing playlist: ${playlistName}`);
+              break;
+            case "Share":
+              if (navigator.share) {
+                navigator.share({
+                  title: playlistName,
+                  text: `Check out this playlist: ${playlistName}`,
+                  url: window.location.href,
+                });
+              } else {
+                alert("Share functionality");
+              }
+              break;
+            case "Edit":
+              alert(`Edit playlist: ${playlistName}`);
+              break;
+            case "Unlike":
+              if (
+                confirm(`Remove ${playlistName} from your liked playlists?`)
+              ) {
+                e.target.closest(".playlist-card").remove();
+              }
+              break;
+            case "Add Song":
+              alert(`Add song to collaborative playlist: ${playlistName}`);
+              break;
+          }
+        }
+      });
+
+      // Close modal when clicking outside
+      document
+        .getElementById("createModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            hideCreateModal();
+          }
+        });
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          hideCreateModal();
+        }
+        if (e.ctrlKey && e.key === "n") {
+          e.preventDefault();
+          showCreateModal();
+        }
+      });
+    </script>
+  </body>
+</html>

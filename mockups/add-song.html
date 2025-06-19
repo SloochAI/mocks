@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Song - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-header h2 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .upload-form {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #667eea;
+        display: inline-block;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .file-upload {
+        border: 2px dashed #ddd;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .file-upload:hover {
+        border-color: #667eea;
+        background-color: #f8f9ff;
+      }
+
+      .file-upload.dragover {
+        border-color: #667eea;
+        background-color: #f0f4ff;
+      }
+
+      .file-upload input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 1rem;
+      }
+
+      .upload-text {
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .upload-hint {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .uploaded-file {
+        display: none;
+        background: #e8f5e8;
+        border: 1px solid #28a745;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .uploaded-file.show {
+        display: block;
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .file-icon {
+        font-size: 2rem;
+        color: #28a745;
+      }
+
+      .file-details h4 {
+        color: #333;
+        margin-bottom: 0.25rem;
+      }
+
+      .file-details p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .remove-file {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        margin-left: auto;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 1rem;
+        display: none;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        width: 0%;
+        transition: width 0.3s;
+      }
+
+      .genre-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .genre-tag {
+        background: #e9ecef;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .genre-tag:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .genre-tag.selected {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-2px);
+      }
+
+      .btn-primary:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+      }
+
+      .notification {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+
+      .notification.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .notification.warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .notification.show {
+        display: block;
+      }
+
+      .requirements {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .requirements h4 {
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .requirements ul {
+        margin-left: 1.5rem;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .requirements li {
+        margin-bottom: 0.25rem;
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          padding: 1rem;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+      }
+
+      /* Upload-specific notifications */
+      #uploadProgressNotification {
+        display: none;
+      }
+
+      #fileFormatErrorNotification {
+        display: none;
+      }
+
+      #fileSizeErrorNotification {
+        display: none;
+      }
+
+      #copyrightErrorNotification {
+        display: none;
+      }
+
+      #moderationNotification {
+        display: none;
+      }
+
+      #serverErrorNotification {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+          <a href="music-player.html">Player</a>
+          <a href="account-settings.html">Settings</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="page-header">
+        <h2>Add New Song</h2>
+        <p>Share your music with the world</p>
+      </div>
+
+      <div id="notification" class="notification">
+        <span id="notification-text"></span>
+      </div>
+
+      <!-- Upload-specific notifications -->
+      <div id="uploadProgressNotification" class="notification success">
+        ⏳ Przesyłanie pliku... Proszę czekać.
+      </div>
+
+      <div id="fileFormatErrorNotification" class="notification error">
+        ❌ Nieobsługiwany format pliku. Akceptowane formaty: MP3, WAV, FLAC.
+      </div>
+
+      <div id="fileSizeErrorNotification" class="notification error">
+        ❌ Plik jest za duży. Maksymalny rozmiar: 50MB dla audio, 10MB dla
+        okładek.
+      </div>
+
+      <div id="copyrightErrorNotification" class="notification error">
+        ❌ Wykryto potencjalne naruszenie praw autorskich. Utwór nie może zostać
+        opublikowany.
+      </div>
+
+      <div id="moderationNotification" class="notification warning">
+        ⚠️ Utwór zostanie sprawdzony przez moderację przed publikacją.
+      </div>
+
+      <div id="serverErrorNotification" class="notification error">
+        ❌ Błąd serwera. Nie można zapisać utworu. Spróbuj ponownie za chwilę.
+      </div>
+
+      <form class="upload-form" id="uploadForm">
+        <!-- Audio File Upload -->
+        <div class="form-section">
+          <h3>Audio File</h3>
+          <div class="file-upload" id="audioUpload">
+            <input type="file" id="audioFile" accept="audio/*" required />
+            <div class="upload-icon">🎵</div>
+            <div class="upload-text">Drag & drop your audio file here</div>
+            <div class="upload-hint">
+              or click to browse (MP3, WAV, FLAC • Max 50MB)
+            </div>
+          </div>
+
+          <div class="uploaded-file" id="uploadedAudio">
+            <div class="file-info">
+              <div class="file-icon">🎵</div>
+              <div class="file-details">
+                <h4 id="audioFileName">song.mp3</h4>
+                <p id="audioFileSize">3.2 MB • 3:45 duration</p>
+              </div>
+              <button
+                type="button"
+                class="remove-file"
+                onclick="removeFile('audio')"
+              >
+                ×
+              </button>
+            </div>
+            <div class="progress-bar" id="audioProgress">
+              <div class="progress-fill" id="audioProgressFill"></div>
+            </div>
+          </div>
+
+          <div class="requirements">
+            <h4>Audio Requirements:</h4>
+            <ul>
+              <li>Supported formats: MP3, WAV, FLAC</li>
+              <li>Maximum file size: 50MB</li>
+              <li>Minimum quality: 128kbps</li>
+              <li>Maximum duration: 10 minutes</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Cover Art Upload -->
+        <div class="form-section">
+          <h3>Cover Art</h3>
+          <div class="file-upload" id="coverUpload">
+            <input type="file" id="coverFile" accept="image/*" />
+            <div class="upload-icon">🖼️</div>
+            <div class="upload-text">Drag & drop your cover art here</div>
+            <div class="upload-hint">
+              or click to browse (JPG, PNG • 1000x1000px recommended)
+            </div>
+          </div>
+
+          <div class="uploaded-file" id="uploadedCover">
+            <div class="file-info">
+              <div class="file-icon">🖼️</div>
+              <div class="file-details">
+                <h4 id="coverFileName">cover.jpg</h4>
+                <p id="coverFileSize">1.5 MB • 1000x1000px</p>
+              </div>
+              <button
+                type="button"
+                class="remove-file"
+                onclick="removeFile('cover')"
+              >
+                ×
+              </button>
+            </div>
+            <div class="progress-bar" id="coverProgress">
+              <div class="progress-fill" id="coverProgressFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Song Information -->
+        <div class="form-section">
+          <h3>Song Information</h3>
+
+          <div class="form-group">
+            <label for="title">Song Title *</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              required
+              placeholder="Enter song title"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="artist">Artist *</label>
+              <input
+                type="text"
+                id="artist"
+                name="artist"
+                required
+                placeholder="Artist name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="album">Album</label>
+              <input
+                type="text"
+                id="album"
+                name="album"
+                placeholder="Album name (optional)"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="year">Release Year</label>
+              <input
+                type="number"
+                id="year"
+                name="year"
+                min="1900"
+                max="2030"
+                placeholder="2023"
+              />
+            </div>
+            <div class="form-group">
+              <label for="duration">Duration</label>
+              <input
+                type="text"
+                id="duration"
+                name="duration"
+                placeholder="Auto-detected"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Tell us about your song..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Genre and Tags -->
+        <div class="form-section">
+          <h3>Genre & Tags</h3>
+
+          <div class="form-group">
+            <label for="primaryGenre">Primary Genre *</label>
+            <select id="primaryGenre" name="primaryGenre" required>
+              <option value="">Select primary genre</option>
+              <option value="pop">Pop</option>
+              <option value="rock">Rock</option>
+              <option value="hip-hop">Hip-Hop</option>
+              <option value="electronic">Electronic</option>
+              <option value="jazz">Jazz</option>
+              <option value="classical">Classical</option>
+              <option value="country">Country</option>
+              <option value="r&b">R&B</option>
+              <option value="indie">Indie</option>
+              <option value="folk">Folk</option>
+              <option value="reggae">Reggae</option>
+              <option value="metal">Metal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Additional Genres (optional)</label>
+            <div class="genre-tags">
+              <div class="genre-tag" data-genre="acoustic">Acoustic</div>
+              <div class="genre-tag" data-genre="ambient">Ambient</div>
+              <div class="genre-tag" data-genre="blues">Blues</div>
+              <div class="genre-tag" data-genre="chillout">Chillout</div>
+              <div class="genre-tag" data-genre="dancehall">Dancehall</div>
+              <div class="genre-tag" data-genre="experimental">
+                Experimental
+              </div>
+              <div class="genre-tag" data-genre="funk">Funk</div>
+              <div class="genre-tag" data-genre="gospel">Gospel</div>
+              <div class="genre-tag" data-genre="house">House</div>
+              <div class="genre-tag" data-genre="instrumental">
+                Instrumental
+              </div>
+              <div class="genre-tag" data-genre="latin">Latin</div>
+              <div class="genre-tag" data-genre="lofi">Lo-Fi</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="customTags">Custom Tags</label>
+            <input
+              type="text"
+              id="customTags"
+              name="customTags"
+              placeholder="Enter tags separated by commas"
+            />
+          </div>
+        </div>
+
+        <!-- Licensing and Permissions -->
+        <div class="form-section">
+          <h3>Licensing & Permissions</h3>
+
+          <div class="form-group">
+            <label for="license">License Type *</label>
+            <select id="license" name="license" required>
+              <option value="">Select license</option>
+              <option value="all-rights-reserved">All Rights Reserved</option>
+              <option value="creative-commons">Creative Commons</option>
+              <option value="royalty-free">Royalty Free</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                id="originalWork"
+                name="originalWork"
+                required
+              />
+              I confirm this is my original work or I have permission to upload
+              this content
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                id="ageAppropriate"
+                name="ageAppropriate"
+                required
+              />
+              This content is appropriate for all audiences
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="allowDownload" name="allowDownload" />
+              Allow users to download this track
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+            Save as Draft
+          </button>
+          <button type="submit" class="btn btn-primary" id="publishBtn">
+            Publish Song
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      let uploadedAudioFile = null;
+      let uploadedCoverFile = null;
+      let selectedGenres = [];
+
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notification-text");
+
+        notificationText.textContent = message;
+        notification.className = `notification ${type} show`;
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 5000);
+      }
+
+      function setupFileUpload(uploadId, fileInputId, uploadedId, fileType) {
+        const uploadArea = document.getElementById(uploadId);
+        const fileInput = document.getElementById(fileInputId);
+        const uploadedDiv = document.getElementById(uploadedId);
+
+        // Drag and drop functionality
+        uploadArea.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          uploadArea.classList.add("dragover");
+        });
+
+        uploadArea.addEventListener("dragleave", () => {
+          uploadArea.classList.remove("dragover");
+        });
+
+        uploadArea.addEventListener("drop", (e) => {
+          e.preventDefault();
+          uploadArea.classList.remove("dragover");
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            handleFileUpload(files[0], fileType);
+          }
+        });
+
+        fileInput.addEventListener("change", (e) => {
+          if (e.target.files.length > 0) {
+            handleFileUpload(e.target.files[0], fileType);
+          }
+        });
+      }
+
+      function handleFileUpload(file, fileType) {
+        if (fileType === "audio") {
+          if (!file.type.startsWith("audio/")) {
+            showNotification("Please select a valid audio file.", "error");
+            document.getElementById(
+              "fileFormatErrorNotification"
+            ).style.display = "block";
+            return;
+          }
+          if (file.size > 50 * 1024 * 1024) {
+            // 50MB
+            showNotification(
+              "Audio file size must be less than 50MB.",
+              "error"
+            );
+            document.getElementById("fileSizeErrorNotification").style.display =
+              "block";
+            return;
+          }
+          uploadedAudioFile = file;
+          showUploadedFile("audio", file);
+
+          // Auto-fill title if not already filled
+          if (!document.getElementById("title").value) {
+            const fileName = file.name.replace(/\.[^/.]+$/, "");
+            document.getElementById("title").value = fileName;
+          }
+
+          // Simulate duration detection
+          document.getElementById("duration").value = "3:45";
+        } else if (fileType === "cover") {
+          if (!file.type.startsWith("image/")) {
+            showNotification("Please select a valid image file.", "error");
+            document.getElementById(
+              "fileFormatErrorNotification"
+            ).style.display = "block";
+            return;
+          }
+          if (file.size > 10 * 1024 * 1024) {
+            // 10MB
+            showNotification(
+              "Image file size must be less than 10MB.",
+              "error"
+            );
+            document.getElementById("fileSizeErrorNotification").style.display =
+              "block";
+            return;
+          }
+          uploadedCoverFile = file;
+          showUploadedFile("cover", file);
+        }
+
+        simulateUpload(fileType);
+      }
+
+      function showUploadedFile(fileType, file) {
+        const uploadedDiv = document.getElementById(
+          `uploaded${fileType.charAt(0).toUpperCase() + fileType.slice(1)}`
+        );
+        const fileNameSpan = document.getElementById(`${fileType}FileName`);
+        const fileSizeSpan = document.getElementById(`${fileType}FileSize`);
+
+        fileNameSpan.textContent = file.name;
+        fileSizeSpan.textContent = `${(file.size / 1024 / 1024).toFixed(1)} MB`;
+
+        if (fileType === "cover") {
+          fileSizeSpan.textContent += " • Image";
+        } else {
+          fileSizeSpan.textContent += " • Audio";
+        }
+
+        uploadedDiv.classList.add("show");
+        document.getElementById(`${fileType}Upload`).style.display = "none";
+      }
+
+      function simulateUpload(fileType) {
+        const progressBar = document.getElementById(`${fileType}Progress`);
+        const progressFill = document.getElementById(`${fileType}ProgressFill`);
+
+        progressBar.style.display = "block";
+
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 30;
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+            setTimeout(() => {
+              progressBar.style.display = "none";
+            }, 1000);
+          }
+          progressFill.style.width = `${progress}%`;
+        }, 200);
+      }
+
+      function removeFile(fileType) {
+        if (fileType === "audio") {
+          uploadedAudioFile = null;
+          document.getElementById("uploadedAudio").classList.remove("show");
+          document.getElementById("audioUpload").style.display = "block";
+          document.getElementById("audioFile").value = "";
+        } else if (fileType === "cover") {
+          uploadedCoverFile = null;
+          document.getElementById("uploadedCover").classList.remove("show");
+          document.getElementById("coverUpload").style.display = "block";
+          document.getElementById("coverFile").value = "";
+        }
+      }
+
+      function setupGenreTags() {
+        document.querySelectorAll(".genre-tag").forEach((tag) => {
+          tag.addEventListener("click", function () {
+            const genre = this.dataset.genre;
+
+            if (this.classList.contains("selected")) {
+              this.classList.remove("selected");
+              selectedGenres = selectedGenres.filter((g) => g !== genre);
+            } else {
+              if (selectedGenres.length < 3) {
+                this.classList.add("selected");
+                selectedGenres.push(genre);
+              } else {
+                showNotification(
+                  "You can select up to 3 additional genres.",
+                  "warning"
+                );
+              }
+            }
+          });
+        });
+      }
+
+      function validateForm() {
+        const title = document.getElementById("title").value.trim();
+        const artist = document.getElementById("artist").value.trim();
+        const primaryGenre = document.getElementById("primaryGenre").value;
+        const originalWork = document.getElementById("originalWork").checked;
+        const ageAppropriate =
+          document.getElementById("ageAppropriate").checked;
+        const license = document.getElementById("license").value;
+
+        if (!uploadedAudioFile) {
+          showNotification("Please upload an audio file.", "error");
+          return false;
+        }
+
+        if (!title) {
+          showNotification("Please enter a song title.", "error");
+          return false;
+        }
+
+        if (!artist) {
+          showNotification("Please enter the artist name.", "error");
+          return false;
+        }
+
+        if (!primaryGenre) {
+          showNotification("Please select a primary genre.", "error");
+          return false;
+        }
+
+        if (!license) {
+          showNotification("Please select a license type.", "error");
+          return false;
+        }
+
+        if (!originalWork) {
+          showNotification(
+            "Please confirm this is your original work.",
+            "error"
+          );
+          return false;
+        }
+
+        if (!ageAppropriate) {
+          showNotification(
+            "Please confirm the content is age-appropriate.",
+            "error"
+          );
+          return false;
+        }
+
+        return true;
+      }
+
+      function saveDraft() {
+        if (!uploadedAudioFile) {
+          showNotification(
+            "Please upload an audio file before saving.",
+            "error"
+          );
+          return;
+        }
+
+        showNotification("Draft saved successfully!", "success");
+      }
+
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          if (!validateForm()) {
+            return;
+          }
+
+          const publishBtn = document.getElementById("publishBtn");
+          publishBtn.disabled = true;
+          publishBtn.textContent = "Publishing...";
+
+          // Simulate upload process
+          setTimeout(() => {
+            // Randomly simulate success or error
+            const isSuccess = Math.random() > 0.2;
+
+            if (isSuccess) {
+              showNotification("Song published successfully! 🎉", "success");
+              document.getElementById("moderationNotification").style.display =
+                "block";
+
+              // Redirect to profile or song page after a delay
+              setTimeout(() => {
+                window.location.href = "profile.html";
+              }, 2000);
+            } else {
+              const errorType = Math.floor(Math.random() * 3);
+              if (errorType === 0) {
+                showNotification(
+                  "Server error. Please try again later.",
+                  "error"
+                );
+                document.getElementById(
+                  "serverErrorNotification"
+                ).style.display = "block";
+              } else if (errorType === 1) {
+                showNotification("Copyright infringement detected.", "error");
+                document.getElementById(
+                  "copyrightErrorNotification"
+                ).style.display = "block";
+              } else {
+                showNotification(
+                  "Moderation required. Your song is under review.",
+                  "warning"
+                );
+                document.getElementById(
+                  "moderationNotification"
+                ).style.display = "block";
+              }
+            }
+
+            publishBtn.disabled = false;
+            publishBtn.textContent = "Publish Song";
+          }, 3000);
+        });
+
+      // Initialize file upload handlers
+      setupFileUpload("audioUpload", "audioFile", "uploadedAudio", "audio");
+      setupFileUpload("coverUpload", "coverFile", "uploadedCover", "cover");
+      setupGenreTags();
+
+      // Auto-fill artist name from user profile (simulated)
+      document.getElementById("artist").value = "John Doe";
+    </script>
+  </body>
+</html>

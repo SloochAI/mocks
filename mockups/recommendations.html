@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rekomendacje - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .recommendations-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .recommendation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 15px;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .refresh-btn {
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: transform 0.3s ease;
+      }
+
+      .refresh-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .songs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .song-card {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .song-card:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      .song-cover {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+
+      .song-info {
+        flex-grow: 1;
+        min-width: 0;
+      }
+
+      .song-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .song-artist {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+      }
+
+      .song-stats {
+        font-size: 0.8rem;
+        color: #999;
+        display: flex;
+        gap: 15px;
+      }
+
+      .song-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        color: #666;
+      }
+
+      .action-btn:hover {
+        background: #f0f0f0;
+        color: #667eea;
+      }
+
+      .play-btn {
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .play-btn:hover {
+        background: linear-gradient(45deg, #5a6fd8 0%, #6a4190 100%);
+        color: white;
+      }
+
+      .recommendation-reason {
+        background: #f0f4ff;
+        border-left: 4px solid #667eea;
+        padding: 10px 15px;
+        margin-top: 15px;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      .artists-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .artist-card {
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .artist-card:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-5px);
+      }
+
+      .artist-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        margin: 0 auto 15px;
+      }
+
+      .artist-name {
+        font-weight: bold;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+      }
+
+      .artist-genre {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .artist-stats {
+        font-size: 0.8rem;
+        color: #999;
+        margin-bottom: 15px;
+      }
+
+      .follow-btn {
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .follow-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .follow-btn.following {
+        background: #27ae60;
+      }
+
+      .genres-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .genre-card {
+        flex: 1;
+        min-width: 200px;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .genre-card:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: scale(1.02);
+      }
+
+      .genre-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .genre-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .genre-count {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .trends-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .trend-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .trend-item:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+      }
+
+      .trend-rank {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+      }
+
+      .trend-info {
+        flex-grow: 1;
+      }
+
+      .trend-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .trend-description {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .trend-stats {
+        color: #999;
+        font-size: 0.8rem;
+        text-align: right;
+      }
+
+      .preferences-panel {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .preferences-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .preference-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .preference-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .preference-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
+
+      .preference-item label {
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      .filter-select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      .notification.success {
+        background: #27ae60;
+      }
+
+      .notification.info {
+        background: #3498db;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .songs-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .artists-grid {
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .genres-container {
+          flex-direction: column;
+        }
+
+        .preference-controls {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎯 Rekomendacje</h1>
+        <p>Odkrywaj nową muzykę dopasowaną do Twoich gustów</p>
+      </div>
+
+      <!-- Notifications -->
+      <div id="successNotification" class="notification success">
+        ✅ Utwór został dodany do ulubionych!
+      </div>
+
+      <div id="infoNotification" class="notification info">
+        ℹ️ Rekomendacje zostały odświeżone
+      </div>
+
+      <!-- Personalization Preferences -->
+      <div class="preferences-panel">
+        <div class="preferences-title">⚙️ Personalizacja rekomendacji</div>
+        <div class="preference-controls">
+          <div class="preference-item">
+            <input type="checkbox" id="includeFollowed" checked />
+            <label for="includeFollowed"
+              >Uwzględnij obserwowanych artystów</label
+            >
+          </div>
+          <div class="preference-item">
+            <input type="checkbox" id="includeSimilar" checked />
+            <label for="includeSimilar">Podobni do ulubionych</label>
+          </div>
+          <div class="preference-item">
+            <input type="checkbox" id="includeNewReleases" checked />
+            <label for="includeNewReleases">Nowości</label>
+          </div>
+          <div class="preference-item">
+            <input type="checkbox" id="includeTrending" />
+            <label for="includeTrending">Popularne</label>
+          </div>
+          <select class="filter-select" id="timeRange">
+            <option value="week">Z ostatniego tygodnia</option>
+            <option value="month" selected>Z ostatniego miesiąca</option>
+            <option value="year">Z ostatniego roku</option>
+            <option value="all">Ze wszystkich czasów</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Recommended Songs Based on Listening History -->
+      <div class="recommendation-section">
+        <div class="section-header">
+          <h2 class="section-title">🎵 Dla Ciebie</h2>
+          <button
+            class="refresh-btn"
+            onclick="refreshRecommendations('personal')"
+          >
+            🔄 Odśwież
+          </button>
+        </div>
+
+        <div class="recommendation-reason">
+          <strong>📊 Dopasowane na podstawie:</strong> Twojej historii
+          odsłuchań, polubionych utworów i obserwowanych artystów
+        </div>
+
+        <div class="songs-grid">
+          <div class="song-card" onclick="playSong(this)">
+            <div class="song-cover">🎼</div>
+            <div class="song-info">
+              <div class="song-title">Neon Dreams</div>
+              <div class="song-artist">SynthWave Collective</div>
+              <div class="song-stats">
+                <span>❤️ 2.1K</span>
+                <span>▶️ 45K</span>
+                <span>⏱️ 4:23</span>
+              </div>
+            </div>
+            <div class="song-actions">
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); toggleLike(this)"
+              >
+                🤍
+              </button>
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); addToPlaylist(this)"
+              >
+                📝
+              </button>
+              <button class="play-btn">▶️</button>
+            </div>
+          </div>
+
+          <div class="song-card" onclick="playSong(this)">
+            <div class="song-cover">🎸</div>
+            <div class="song-info">
+              <div class="song-title">Midnight Groove</div>
+              <div class="song-artist">Blues Brothers</div>
+              <div class="song-stats">
+                <span>❤️ 1.8K</span>
+                <span>▶️ 32K</span>
+                <span>⏱️ 3:45</span>
+              </div>
+            </div>
+            <div class="song-actions">
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); toggleLike(this)"
+              >
+                🤍
+              </button>
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); addToPlaylist(this)"
+              >
+                📝
+              </button>
+              <button class="play-btn">▶️</button>
+            </div>
+          </div>
+
+          <div class="song-card" onclick="playSong(this)">
+            <div class="song-cover">🎹</div>
+            <div class="song-info">
+              <div class="song-title">Coffee Shop Jazz</div>
+              <div class="song-artist">Smooth Collective</div>
+              <div class="song-stats">
+                <span>❤️ 3.2K</span>
+                <span>▶️ 67K</span>
+                <span>⏱️ 5:12</span>
+              </div>
+            </div>
+            <div class="song-actions">
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); toggleLike(this)"
+              >
+                🤍
+              </button>
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); addToPlaylist(this)"
+              >
+                📝
+              </button>
+              <button class="play-btn">▶️</button>
+            </div>
+          </div>
+
+          <div class="song-card" onclick="playSong(this)">
+            <div class="song-cover">🎤</div>
+            <div class="song-info">
+              <div class="song-title">Heartbreak Anthem</div>
+              <div class="song-artist">Emotional Voices</div>
+              <div class="song-stats">
+                <span>❤️ 4.5K</span>
+                <span>▶️ 89K</span>
+                <span>⏱️ 3:58</span>
+              </div>
+            </div>
+            <div class="song-actions">
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); toggleLike(this)"
+              >
+                🤍
+              </button>
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); addToPlaylist(this)"
+              >
+                📝
+              </button>
+              <button class="play-btn">▶️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Similar Artists -->
+      <div class="recommendation-section">
+        <div class="section-header">
+          <h2 class="section-title">👥 Podobni Artyści</h2>
+          <button
+            class="refresh-btn"
+            onclick="refreshRecommendations('artists')"
+          >
+            🔄 Odśwież
+          </button>
+        </div>
+
+        <div class="recommendation-reason">
+          <strong>🎯 Na podstawie:</strong> Artystów, których obserwujesz i
+          często słuchasz
+        </div>
+
+        <div class="artists-grid">
+          <div class="artist-card" onclick="viewArtistProfile(this)">
+            <div class="artist-avatar">EP</div>
+            <div class="artist-name">Electronic Paradise</div>
+            <div class="artist-genre">Elektroniczna • Ambient</div>
+            <div class="artist-stats">12 utworów • 8.5K obserwujących</div>
+            <button
+              class="follow-btn"
+              onclick="event.stopPropagation(); toggleFollow(this)"
+            >
+              + Obserwuj
+            </button>
+          </div>
+
+          <div class="artist-card" onclick="viewArtistProfile(this)">
+            <div class="artist-avatar">VS</div>
+            <div class="artist-name">Vocal Spectrum</div>
+            <div class="artist-genre">Pop • Indie</div>
+            <div class="artist-stats">23 utworów • 15.2K obserwujących</div>
+            <button
+              class="follow-btn"
+              onclick="event.stopPropagation(); toggleFollow(this)"
+            >
+              + Obserwuj
+            </button>
+          </div>
+
+          <div class="artist-card" onclick="viewArtistProfile(this)">
+            <div class="artist-avatar">RB</div>
+            <div class="artist-name">Rhythm & Blues Co.</div>
+            <div class="artist-genre">Blues • Soul</div>
+            <div class="artist-stats">18 utworów • 6.7K obserwujących</div>
+            <button
+              class="follow-btn"
+              onclick="event.stopPropagation(); toggleFollow(this)"
+            >
+              + Obserwuj
+            </button>
+          </div>
+
+          <div class="artist-card" onclick="viewArtistProfile(this)">
+            <div class="artist-avatar">AF</div>
+            <div class="artist-name">Acoustic Feelings</div>
+            <div class="artist-genre">Folk • Acoustic</div>
+            <div class="artist-stats">31 utworów • 12.1K obserwujących</div>
+            <button
+              class="follow-btn"
+              onclick="event.stopPropagation(); toggleFollow(this)"
+            >
+              + Obserwuj
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trending by Genre -->
+      <div class="recommendation-section">
+        <div class="section-header">
+          <h2 class="section-title">🔥 Trendy Muzyczne</h2>
+          <button
+            class="refresh-btn"
+            onclick="refreshRecommendations('trends')"
+          >
+            🔄 Odśwież
+          </button>
+        </div>
+
+        <div class="recommendation-reason">
+          <strong>📈 Obecnie popularne:</strong> Najczęściej słuchane gatunki i
+          utwory w ostatnim tygodniu
+        </div>
+
+        <div class="trends-list">
+          <div class="trend-item">
+            <div class="trend-rank">1</div>
+            <div class="trend-info">
+              <div class="trend-title">Letnie Vibes</div>
+              <div class="trend-description">
+                Łagodne utwory idealne na letnie wieczory
+              </div>
+            </div>
+            <div class="trend-stats">
+              +156% odsłuchań<br />
+              w tym tygodniu
+            </div>
+          </div>
+
+          <div class="trend-item">
+            <div class="trend-rank">2</div>
+            <div class="trend-info">
+              <div class="trend-title">Indie Rock Revival</div>
+              <div class="trend-description">
+                Powrót do korzeni rocka niezależnego
+              </div>
+            </div>
+            <div class="trend-stats">
+              +89% odsłuchań<br />
+              w tym tygodniu
+            </div>
+          </div>
+
+          <div class="trend-item">
+            <div class="trend-rank">3</div>
+            <div class="trend-info">
+              <div class="trend-title">Chillstep & Ambient</div>
+              <div class="trend-description">
+                Relaksująca elektronika do pracy
+              </div>
+            </div>
+            <div class="trend-stats">
+              +67% odsłuchań<br />
+              w tym tygodniu
+            </div>
+          </div>
+
+          <div class="trend-item">
+            <div class="trend-rank">4</div>
+            <div class="trend-info">
+              <div class="trend-title">Neo-Soul Fusion</div>
+              <div class="trend-description">
+                Nowoczesne brzmienia soul z jazzowymi akcentami
+              </div>
+            </div>
+            <div class="trend-stats">
+              +45% odsłuchań<br />
+              w tym tygodniu
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Genre Exploration -->
+      <div class="recommendation-section">
+        <div class="section-header">
+          <h2 class="section-title">🎭 Odkrywaj Gatunki</h2>
+          <button
+            class="refresh-btn"
+            onclick="refreshRecommendations('genres')"
+          >
+            🔄 Odśwież
+          </button>
+        </div>
+
+        <div class="recommendation-reason">
+          <strong>🌟 Sugestie:</strong> Gatunki muzyczne, które mogą Ci się
+          spodobać na podstawie Twoich preferencji
+        </div>
+
+        <div class="genres-container">
+          <div class="genre-card" onclick="exploreGenre('electronic')">
+            <div class="genre-icon">🎛️</div>
+            <div class="genre-name">Elektroniczna</div>
+            <div class="genre-count">245 nowych utworów</div>
+          </div>
+
+          <div class="genre-card" onclick="exploreGenre('jazz')">
+            <div class="genre-icon">🎷</div>
+            <div class="genre-name">Jazz</div>
+            <div class="genre-count">127 nowych utworów</div>
+          </div>
+
+          <div class="genre-card" onclick="exploreGenre('indie')">
+            <div class="genre-icon">🎸</div>
+            <div class="genre-name">Indie</div>
+            <div class="genre-count">189 nowych utworów</div>
+          </div>
+
+          <div class="genre-card" onclick="exploreGenre('ambient')">
+            <div class="genre-icon">🌙</div>
+            <div class="genre-name">Ambient</div>
+            <div class="genre-count">98 nowych utworów</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- New Releases from Followed Artists -->
+      <div class="recommendation-section">
+        <div class="section-header">
+          <h2 class="section-title">🆕 Nowości od Obserwowanych</h2>
+          <button
+            class="refresh-btn"
+            onclick="refreshRecommendations('newreleases')"
+          >
+            🔄 Odśwież
+          </button>
+        </div>
+
+        <div class="recommendation-reason">
+          <strong>👥 Nowe utwory:</strong> Od artystów, których obserwujesz w
+          ostatnim tygodniu
+        </div>
+
+        <div class="songs-grid">
+          <div class="song-card" onclick="playSong(this)">
+            <div class="song-cover">🌟</div>
+            <div class="song-info">
+              <div class="song-title">Fresh Start</div>
+              <div class="song-artist">Marta Kowalska</div>
+              <div class="song-stats">
+                <span>❤️ 892</span>
+                <span>▶️ 12K</span>
+                <span>⏱️ 3:31</span>
+                <span class="new-badge">🆕 2 dni temu</span>
+              </div>
+            </div>
+            <div class="song-actions">
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); toggleLike(this)"
+              >
+                🤍
+              </button>
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); addToPlaylist(this)"
+              >
+                📝
+              </button>
+              <button class="play-btn">▶️</button>
+            </div>
+          </div>
+
+          <div class="song-card" onclick="playSong(this)">
+            <div class="song-cover">⚡</div>
+            <div class="song-info">
+              <div class="song-title">Electric Pulse</div>
+              <div class="song-artist">Piotr Gitarzysta</div>
+              <div class="song-stats">
+                <span>❤️ 1.2K</span>
+                <span>▶️ 18K</span>
+                <span>⏱️ 4:07</span>
+                <span class="new-badge">🆕 5 dni temu</span>
+              </div>
+            </div>
+            <div class="song-actions">
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); toggleLike(this)"
+              >
+                🤍
+              </button>
+              <button
+                class="action-btn"
+                onclick="event.stopPropagation(); addToPlaylist(this)"
+              >
+                📝
+              </button>
+              <button class="play-btn">▶️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Toggle like functionality
+      function toggleLike(btn) {
+        if (btn.textContent === "🤍") {
+          btn.textContent = "❤️";
+          btn.style.color = "#e74c3c";
+          showNotification("success", "Dodano do ulubionych!");
+        } else {
+          btn.textContent = "🤍";
+          btn.style.color = "#666";
+          showNotification("info", "Usunięto z ulubionych");
+        }
+      }
+
+      // Toggle follow functionality
+      function toggleFollow(btn) {
+        if (btn.textContent.includes("Obserwuj")) {
+          btn.textContent = "✓ Obserwujesz";
+          btn.classList.add("following");
+          showNotification("success", "Teraz obserwujesz tego artystę!");
+        } else {
+          btn.textContent = "+ Obserwuj";
+          btn.classList.remove("following");
+          showNotification("info", "Przestałeś obserwować artystę");
+        }
+      }
+
+      // Play song functionality
+      function playSong(songCard) {
+        const title = songCard.querySelector(".song-title").textContent;
+        const artist = songCard.querySelector(".song-artist").textContent;
+        showNotification("info", `Odtwarzanie: ${title} - ${artist}`);
+
+        // Visual feedback
+        songCard.style.background = "#e3f2fd";
+        setTimeout(() => {
+          songCard.style.background = "";
+        }, 1000);
+      }
+
+      // Add to playlist functionality
+      function addToPlaylist(btn) {
+        showNotification("success", "Dodano do playlisty!");
+      }
+
+      // View artist profile
+      function viewArtistProfile(artistCard) {
+        const artistName = artistCard.querySelector(".artist-name").textContent;
+        showNotification("info", `Przechodzenie do profilu: ${artistName}`);
+        // In real app: window.location.href = `profile.html?artist=${artistName}`;
+      }
+
+      // Explore genre
+      function exploreGenre(genre) {
+        showNotification("info", `Odkrywanie gatunku: ${genre}`);
+        // In real app: window.location.href = `search.html?genre=${genre}`;
+      }
+
+      // Refresh recommendations
+      function refreshRecommendations(section) {
+        showNotification("info", "Odświeżanie rekomendacji...");
+
+        // Simulate loading
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "⏳ Ładowanie...";
+        btn.disabled = true;
+
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          showNotification("success", "Rekomendacje zostały odświeżone!");
+        }, 1500);
+      }
+
+      // Preference changes
+      document
+        .querySelectorAll('.preference-item input[type="checkbox"]')
+        .forEach((checkbox) => {
+          checkbox.addEventListener("change", () => {
+            showNotification("info", "Preferencje zostały zaktualizowane");
+            // In real app: save preferences and refresh recommendations
+          });
+        });
+
+      document.getElementById("timeRange").addEventListener("change", () => {
+        showNotification("info", "Zakres czasowy został zmieniony");
+        // In real app: refresh recommendations based on time range
+      });
+
+      // Notification system
+      function showNotification(type, message) {
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          notification.textContent = message;
+          notification.style.display = "block";
+
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 3000);
+        }
+      }
+
+      // Simulate dynamic content loading based on user interaction
+      window.addEventListener("load", () => {
+        // Simulate personalized content loading
+        setTimeout(() => {
+          showNotification(
+            "info",
+            "Rekomendacje zostały dostosowane do Twoich gustów!"
+          );
+        }, 1000);
+      });
+
+      // Add some CSS for new badge
+      const style = document.createElement("style");
+      style.textContent = `
+            .new-badge {
+                color: #27ae60 !important;
+                font-weight: bold;
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

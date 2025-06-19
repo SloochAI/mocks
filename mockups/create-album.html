@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sloochai - Tworzenie Albumu</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      .header h1 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .form-container {
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-bottom: 30px;
+      }
+
+      .form-step {
+        margin-bottom: 40px;
+      }
+
+      .step-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .step-number {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+      }
+
+      .step-title {
+        font-size: 1.4rem;
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .cover-upload {
+        border: 2px dashed #ddd;
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .cover-upload:hover {
+        border-color: #667eea;
+        background: #f9f9ff;
+      }
+
+      .cover-upload.dragover {
+        border-color: #667eea;
+        background: #f0f0ff;
+        transform: scale(1.02);
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 15px;
+      }
+
+      .upload-text {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .upload-preview {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin: 20px auto;
+        display: none;
+      }
+
+      .songs-list {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .song-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.3s ease;
+      }
+
+      .song-item:hover {
+        background: #f9f9ff;
+      }
+
+      .song-item:last-child {
+        border-bottom: none;
+      }
+
+      .song-info {
+        flex: 1;
+        margin-right: 15px;
+      }
+
+      .song-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .song-duration {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .song-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .drag-handle {
+        cursor: move;
+        color: #ccc;
+        font-size: 1.2rem;
+      }
+
+      .remove-btn {
+        background: #ff4757;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.3s ease;
+      }
+
+      .remove-btn:hover {
+        background: #ff3742;
+      }
+
+      .add-songs-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      .add-songs-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 40px;
+      }
+
+      .btn {
+        padding: 15px 40px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+      }
+
+      .notification {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        display: none;
+      }
+
+      .notification.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .notification.warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .privacy-options {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .privacy-option {
+        flex: 1;
+        min-width: 200px;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .privacy-option:hover {
+        border-color: #667eea;
+      }
+
+      .privacy-option.selected {
+        border-color: #667eea;
+        background: #f0f0ff;
+      }
+
+      .privacy-option input[type="radio"] {
+        display: none;
+      }
+
+      .privacy-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .privacy-desc {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        .form-container {
+          padding: 20px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+
+        .privacy-options {
+          flex-direction: column;
+        }
+
+        .song-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎵 Utwórz Nowy Album</h1>
+        <p>Stwórz profesjonalny album z Twoimi utworami</p>
+      </div>
+
+      <!-- Notifications -->
+      <div id="successNotification" class="notification success">
+        ✅ Album został pomyślnie utworzony!
+      </div>
+
+      <div id="errorNotification" class="notification error">
+        ❌ Wystąpił błąd podczas tworzenia albumu. Sprawdź wymagane pola.
+      </div>
+
+      <div id="warningNotification" class="notification warning">
+        ⚠️ Niektóre pola wymagają uzupełnienia lub poprawy.
+      </div>
+
+      <div class="form-container">
+        <form id="albumForm">
+          <!-- Step 1: Basic Information -->
+          <div class="form-step">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <div class="step-title">Podstawowe Informacje</div>
+            </div>
+
+            <div class="form-group">
+              <label for="albumTitle">Tytuł Albumu *</label>
+              <input
+                type="text"
+                id="albumTitle"
+                name="albumTitle"
+                required
+                placeholder="Wpisz tytuł albumu"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="albumDescription">Opis Albumu</label>
+              <textarea
+                id="albumDescription"
+                name="albumDescription"
+                placeholder="Opisz swój album, inspiracje, proces twórczy..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="releaseDate">Data Wydania</label>
+              <input type="date" id="releaseDate" name="releaseDate" />
+            </div>
+
+            <div class="form-group">
+              <label for="genre">Główny Gatunek</label>
+              <select id="genre" name="genre">
+                <option value="">Wybierz gatunek</option>
+                <option value="pop">Pop</option>
+                <option value="rock">Rock</option>
+                <option value="jazz">Jazz</option>
+                <option value="classical">Klasyczna</option>
+                <option value="electronic">Elektroniczna</option>
+                <option value="hip-hop">Hip-Hop</option>
+                <option value="folk">Folk</option>
+                <option value="alternative">Alternatywna</option>
+                <option value="indie">Indie</option>
+                <option value="other">Inne</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Step 2: Album Cover -->
+          <div class="form-step">
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <div class="step-title">Okładka Albumu</div>
+            </div>
+
+            <div class="form-group">
+              <label>Okładka Albumu (zalecane: 1400x1400px, max 5MB)</label>
+              <div class="cover-upload" id="coverUpload">
+                <div class="upload-icon">🎨</div>
+                <div class="upload-text">
+                  Przeciągnij i upuść okładkę lub kliknij aby wybrać
+                </div>
+                <input
+                  type="file"
+                  id="coverFile"
+                  accept="image/*"
+                  style="display: none"
+                />
+                <img
+                  id="coverPreview"
+                  class="upload-preview"
+                  alt="Podgląd okładki"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Songs Management -->
+          <div class="form-step">
+            <div class="step-header">
+              <div class="step-number">3</div>
+              <div class="step-title">Utwory w Albumie</div>
+            </div>
+
+            <button type="button" class="add-songs-btn" id="addSongsBtn">
+              + Dodaj Utwory do Albumu
+            </button>
+
+            <div class="songs-list" id="songsList">
+              <!-- Sample songs for demo -->
+              <div class="song-item" data-song-id="1">
+                <div class="song-controls">
+                  <span class="drag-handle">⋮⋮</span>
+                </div>
+                <div class="song-info">
+                  <div class="song-title">Przykładowy Utwór 1</div>
+                  <div class="song-duration">3:45</div>
+                </div>
+                <div class="song-controls">
+                  <button type="button" class="remove-btn">Usuń</button>
+                </div>
+              </div>
+
+              <div class="song-item" data-song-id="2">
+                <div class="song-controls">
+                  <span class="drag-handle">⋮⋮</span>
+                </div>
+                <div class="song-info">
+                  <div class="song-title">Druga Piosenka</div>
+                  <div class="song-duration">4:12</div>
+                </div>
+                <div class="song-controls">
+                  <button type="button" class="remove-btn">Usuń</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Privacy Settings -->
+          <div class="form-step">
+            <div class="step-header">
+              <div class="step-number">4</div>
+              <div class="step-title">Ustawienia Prywatności</div>
+            </div>
+
+            <div class="privacy-options">
+              <div class="privacy-option selected" data-privacy="public">
+                <input type="radio" name="privacy" value="public" checked />
+                <div class="privacy-title">🌍 Publiczny</div>
+                <div class="privacy-desc">
+                  Wszyscy mogą słuchać i wyszukiwać
+                </div>
+              </div>
+
+              <div class="privacy-option" data-privacy="unlisted">
+                <input type="radio" name="privacy" value="unlisted" />
+                <div class="privacy-title">🔗 Niewidoczny</div>
+                <div class="privacy-desc">Tylko z bezpośrednim linkiem</div>
+              </div>
+
+              <div class="privacy-option" data-privacy="private">
+                <input type="radio" name="privacy" value="private" />
+                <div class="privacy-title">🔒 Prywatny</div>
+                <div class="privacy-desc">Tylko dla Ciebie</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="saveDraftBtn">
+              Zapisz jako Szkic
+            </button>
+            <button type="submit" class="btn btn-primary" id="publishBtn">
+              Opublikuj Album
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Cover upload functionality
+      const coverUpload = document.getElementById("coverUpload");
+      const coverFile = document.getElementById("coverFile");
+      const coverPreview = document.getElementById("coverPreview");
+
+      coverUpload.addEventListener("click", () => coverFile.click());
+
+      coverUpload.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        coverUpload.classList.add("dragover");
+      });
+
+      coverUpload.addEventListener("dragleave", () => {
+        coverUpload.classList.remove("dragover");
+      });
+
+      coverUpload.addEventListener("drop", (e) => {
+        e.preventDefault();
+        coverUpload.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFileUpload(files[0]);
+        }
+      });
+
+      coverFile.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleFileUpload(e.target.files[0]);
+        }
+      });
+
+      function handleFileUpload(file) {
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            coverPreview.src = e.target.result;
+            coverPreview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Privacy options functionality
+      const privacyOptions = document.querySelectorAll(".privacy-option");
+      privacyOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+          privacyOptions.forEach((opt) => opt.classList.remove("selected"));
+          option.classList.add("selected");
+          option.querySelector('input[type="radio"]').checked = true;
+        });
+      });
+
+      // Remove song functionality
+      document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-btn")) {
+          e.target.closest(".song-item").remove();
+        }
+      });
+
+      // Add songs button
+      document.getElementById("addSongsBtn").addEventListener("click", () => {
+        // This would open a modal to select from user's songs
+        alert(
+          "Funkcja dodawania utworów zostanie zaimplementowana w pełnej wersji"
+        );
+      });
+
+      // Form submission
+      document.getElementById("albumForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const albumTitle = document.getElementById("albumTitle").value.trim();
+        const songs = document.querySelectorAll(".song-item").length;
+
+        if (!albumTitle) {
+          showNotification("error", "Tytuł albumu jest wymagany");
+          return;
+        }
+
+        if (songs === 0) {
+          showNotification(
+            "warning",
+            "Album musi zawierać przynajmniej jeden utwór"
+          );
+          return;
+        }
+
+        // Simulate successful creation
+        showNotification("success", "Album został pomyślnie utworzony!");
+
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = "profile.html";
+        }, 2000);
+      });
+
+      // Save draft functionality
+      document.getElementById("saveDraftBtn").addEventListener("click", () => {
+        showNotification("success", "Szkic albumu został zapisany");
+      });
+
+      // Notification system
+      function showNotification(type, message) {
+        // Hide all notifications
+        document.querySelectorAll(".notification").forEach((notif) => {
+          notif.style.display = "none";
+        });
+
+        // Show specific notification
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          if (message) {
+            notification.textContent = message;
+          }
+          notification.style.display = "block";
+
+          // Auto-hide after 5 seconds
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 5000);
+        }
+      }
+
+      // Drag and drop reordering for songs (simplified)
+      let draggedElement = null;
+
+      document.addEventListener("dragstart", (e) => {
+        if (e.target.classList.contains("drag-handle")) {
+          draggedElement = e.target.closest(".song-item");
+          e.dataTransfer.effectAllowed = "move";
+        }
+      });
+
+      document.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      });
+
+      document.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (draggedElement && e.target.closest(".song-item")) {
+          const dropTarget = e.target.closest(".song-item");
+          const parent = dropTarget.parentNode;
+          parent.insertBefore(draggedElement, dropTarget.nextSibling);
+          draggedElement = null;
+        }
+      });
+    </script>
+  </body>
+</html>

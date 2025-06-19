@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rejestracja - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        padding: 20px;
+      }
+
+      .register-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        width: 100%;
+        max-width: 1000px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 700px;
+      }
+
+      .register-form {
+        padding: 40px;
+        overflow-y: auto;
+      }
+
+      .register-visual {
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: white;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .logo {
+        font-size: 3rem;
+        margin-bottom: 20px;
+      }
+
+      .brand-title {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .brand-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 30px;
+      }
+
+      .form-title {
+        font-size: 2rem;
+        margin-bottom: 30px;
+        color: #333;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e1e8ed;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group.error input {
+        border-color: #e74c3c;
+      }
+
+      .error-message {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .form-group.error .error-message {
+        display: block;
+      }
+
+      .password-requirements {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .requirement {
+        margin: 2px 0;
+      }
+
+      .requirement.valid {
+        color: #28a745;
+      }
+
+      .requirement.invalid {
+        color: #e74c3c;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+      }
+
+      .checkbox-group label {
+        font-size: 0.9rem;
+        font-weight: normal;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .checkbox-group a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .checkbox-group a:hover {
+        text-decoration: underline;
+      }
+
+      .register-button {
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        margin-bottom: 25px;
+        width: 100%;
+      }
+
+      .register-button:hover {
+        transform: translateY(-2px);
+      }
+
+      .register-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .login-link {
+        text-align: center;
+        color: #666;
+      }
+
+      .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .login-link a:hover {
+        text-decoration: underline;
+      }
+
+      .notification {
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .notification.error {
+        background: #ffe6e6;
+        border: 1px solid #ffb3b3;
+        color: #d32f2f;
+      }
+
+      .notification.success {
+        background: #e8f5e8;
+        border: 1px solid #b3d9b3;
+        color: #2e7d2e;
+      }
+
+      .notification.warning {
+        background: #fff3cd;
+        border: 1px solid #ffd700;
+        color: #856404;
+      }
+
+      @media (max-width: 768px) {
+        .register-container {
+          grid-template-columns: 1fr;
+          margin: 20px;
+        }
+
+        .register-visual {
+          order: -1;
+          padding: 30px 20px;
+        }
+
+        .register-form {
+          padding: 30px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="register-form">
+        <h2 class="form-title">Załóż konto</h2>
+
+        <!-- Notifications according to documentation scenarios -->
+        <div class="notification error" id="error-notification">
+          Konto z podanym adresem e-mail lub nazwą użytkownika już istnieje.
+          Zaloguj się na istniejące konto lub wybierz inne dane.
+        </div>
+
+        <div class="notification warning" id="warning-notification">
+          Dokonano zbyt wielu prób rejestracji. Spróbuj ponownie za 10 minut lub
+          skontaktuj się z pomocą techniczną: support@sloochai.com
+        </div>
+
+        <div class="notification success" id="success-notification">
+          Konto zostało pomyślnie założone! Sprawdź swoją skrzynkę e-mail w celu
+          aktywacji konta.
+        </div>
+
+        <!-- Email verification needed notification -->
+        <div class="notification success" id="verification-notification">
+          Konto zostało utworzone! Sprawdź swoją skrzynkę e-mail i kliknij link
+          weryfikacyjny, aby aktywować konto.
+        </div>
+
+        <!-- Server error during registration -->
+        <div class="notification error" id="server-error-notification">
+          Wystąpił błąd serwera podczas tworzenia konta. Spróbuj ponownie za
+          chwilę lub skontaktuj się z pomocą techniczną.
+        </div>
+
+        <!-- Account pending deletion -->
+        <div class="notification warning" id="pending-deletion-notification">
+          Konto z tym adresem e-mail oczekuje na usunięcie. Skontaktuj się z
+          pomocą techniczną aby anulować usunięcie: support@sloochai.com
+        </div>
+
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="email">Adres e-mail</label>
+            <input type="email" id="email" name="email" required />
+            <div class="error-message">Nieprawidłowy format adresu e-mail</div>
+          </div>
+
+          <div class="form-group">
+            <label for="username">Nazwa użytkownika (8-30 znaków)</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              minlength="8"
+              maxlength="30"
+            />
+            <div class="error-message">
+              Nazwa użytkownika musi mieć między 8 a 30 znaków i być unikalna
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Hasło</label>
+            <input type="password" id="password" name="password" required />
+            <div class="password-requirements">
+              <div class="requirement" id="req-length">
+                ✗ Co najmniej 8 znaków
+              </div>
+              <div class="requirement" id="req-special">✗ Znak specjalny</div>
+              <div class="requirement" id="req-uppercase">✗ Duża litera</div>
+              <div class="requirement" id="req-number">✗ Cyfra</div>
+            </div>
+            <div class="error-message">
+              Hasło nie spełnia wymagań bezpieczeństwa
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Potwierdź hasło</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+            />
+            <div class="error-message">Hasła muszą być identyczne</div>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms" name="terms" required />
+            <label for="terms">
+              Zapoznałem się i akceptuję
+              <a href="#" target="_blank">Zasady serwisu</a> oraz
+              <a href="#" target="_blank">Politykę prywatności</a>. Wyrażam
+              zgodę na przetwarzanie moich danych osobowych.
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="register-button"
+            id="submitButton"
+            disabled
+          >
+            Zarejestruj
+          </button>
+        </form>
+
+        <div class="login-link">
+          Masz już konto? <a href="login.html">Zaloguj się</a>
+        </div>
+      </div>
+
+      <div class="register-visual">
+        <div class="logo">🎵</div>
+        <h1 class="brand-title">Sloochai</h1>
+        <p class="brand-subtitle">Dołącz do społeczności muzycznej</p>
+        <div style="margin-top: 30px; text-align: left">
+          <h3>🚀 Co zyskujesz:</h3>
+          <ul style="list-style: none; margin-top: 15px; line-height: 1.8">
+            <li>🎼 Dodawaj własne utwory</li>
+            <li>📝 Twórz playlisty</li>
+            <li>👥 Nawiązuj kontakty</li>
+            <li>💰 Zarabiaj na muzyce</li>
+            <li>📊 Analizuj statystyki</li>
+            <li>🎤 Organizuj wydarzenia live</li>
+            <li>🏆 Zdobywaj wirtualne nagrody</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Password validation according to documentation requirements
+      function validatePassword(password) {
+        const requirements = {
+          length: password.length >= 8,
+          special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+          uppercase: /[A-Z]/.test(password),
+          number: /\d/.test(password),
+        };
+
+        return requirements;
+      }
+
+      // Email validation
+      function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      // Username validation (8-30 characters)
+      function validateUsername(username) {
+        return username.length >= 8 && username.length <= 30;
+      }
+
+      // Real-time password validation
+      document
+        .getElementById("password")
+        .addEventListener("input", function (e) {
+          const password = e.target.value;
+          const requirements = validatePassword(password);
+
+          // Update requirement indicators
+          updateRequirement("req-length", requirements.length);
+          updateRequirement("req-special", requirements.special);
+          updateRequirement("req-uppercase", requirements.uppercase);
+          updateRequirement("req-number", requirements.number);
+
+          checkFormValid();
+        });
+
+      function updateRequirement(id, isValid) {
+        const element = document.getElementById(id);
+        element.className = isValid
+          ? "requirement valid"
+          : "requirement invalid";
+        element.textContent =
+          (isValid ? "✓" : "✗") + " " + element.textContent.substring(2);
+      }
+
+      // Form validation
+      function checkFormValid() {
+        const email = document.getElementById("email").value;
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+        const terms = document.getElementById("terms").checked;
+
+        const emailValid = validateEmail(email);
+        const usernameValid = validateUsername(username);
+        const passwordRequirements = validatePassword(password);
+        const passwordValid = Object.values(passwordRequirements).every(
+          (req) => req
+        );
+        const passwordsMatch =
+          password === confirmPassword && password.length > 0;
+
+        const allValid =
+          emailValid &&
+          usernameValid &&
+          passwordValid &&
+          passwordsMatch &&
+          terms;
+
+        document.getElementById("submitButton").disabled = !allValid;
+      }
+
+      // Real-time validation for all fields
+      ["email", "username", "confirmPassword"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", checkFormValid);
+      });
+
+      document
+        .getElementById("terms")
+        .addEventListener("change", checkFormValid);
+
+      // Form submission
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const email = document.getElementById("email").value;
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+          // Reset previous errors
+          document.querySelectorAll(".form-group").forEach((group) => {
+            group.classList.remove("error");
+          });
+
+          let hasErrors = false;
+
+          // Validate all fields according to documentation
+          if (!validateEmail(email)) {
+            document
+              .getElementById("email")
+              .parentElement.classList.add("error");
+            hasErrors = true;
+          }
+
+          if (!validateUsername(username)) {
+            document
+              .getElementById("username")
+              .parentElement.classList.add("error");
+            hasErrors = true;
+          }
+
+          const passwordRequirements = validatePassword(password);
+          if (!Object.values(passwordRequirements).every((req) => req)) {
+            document
+              .getElementById("password")
+              .parentElement.classList.add("error");
+            hasErrors = true;
+          }
+
+          if (password !== confirmPassword) {
+            document
+              .getElementById("confirmPassword")
+              .parentElement.classList.add("error");
+            hasErrors = true;
+          }
+
+          if (!hasErrors) {
+            // Simulate registration scenarios from documentation
+            const scenario = Math.random();
+
+            if (scenario < 0.1) {
+              // Scenario 2.a - User already exists
+              showNotification("error");
+            } else if (scenario < 0.2) {
+              // Scenario 2.c - Too many attempts
+              showNotification("warning");
+            } else if (scenario < 0.3) {
+              // Scenario - Email verification needed
+              showNotification("verification");
+            } else if (scenario < 0.4) {
+              // Scenario - Account pending deletion
+              showNotification("pending-deletion");
+            } else {
+              // Success - show success message and redirect to verification
+              showNotification("success");
+              setTimeout(() => {
+                window.location.href = "email-verification.html";
+              }, 3000);
+            }
+          }
+        });
+
+      function showNotification(type) {
+        // Hide all notifications first
+        document
+          .querySelectorAll(".notification")
+          .forEach((n) => (n.style.display = "none"));
+
+        // Show the specific notification
+        const notification = document.getElementById(type + "-notification");
+        if (notification) {
+          notification.style.display = "block";
+          if (type !== "success") {
+            setTimeout(() => {
+              notification.style.display = "none";
+            }, 10000);
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
