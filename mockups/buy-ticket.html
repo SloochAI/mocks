@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zakup Biletu - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+        margin: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .breadcrumb {
+        margin-bottom: 1rem;
+        color: #666;
+      }
+
+      .breadcrumb a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .purchase-grid {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .event-info {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .event-header {
+        position: relative;
+        height: 300px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+      }
+
+      .event-poster {
+        width: 200px;
+        height: 200px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        margin-right: 2rem;
+        flex-shrink: 0;
+      }
+
+      .event-details {
+        flex: 1;
+      }
+
+      .event-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .event-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        font-size: 1.1rem;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .meta-icon {
+        font-size: 1.2rem;
+      }
+
+      .event-body {
+        padding: 2rem;
+      }
+
+      .event-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+      }
+
+      .event-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .feature-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .feature-label {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .purchase-panel {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        height: fit-content;
+        position: sticky;
+        top: 120px;
+      }
+
+      .panel-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .panel-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .panel-subtitle {
+        color: #666;
+      }
+
+      .ticket-types {
+        margin-bottom: 2rem;
+      }
+
+      .ticket-type {
+        border: 2px solid #eee;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+      }
+
+      .ticket-type:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+      }
+
+      .ticket-type.selected {
+        border-color: #667eea;
+        background: linear-gradient(45deg, #f8f9ff, #f0f2ff);
+      }
+
+      .ticket-type.selected::after {
+        content: "✓";
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #667eea;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+
+      .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .ticket-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .ticket-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .ticket-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .ticket-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .ticket-feature {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+      }
+
+      .quantity-selector {
+        margin-bottom: 2rem;
+      }
+
+      .quantity-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .quantity-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #667eea;
+        background: white;
+        color: #667eea;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .quantity-btn:hover:not(:disabled) {
+        background: #667eea;
+        color: white;
+      }
+
+      .quantity-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .quantity-display {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        min-width: 40px;
+        text-align: center;
+      }
+
+      .order-summary {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .summary-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        color: #666;
+      }
+
+      .summary-row.total {
+        font-weight: bold;
+        color: #333;
+        font-size: 1.1rem;
+        border-top: 1px solid #ddd;
+        padding-top: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      .purchase-btn {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 1rem;
+      }
+
+      .purchase-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .purchase-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .purchase-info {
+        font-size: 0.8rem;
+        color: #666;
+        text-align: center;
+        line-height: 1.4;
+      }
+
+      .purchase-info a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .availability-info {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .availability-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .availability-text {
+        color: #856404;
+        font-weight: bold;
+      }
+
+      .sold-out {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+
+      .sold-out .availability-text {
+        color: #721c24;
+      }
+
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      .notification.success {
+        background: #28a745;
+      }
+
+      .notification.error {
+        background: #dc3545;
+      }
+
+      .notification.warning {
+        background: #ffc107;
+        color: #333;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .purchase-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .purchase-panel {
+          position: static;
+        }
+
+        .event-header {
+          flex-direction: column;
+          text-align: center;
+          height: auto;
+          padding: 2rem 1rem;
+        }
+
+        .event-poster {
+          width: 150px;
+          height: 150px;
+          margin-right: 0;
+          margin-bottom: 1rem;
+        }
+
+        .event-title {
+          font-size: 2rem;
+        }
+
+        .event-meta {
+          align-items: center;
+        }
+
+        .ticket-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Panel</a>
+          <a href="events.html">Wydarzenia</a>
+          <a href="my-tickets.html">Moje bilety</a>
+          <a href="account-settings.html">Ustawienia</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Panel</a> /
+        <a href="events.html">Wydarzenia</a> / Zakup biletu
+      </div>
+
+      <div class="purchase-grid">
+        <!-- Event Information -->
+        <div class="event-info">
+          <div class="event-header">
+            <div class="event-poster">🎪</div>
+            <div class="event-details">
+              <div class="event-title">Summer Music Festival</div>
+              <div class="event-meta">
+                <div class="meta-item">
+                  <span class="meta-icon">📅</span>
+                  <span>20 sierpnia 2024, 16:00</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">📍</span>
+                  <span>Stadion Miejski, Warszawa</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">⏱️</span>
+                  <span>8 godzin muzyki</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">👥</span>
+                  <span>Do 50,000 osób</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-body">
+            <div class="event-description">
+              <p>
+                Dołącz do nas na największym letnim festiwalu muzycznym w
+                Polsce! Na trzech scenach wystąpią najlepsi artyści z kraju i
+                zagranicy. Przygotowaliśmy dla Was niesamowitą atmosferę, food
+                trucki z całego świata, strefę relaksu i wiele innych atrakcji.
+              </p>
+
+              <p>
+                Nie przegap tej wyjątkowej okazji - bilety w limitowanej ilości!
+              </p>
+            </div>
+
+            <div class="event-features">
+              <div class="feature-item">
+                <div class="feature-icon">🎤</div>
+                <div class="feature-label">3 sceny</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon">🍕</div>
+                <div class="feature-label">Food trucki</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon">🚗</div>
+                <div class="feature-label">Bezpłatny parking</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon">♿</div>
+                <div class="feature-label">Dostępność</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon">🎪</div>
+                <div class="feature-label">Strefa VIP</div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon">💧</div>
+                <div class="feature-label">Bezpłatna woda</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Purchase Panel -->
+        <div class="purchase-panel">
+          <div class="panel-header">
+            <div class="panel-title">🎫 Zakup Biletów</div>
+            <div class="panel-subtitle">Wybierz typ biletu i ilość</div>
+          </div>
+
+          <!-- Ticket Types -->
+          <div class="ticket-types">
+            <div
+              class="ticket-type"
+              data-type="early-bird"
+              data-price="150"
+              data-available="0"
+            >
+              <div class="ticket-header">
+                <div class="ticket-name">Early Bird</div>
+                <div class="ticket-price">150 PLN</div>
+              </div>
+              <div class="ticket-description">
+                Najniższa cena! Podstawowy dostęp do festiwalu.
+              </div>
+              <div class="ticket-features">
+                <span class="ticket-feature">Dostęp do wszystkich scen</span>
+                <span class="ticket-feature">Bezpłatny parking</span>
+              </div>
+              <div class="sold-out availability-info">
+                <div class="availability-icon">🚫</div>
+                <div class="availability-text">Wyprzedane</div>
+              </div>
+            </div>
+
+            <div
+              class="ticket-type selected"
+              data-type="standard"
+              data-price="200"
+              data-available="247"
+            >
+              <div class="ticket-header">
+                <div class="ticket-name">Standardowy</div>
+                <div class="ticket-price">200 PLN</div>
+              </div>
+              <div class="ticket-description">
+                Klasyczny bilet z podstawowymi udogodnieniami.
+              </div>
+              <div class="ticket-features">
+                <span class="ticket-feature">Dostęp do wszystkich scen</span>
+                <span class="ticket-feature">Bezpłatny parking</span>
+                <span class="ticket-feature">Mapa festiwalu</span>
+              </div>
+              <div class="availability-info">
+                <div class="availability-icon">⚡</div>
+                <div class="availability-text">Zostało tylko 247 biletów!</div>
+              </div>
+            </div>
+
+            <div
+              class="ticket-type"
+              data-type="vip"
+              data-price="350"
+              data-available="89"
+            >
+              <div class="ticket-header">
+                <div class="ticket-name">VIP</div>
+                <div class="ticket-price">350 PLN</div>
+              </div>
+              <div class="ticket-description">
+                Premium doświadczenie z dodatkowymi korzyściami.
+              </div>
+              <div class="ticket-features">
+                <span class="ticket-feature">Strefa VIP</span>
+                <span class="ticket-feature">Oddzielny bar</span>
+                <span class="ticket-feature">Lepszy widok</span>
+                <span class="ticket-feature">Welcome drink</span>
+              </div>
+              <div class="availability-info">
+                <div class="availability-icon">✨</div>
+                <div class="availability-text">Dostępne: 89 biletów</div>
+              </div>
+            </div>
+
+            <div
+              class="ticket-type"
+              data-type="premium"
+              data-price="500"
+              data-available="23"
+            >
+              <div class="ticket-header">
+                <div class="ticket-name">Premium</div>
+                <div class="ticket-price">500 PLN</div>
+              </div>
+              <div class="ticket-description">
+                Najwyższy poziom komfortu i ekskluzywności.
+              </div>
+              <div class="ticket-features">
+                <span class="ticket-feature">Backstage access</span>
+                <span class="ticket-feature">Meet & greet</span>
+                <span class="ticket-feature">Premium catering</span>
+                <span class="ticket-feature">Pamiątkowy gadżet</span>
+                <span class="ticket-feature">Dedykowany host</span>
+              </div>
+              <div class="availability-info">
+                <div class="availability-icon">👑</div>
+                <div class="availability-text">
+                  Ekskluzywne - tylko 23 biletów!
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="quantity-selector">
+            <label class="quantity-label">Ilość biletów</label>
+            <div class="quantity-controls">
+              <button
+                class="quantity-btn"
+                id="decreaseBtn"
+                onclick="changeQuantity(-1)"
+              >
+                −
+              </button>
+              <div class="quantity-display" id="quantityDisplay">1</div>
+              <button
+                class="quantity-btn"
+                id="increaseBtn"
+                onclick="changeQuantity(1)"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Order Summary -->
+          <div class="order-summary">
+            <div class="summary-title">📋 Podsumowanie zamówienia</div>
+            <div class="summary-row">
+              <span
+                >Bilet: <span id="selectedTicketName">Standardowy</span></span
+              >
+              <span><span id="ticketPrice">200</span> PLN</span>
+            </div>
+            <div class="summary-row">
+              <span>Ilość: <span id="summaryQuantity">1</span></span>
+              <span><span id="subtotal">200</span> PLN</span>
+            </div>
+            <div class="summary-row">
+              <span>Opłata serwisowa (8%)</span>
+              <span><span id="serviceFee">16</span> PLN</span>
+            </div>
+            <div class="summary-row total">
+              <span>Do zapłaty</span>
+              <span><span id="totalPrice">216</span> PLN</span>
+            </div>
+          </div>
+
+          <!-- Purchase Button -->
+          <button
+            class="purchase-btn"
+            id="purchaseBtn"
+            onclick="proceedToPayment()"
+          >
+            💳 Przejdź do płatności - <span id="buttonTotal">216</span> PLN
+          </button>
+
+          <div class="purchase-info">
+            Klikając "Przejdź do płatności" akceptujesz
+            <a href="#">regulamin</a> i <a href="#">politykę prywatności</a>.
+            Bilety będą dostępne w <a href="my-tickets.html">Twoim panelu</a> po
+            zakończeniu płatności.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="successNotification" class="notification success">
+      ✅ Bilet został dodany do koszyka!
+    </div>
+
+    <div id="errorNotification" class="notification error">
+      ❌ Wystąpił błąd podczas dodawania biletu.
+    </div>
+
+    <div id="warningNotification" class="notification warning">
+      ⚠️ Wybrano maksymalną dostępną ilość biletów.
+    </div>
+
+    <script>
+      let selectedTicketType = "standard";
+      let selectedPrice = 200;
+      let selectedAvailable = 247;
+      let quantity = 1;
+      const maxQuantityPerOrder = 8;
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", () => {
+        updateSummary();
+        updateQuantityButtons();
+      });
+
+      // Ticket type selection
+      document.querySelectorAll(".ticket-type").forEach((ticket) => {
+        ticket.addEventListener("click", () => {
+          const available = parseInt(ticket.dataset.available);
+
+          // Don't allow selection of sold out tickets
+          if (available === 0) {
+            showNotification("warning", "Ten typ biletu jest wyprzedany");
+            return;
+          }
+
+          // Remove selection from all tickets
+          document
+            .querySelectorAll(".ticket-type")
+            .forEach((t) => t.classList.remove("selected"));
+
+          // Select clicked ticket
+          ticket.classList.add("selected");
+
+          // Update selected values
+          selectedTicketType = ticket.dataset.type;
+          selectedPrice = parseInt(ticket.dataset.price);
+          selectedAvailable = available;
+
+          // Reset quantity if it exceeds availability
+          if (quantity > selectedAvailable || quantity > maxQuantityPerOrder) {
+            quantity = Math.min(selectedAvailable, maxQuantityPerOrder, 1);
+            document.getElementById("quantityDisplay").textContent = quantity;
+          }
+
+          updateSummary();
+          updateQuantityButtons();
+        });
+      });
+
+      // Quantity change
+      function changeQuantity(delta) {
+        const newQuantity = quantity + delta;
+        const maxAllowed = Math.min(selectedAvailable, maxQuantityPerOrder);
+
+        if (newQuantity >= 1 && newQuantity <= maxAllowed) {
+          quantity = newQuantity;
+          document.getElementById("quantityDisplay").textContent = quantity;
+          updateSummary();
+          updateQuantityButtons();
+        } else if (newQuantity > maxAllowed) {
+          if (maxAllowed === maxQuantityPerOrder) {
+            showNotification(
+              "warning",
+              `Maksymalnie ${maxQuantityPerOrder} biletów na zamówienie`
+            );
+          } else {
+            showNotification(
+              "warning",
+              `Dostępne tylko ${selectedAvailable} biletów tego typu`
+            );
+          }
+        }
+      }
+
+      // Update quantity buttons
+      function updateQuantityButtons() {
+        const decreaseBtn = document.getElementById("decreaseBtn");
+        const increaseBtn = document.getElementById("increaseBtn");
+        const maxAllowed = Math.min(selectedAvailable, maxQuantityPerOrder);
+
+        decreaseBtn.disabled = quantity <= 1;
+        increaseBtn.disabled = quantity >= maxAllowed;
+      }
+
+      // Update order summary
+      function updateSummary() {
+        const ticketNames = {
+          "early-bird": "Early Bird",
+          standard: "Standardowy",
+          vip: "VIP",
+          premium: "Premium",
+        };
+
+        const subtotal = selectedPrice * quantity;
+        const serviceFee = Math.round(subtotal * 0.08);
+        const total = subtotal + serviceFee;
+
+        document.getElementById("selectedTicketName").textContent =
+          ticketNames[selectedTicketType];
+        document.getElementById("ticketPrice").textContent = selectedPrice;
+        document.getElementById("summaryQuantity").textContent = quantity;
+        document.getElementById("subtotal").textContent = subtotal;
+        document.getElementById("serviceFee").textContent = serviceFee;
+        document.getElementById("totalPrice").textContent = total;
+        document.getElementById("buttonTotal").textContent = total;
+      }
+
+      // Proceed to payment
+      function proceedToPayment() {
+        // Check if selected ticket is available
+        if (selectedAvailable === 0) {
+          showNotification("error", "Wybrany typ biletu jest wyprzedany");
+          return;
+        }
+
+        // Simulate adding to cart and redirecting to payment
+        const ticketNames = {
+          "early-bird": "Early Bird",
+          standard: "Standardowy",
+          vip: "VIP",
+          premium: "Premium",
+        };
+
+        const orderData = {
+          ticketType: selectedTicketType,
+          ticketName: ticketNames[selectedTicketType],
+          price: selectedPrice,
+          quantity: quantity,
+          total:
+            selectedPrice * quantity +
+            Math.round(selectedPrice * quantity * 0.08),
+          eventId: "smf-2024",
+          eventName: "Summer Music Festival",
+        };
+
+        // Store order data for payment page
+        localStorage.setItem("pendingOrder", JSON.stringify(orderData));
+
+        showNotification(
+          "success",
+          `${quantity} bilet(ów) ${ticketNames[selectedTicketType]} dodano do koszyka`
+        );
+
+        // Redirect to payment after delay
+        setTimeout(() => {
+          // In real app, this would redirect to payment gateway
+          window.location.href = "payment.html";
+        }, 1500);
+      }
+
+      // Notification system
+      function showNotification(type, message) {
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          notification.textContent = message;
+          notification.style.display = "block";
+
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 4000);
+        }
+      }
+
+      // Simulate real-time availability updates
+      setInterval(() => {
+        // Randomly decrease availability for demonstration
+        if (Math.random() < 0.1) {
+          // 10% chance every 30 seconds
+          document.querySelectorAll(".ticket-type").forEach((ticket) => {
+            let available = parseInt(ticket.dataset.available);
+            if (available > 0 && Math.random() < 0.3) {
+              available = Math.max(
+                0,
+                available - Math.floor(Math.random() * 3) - 1
+              );
+              ticket.dataset.available = available;
+
+              const availabilityInfo =
+                ticket.querySelector(".availability-info");
+              const availabilityText =
+                ticket.querySelector(".availability-text");
+
+              if (available === 0) {
+                availabilityInfo.classList.add("sold-out");
+                availabilityText.textContent = "Wyprzedane";
+                ticket.style.opacity = "0.6";
+                ticket.style.pointerEvents = "none";
+              } else {
+                if (available < 50) {
+                  availabilityText.textContent = `Zostało tylko ${available} biletów!`;
+                } else {
+                  availabilityText.textContent = `Dostępne: ${available} biletów`;
+                }
+              }
+
+              // Update if this is the selected ticket
+              if (ticket.classList.contains("selected")) {
+                selectedAvailable = available;
+                updateQuantityButtons();
+
+                if (quantity > available) {
+                  quantity = Math.max(1, available);
+                  document.getElementById("quantityDisplay").textContent =
+                    quantity;
+                  updateSummary();
+                }
+              }
+            }
+          });
+        }
+      }, 30000); // Check every 30 seconds
+    </script>
+  </body>
+</html>

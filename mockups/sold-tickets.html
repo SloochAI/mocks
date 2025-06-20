@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista Sprzedanych Biletów - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+        margin: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .breadcrumb {
+        margin-bottom: 1rem;
+        color: #666;
+      }
+
+      .breadcrumb a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .page-header {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-content-left {
+        flex: 1;
+      }
+
+      .page-header h2 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+      }
+
+      .page-header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .event-selector {
+        min-width: 300px;
+      }
+
+      .event-selector select {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .stat-change {
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+      }
+
+      .stat-change.positive {
+        color: #28a745;
+      }
+
+      .stat-change.negative {
+        color: #dc3545;
+      }
+
+      .controls-section {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .filters {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .filter-group label {
+        font-weight: bold;
+        color: #333;
+        white-space: nowrap;
+      }
+
+      .filter-group select,
+      .filter-group input {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+      }
+
+      .search-input {
+        min-width: 200px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 1rem;
+      }
+
+      .export-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .export-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #f8f9fa;
+        color: #666;
+        border: 1px solid #ddd;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-secondary:hover {
+        background: #e9ecef;
+        color: #333;
+      }
+
+      .tickets-table {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+      }
+
+      .table-header {
+        background: #f8f9fa;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .table-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .table-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .table-content {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+
+      th {
+        background: #f8f9fa;
+        font-weight: bold;
+        color: #333;
+        position: sticky;
+        top: 0;
+      }
+
+      tbody tr:hover {
+        background: #f8f9fa;
+      }
+
+      .ticket-id {
+        font-family: monospace;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .buyer-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .buyer-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+
+      .buyer-details {
+        flex: 1;
+      }
+
+      .buyer-name {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .buyer-email {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .status-sold {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-used {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .status-refunded {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .ticket-actions {
+        display: flex;
+        gap: 0.25rem;
+      }
+
+      .action-btn-small {
+        padding: 0.25rem 0.5rem;
+        border: none;
+        border-radius: 3px;
+        font-size: 0.7rem;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .action-view {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .action-edit {
+        background: #f3e5f5;
+        color: #7b1fa2;
+      }
+
+      .action-cancel {
+        background: #ffebee;
+        color: #d32f2f;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+      }
+
+      .pagination button {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .pagination button:hover:not(:disabled) {
+        background: #f8f9fa;
+      }
+
+      .pagination button.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
+      .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .empty-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .empty-text {
+        color: #666;
+        margin-bottom: 2rem;
+      }
+
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      .notification.success {
+        background: #28a745;
+      }
+
+      .notification.error {
+        background: #dc3545;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .page-header {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 1rem;
+        }
+
+        .event-selector {
+          min-width: auto;
+        }
+
+        .controls-section {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .filters {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .filter-group {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .search-input {
+          width: 100%;
+        }
+
+        .export-buttons {
+          justify-content: center;
+        }
+
+        .table-content {
+          font-size: 0.9rem;
+        }
+
+        th,
+        td {
+          padding: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Panel</a>
+          <a href="events.html">Wydarzenia</a>
+          <a href="profile.html">Profil</a>
+          <a href="account-settings.html">Ustawienia</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Panel</a> /
+        <a href="events.html">Wydarzenia</a> / Lista sprzedanych biletów
+      </div>
+
+      <div class="page-header">
+        <div class="header-content-left">
+          <h2>📊 Lista Sprzedanych Biletów</h2>
+          <p>Zarządzaj biletami sprzedanymi na swoje wydarzenia</p>
+        </div>
+        <div class="event-selector">
+          <select id="eventSelect">
+            <option value="all">Wszystkie wydarzenia</option>
+            <option value="smf-2024" selected>
+              Summer Music Festival 2024
+            </option>
+            <option value="jazz-evening">Jazz Evening - Blue Note</option>
+            <option value="rock-legends">Rock Legends Live</option>
+            <option value="indie-night">Indie Night Special</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🎫</div>
+          <div class="stat-number">1,847</div>
+          <div class="stat-label">Sprzedane bilety</div>
+          <div class="stat-change positive">+12% od wczoraj</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-number">164,230</div>
+          <div class="stat-label">Przychód (PLN)</div>
+          <div class="stat-change positive">+8% od wczoraj</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-number">1,653</div>
+          <div class="stat-label">Unikalni kupujący</div>
+          <div class="stat-change positive">+15% od wczoraj</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📈</div>
+          <div class="stat-number">92.4%</div>
+          <div class="stat-label">Wypełnienie</div>
+          <div class="stat-change positive">+5% od wczoraj</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-number">89</div>
+          <div class="stat-label">Średnia cena</div>
+          <div class="stat-change negative">-2% od wczoraj</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-number">23</div>
+          <div class="stat-label">Zwroty</div>
+          <div class="stat-change positive">-8% od wczoraj</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-section">
+        <div class="filters">
+          <div class="filter-group">
+            <label>Status:</label>
+            <select id="statusFilter">
+              <option value="all">Wszystkie</option>
+              <option value="sold">Sprzedane</option>
+              <option value="used">Wykorzystane</option>
+              <option value="cancelled">Anulowane</option>
+              <option value="refunded">Zwrócone</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Typ biletu:</label>
+            <select id="typeFilter">
+              <option value="all">Wszystkie typy</option>
+              <option value="early-bird">Early Bird</option>
+              <option value="standard">Standardowy</option>
+              <option value="vip">VIP</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Data:</label>
+            <input type="date" id="dateFilter" />
+          </div>
+
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="🔍 Szukaj po kupującym lub numerze biletu..."
+          />
+        </div>
+
+        <div class="export-buttons">
+          <button class="export-btn btn-secondary" onclick="exportCSV()">
+            📊 Eksport CSV
+          </button>
+          <button class="export-btn btn-secondary" onclick="exportPDF()">
+            📄 Eksport PDF
+          </button>
+          <button class="export-btn btn-primary" onclick="printTickets()">
+            🖨️ Drukuj
+          </button>
+        </div>
+      </div>
+
+      <!-- Tickets Table -->
+      <div class="tickets-table">
+        <div class="table-header">
+          <div class="table-title">Lista Biletów</div>
+          <div class="table-actions">
+            <button class="export-btn btn-secondary" onclick="selectAll()">
+              Zaznacz wszystkie
+            </button>
+            <button class="export-btn btn-secondary" onclick="bulkAction()">
+              Akcje grupowe
+            </button>
+          </div>
+        </div>
+
+        <div class="table-content">
+          <table id="ticketsTable">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="selectAllCheckbox" /></th>
+                <th>Numer biletu</th>
+                <th>Kupujący</th>
+                <th>Typ biletu</th>
+                <th>Cena</th>
+                <th>Data zakupu</th>
+                <th>Status</th>
+                <th>Akcje</th>
+              </tr>
+            </thead>
+            <tbody id="ticketsTableBody">
+              <!-- Tickets will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <button id="prevPage" onclick="changePage(-1)">‹ Poprzednia</button>
+        <span id="pageInfo">Strona 1 z 15</span>
+        <button id="nextPage" onclick="changePage(1)">Następna ›</button>
+      </div>
+
+      <!-- Empty State (hidden by default) -->
+      <div class="empty-state" id="emptyState" style="display: none">
+        <div class="empty-icon">🎫</div>
+        <div class="empty-title">Brak sprzedanych biletów</div>
+        <div class="empty-text">
+          Nie znaleziono biletów pasujących do wybranych filtrów
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="successNotification" class="notification success">
+      ✅ Operacja wykonana pomyślnie!
+    </div>
+
+    <div id="errorNotification" class="notification error">
+      ❌ Wystąpił błąd podczas wykonywania operacji.
+    </div>
+
+    <script>
+      // Sample ticket data
+      const sampleTickets = [
+        {
+          id: "SMF-2024-001",
+          buyer: {
+            name: "Anna Kowalska",
+            email: "anna@email.com",
+            avatar: "AK",
+          },
+          type: "Early Bird",
+          price: 150,
+          purchaseDate: "2024-05-15",
+          status: "sold",
+          used: false,
+        },
+        {
+          id: "SMF-2024-002",
+          buyer: {
+            name: "Piotr Nowak",
+            email: "piotr@email.com",
+            avatar: "PN",
+          },
+          type: "VIP",
+          price: 299,
+          purchaseDate: "2024-05-16",
+          status: "used",
+          used: true,
+        },
+        {
+          id: "SMF-2024-003",
+          buyer: {
+            name: "Maria Wiśniewska",
+            email: "maria@email.com",
+            avatar: "MW",
+          },
+          type: "Standard",
+          price: 200,
+          purchaseDate: "2024-05-17",
+          status: "sold",
+          used: false,
+        },
+        {
+          id: "SMF-2024-004",
+          buyer: {
+            name: "Tomasz Łukasik",
+            email: "tomasz@email.com",
+            avatar: "TŁ",
+          },
+          type: "Premium",
+          price: 250,
+          purchaseDate: "2024-05-18",
+          status: "cancelled",
+          used: false,
+        },
+        {
+          id: "SMF-2024-005",
+          buyer: {
+            name: "Katarzyna Maj",
+            email: "katarzyna@email.com",
+            avatar: "KM",
+          },
+          type: "Early Bird",
+          price: 150,
+          purchaseDate: "2024-05-19",
+          status: "refunded",
+          used: false,
+        },
+      ];
+
+      let currentPage = 1;
+      const itemsPerPage = 20;
+      let filteredTickets = [...sampleTickets];
+
+      // Initialize page
+      function init() {
+        // Generate more sample data
+        for (let i = 6; i <= 100; i++) {
+          const types = ["Early Bird", "Standard", "VIP", "Premium"];
+          const statuses = ["sold", "used", "cancelled", "refunded"];
+          const names = [
+            "Jan Kowalski",
+            "Anna Nowak",
+            "Piotr Wiśniewski",
+            "Maria Kowalczyk",
+            "Tomasz Kamiński",
+          ];
+
+          const randomName = names[Math.floor(Math.random() * names.length)];
+          const nameParts = randomName.split(" ");
+          const avatar = nameParts[0][0] + nameParts[1][0];
+
+          sampleTickets.push({
+            id: `SMF-2024-${i.toString().padStart(3, "0")}`,
+            buyer: {
+              name: randomName,
+              email: `${randomName.toLowerCase().replace(" ", ".")}@email.com`,
+              avatar: avatar,
+            },
+            type: types[Math.floor(Math.random() * types.length)],
+            price: Math.floor(Math.random() * 200) + 100,
+            purchaseDate: `2024-05-${Math.floor(Math.random() * 30) + 1}`,
+            status: statuses[Math.floor(Math.random() * statuses.length)],
+            used: Math.random() > 0.7,
+          });
+        }
+
+        filteredTickets = [...sampleTickets];
+        renderTable();
+        updatePagination();
+      }
+
+      // Render table
+      function renderTable() {
+        const tbody = document.getElementById("ticketsTableBody");
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageTickets = filteredTickets.slice(startIndex, endIndex);
+
+        tbody.innerHTML = "";
+
+        pageTickets.forEach((ticket) => {
+          const row = document.createElement("tr");
+
+          const statusClass = `status-${ticket.status}`;
+          const statusText = {
+            sold: "Sprzedany",
+            used: "Wykorzystany",
+            cancelled: "Anulowany",
+            refunded: "Zwrócony",
+          }[ticket.status];
+
+          row.innerHTML = `
+            <td><input type="checkbox" class="ticket-checkbox" data-id="${
+              ticket.id
+            }"></td>
+            <td><span class="ticket-id">${ticket.id}</span></td>
+            <td>
+              <div class="buyer-info">
+                <div class="buyer-avatar">${ticket.buyer.avatar}</div>
+                <div class="buyer-details">
+                  <div class="buyer-name">${ticket.buyer.name}</div>
+                  <div class="buyer-email">${ticket.buyer.email}</div>
+                </div>
+              </div>
+            </td>
+            <td>${ticket.type}</td>
+            <td>${ticket.price} PLN</td>
+            <td>${new Date(ticket.purchaseDate).toLocaleDateString(
+              "pl-PL"
+            )}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>
+              <div class="ticket-actions">
+                <button class="action-btn-small action-view" onclick="viewTicket('${
+                  ticket.id
+                }')">👁️</button>
+                <button class="action-btn-small action-edit" onclick="editTicket('${
+                  ticket.id
+                }')">✏️</button>
+                ${
+                  ticket.status === "sold"
+                    ? `<button class="action-btn-small action-cancel" onclick="cancelTicket('${ticket.id}')">❌</button>`
+                    : ""
+                }
+              </div>
+            </td>
+          `;
+
+          tbody.appendChild(row);
+        });
+
+        // Show/hide empty state
+        const emptyState = document.getElementById("emptyState");
+        const ticketsTable = document.querySelector(".tickets-table");
+
+        if (filteredTickets.length === 0) {
+          ticketsTable.style.display = "none";
+          emptyState.style.display = "block";
+        } else {
+          ticketsTable.style.display = "block";
+          emptyState.style.display = "none";
+        }
+      }
+
+      // Update pagination
+      function updatePagination() {
+        const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+        const pageInfo = document.getElementById("pageInfo");
+        const prevButton = document.getElementById("prevPage");
+        const nextButton = document.getElementById("nextPage");
+
+        pageInfo.textContent = `Strona ${currentPage} z ${totalPages}`;
+        prevButton.disabled = currentPage === 1;
+        nextButton.disabled = currentPage === totalPages;
+      }
+
+      // Change page
+      function changePage(direction) {
+        const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+        const newPage = currentPage + direction;
+
+        if (newPage >= 1 && newPage <= totalPages) {
+          currentPage = newPage;
+          renderTable();
+          updatePagination();
+        }
+      }
+
+      // Filter tickets
+      function filterTickets() {
+        const statusFilter = document.getElementById("statusFilter").value;
+        const typeFilter = document.getElementById("typeFilter").value;
+        const dateFilter = document.getElementById("dateFilter").value;
+        const searchInput = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+
+        filteredTickets = sampleTickets.filter((ticket) => {
+          const matchesStatus =
+            statusFilter === "all" || ticket.status === statusFilter;
+          const matchesType =
+            typeFilter === "all" ||
+            ticket.type.toLowerCase().includes(typeFilter.toLowerCase());
+          const matchesDate = !dateFilter || ticket.purchaseDate === dateFilter;
+          const matchesSearch =
+            !searchInput ||
+            ticket.buyer.name.toLowerCase().includes(searchInput) ||
+            ticket.buyer.email.toLowerCase().includes(searchInput) ||
+            ticket.id.toLowerCase().includes(searchInput);
+
+          return matchesStatus && matchesType && matchesDate && matchesSearch;
+        });
+
+        currentPage = 1;
+        renderTable();
+        updatePagination();
+      }
+
+      // Event listeners
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", filterTickets);
+      document
+        .getElementById("typeFilter")
+        .addEventListener("change", filterTickets);
+      document
+        .getElementById("dateFilter")
+        .addEventListener("change", filterTickets);
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", filterTickets);
+
+      // Ticket actions
+      function viewTicket(ticketId) {
+        showNotification(
+          "success",
+          `Wyświetlanie szczegółów biletu ${ticketId}`
+        );
+        console.log(`Viewing ticket ${ticketId}`);
+      }
+
+      function editTicket(ticketId) {
+        showNotification("success", `Edytowanie biletu ${ticketId}`);
+        console.log(`Editing ticket ${ticketId}`);
+      }
+
+      function cancelTicket(ticketId) {
+        if (confirm(`Czy na pewno chcesz anulować bilet ${ticketId}?`)) {
+          showNotification("success", `Bilet ${ticketId} został anulowany`);
+
+          // Update ticket status in sample data
+          const ticket = sampleTickets.find((t) => t.id === ticketId);
+          if (ticket) {
+            ticket.status = "cancelled";
+            filterTickets();
+          }
+        }
+      }
+
+      // Export functions
+      function exportCSV() {
+        showNotification("success", "Eksportowanie danych do CSV...");
+        console.log("Exporting to CSV");
+      }
+
+      function exportPDF() {
+        showNotification("success", "Generowanie raportu PDF...");
+        console.log("Exporting to PDF");
+      }
+
+      function printTickets() {
+        showNotification("success", "Przygotowywanie do druku...");
+        console.log("Printing tickets");
+      }
+
+      // Select all functionality
+      function selectAll() {
+        const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        const ticketCheckboxes = document.querySelectorAll(".ticket-checkbox");
+
+        const allChecked = Array.from(ticketCheckboxes).every(
+          (cb) => cb.checked
+        );
+
+        ticketCheckboxes.forEach((cb) => {
+          cb.checked = !allChecked;
+        });
+
+        selectAllCheckbox.checked = !allChecked;
+      }
+
+      function bulkAction() {
+        const checkedTickets = Array.from(
+          document.querySelectorAll(".ticket-checkbox:checked")
+        );
+
+        if (checkedTickets.length === 0) {
+          showNotification("error", "Nie wybrano żadnych biletów");
+          return;
+        }
+
+        const ticketIds = checkedTickets.map((cb) => cb.dataset.id);
+        showNotification(
+          "success",
+          `Wykonywanie akcji dla ${ticketIds.length} biletów`
+        );
+        console.log("Bulk action for tickets:", ticketIds);
+      }
+
+      // Notification system
+      function showNotification(type, message) {
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          notification.textContent = message;
+          notification.style.display = "block";
+
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 4000);
+        }
+      }
+
+      // Initialize page
+      init();
+    </script>
+  </body>
+</html>

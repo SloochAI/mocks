@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wypłata Środków - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+        margin: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .breadcrumb {
+        margin-bottom: 1rem;
+        color: #666;
+      }
+
+      .breadcrumb a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .page-header {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .page-header h2 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+      }
+
+      .page-header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .payout-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .earnings-card {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .earnings-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .earnings-icon {
+        font-size: 2rem;
+        margin-right: 1rem;
+      }
+
+      .earnings-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .balance-display {
+        text-align: center;
+        margin: 2rem 0;
+      }
+
+      .balance-amount {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 0.5rem;
+      }
+
+      .balance-currency {
+        font-size: 1.2rem;
+        color: #666;
+      }
+
+      .earnings-breakdown {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .breakdown-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      .breakdown-amount {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+      }
+
+      .breakdown-label {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .payout-form {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .form-header {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .form-header h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-header p {
+        color: #666;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .amount-selector {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .amount-btn {
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        color: #333;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+      }
+
+      .amount-btn:hover {
+        border-color: #667eea;
+        background: #f0f2ff;
+      }
+
+      .amount-btn.selected {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+      }
+
+      .custom-amount {
+        margin-top: 1rem;
+        display: none;
+      }
+
+      .fee-info {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .fee-info h4 {
+        color: #856404;
+        margin-bottom: 0.5rem;
+      }
+
+      .fee-breakdown {
+        display: flex;
+        justify-content: space-between;
+        margin: 0.5rem 0;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .submit-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .payout-history {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .history-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .filter-select {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        transition: background 0.3s;
+      }
+
+      .history-item:hover {
+        background: #f8f9fa;
+      }
+
+      .history-details {
+        flex: 1;
+      }
+
+      .history-date {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.25rem;
+      }
+
+      .history-method {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .history-amount {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #28a745;
+      }
+
+      .history-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-left: 1rem;
+      }
+
+      .status-completed {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-processing {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      .notification.success {
+        background: #28a745;
+      }
+
+      .notification.error {
+        background: #dc3545;
+      }
+
+      .notification.warning {
+        background: #ffc107;
+        color: #333;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .payout-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .amount-selector {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .history-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .history-status {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Panel</a>
+          <a href="profile.html">Profil</a>
+          <a href="account-settings.html">Ustawienia</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Panel</a> /
+        <a href="account-settings.html">Konto</a> / Wypłata środków
+      </div>
+
+      <div class="page-header">
+        <h2>💰 Wypłata Środków</h2>
+        <p>Wypłać zgromadzone tantiemy i dotacje z konta artysty</p>
+      </div>
+
+      <div class="payout-grid">
+        <!-- Current Earnings -->
+        <div class="earnings-card">
+          <div class="earnings-header">
+            <div class="earnings-icon">💎</div>
+            <div class="earnings-title">Dostępne Środki</div>
+          </div>
+
+          <div class="balance-display">
+            <div class="balance-amount">2,847.50</div>
+            <div class="balance-currency">PLN</div>
+          </div>
+
+          <div class="earnings-breakdown">
+            <div class="breakdown-item">
+              <div class="breakdown-amount">1,923.00</div>
+              <div class="breakdown-label">Tantiemy</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-amount">924.50</div>
+              <div class="breakdown-label">Dotacje</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Stats -->
+        <div class="earnings-card">
+          <div class="earnings-header">
+            <div class="earnings-icon">📈</div>
+            <div class="earnings-title">Statystyki Miesiąca</div>
+          </div>
+
+          <div class="earnings-breakdown">
+            <div class="breakdown-item">
+              <div class="breakdown-amount">847.50</div>
+              <div class="breakdown-label">Nowe przychody</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-amount">2,000.00</div>
+              <div class="breakdown-label">Wypłacone</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-amount">15,423</div>
+              <div class="breakdown-label">Odsłuchy</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-amount">47</div>
+              <div class="breakdown-label">Dotacje</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payout Form -->
+      <div class="payout-form">
+        <div class="form-header">
+          <h3>🏦 Złóż Wniosek o Wypłatę</h3>
+          <p>Minimalna kwota wypłaty: 50 PLN</p>
+        </div>
+
+        <form id="payoutForm">
+          <div class="form-group">
+            <label>Kwota do wypłaty</label>
+            <div class="amount-selector">
+              <button type="button" class="amount-btn" data-amount="100">
+                100 PLN
+              </button>
+              <button type="button" class="amount-btn" data-amount="500">
+                500 PLN
+              </button>
+              <button type="button" class="amount-btn" data-amount="1000">
+                1000 PLN
+              </button>
+              <button type="button" class="amount-btn" data-amount="2847.50">
+                Cała kwota
+              </button>
+              <button type="button" class="amount-btn" data-amount="custom">
+                Inna kwota
+              </button>
+            </div>
+
+            <div class="custom-amount" id="customAmountGroup">
+              <input
+                type="number"
+                id="customAmount"
+                placeholder="Wprowadź kwotę (50 - 2,847.50 PLN)"
+                min="50"
+                max="2847.50"
+                step="0.01"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="paymentMethod">Metoda wypłaty</label>
+            <select id="paymentMethod" required>
+              <option value="">Wybierz metodę wypłaty</option>
+              <option value="bank_transfer">Przelew bankowy</option>
+              <option value="paypal">PayPal</option>
+              <option value="blik">BLIK</option>
+            </select>
+          </div>
+
+          <div id="bankDetails" style="display: none">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="accountNumber">Numer konta</label>
+                <input
+                  type="text"
+                  id="accountNumber"
+                  placeholder="XX XXXX XXXX XXXX XXXX XXXX XXXX"
+                />
+              </div>
+              <div class="form-group">
+                <label for="bankName">Nazwa banku</label>
+                <input
+                  type="text"
+                  id="bankName"
+                  placeholder="np. PKO Bank Polski"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="accountHolder">Właściciel konta</label>
+                <input
+                  type="text"
+                  id="accountHolder"
+                  placeholder="Imię i nazwisko"
+                />
+              </div>
+              <div class="form-group">
+                <label for="swift">Kod SWIFT (opcjonalnie)</label>
+                <input type="text" id="swift" placeholder="BPKOPLPW" />
+              </div>
+            </div>
+          </div>
+
+          <div id="paypalDetails" style="display: none">
+            <div class="form-group">
+              <label for="paypalEmail">Adres email PayPal</label>
+              <input
+                type="email"
+                id="paypalEmail"
+                placeholder="twoj@email.com"
+              />
+            </div>
+          </div>
+
+          <div id="blikDetails" style="display: none">
+            <div class="form-group">
+              <label for="phoneNumber">Numer telefonu</label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                placeholder="+48 XXX XXX XXX"
+              />
+            </div>
+          </div>
+
+          <div class="fee-info" id="feeInfo" style="display: none">
+            <h4>💳 Informacje o opłatach</h4>
+            <div class="fee-breakdown">
+              <span>Kwota wypłaty:</span>
+              <span id="payoutAmount">0.00 PLN</span>
+            </div>
+            <div class="fee-breakdown">
+              <span>Opłata serwisowa (2%):</span>
+              <span id="serviceFee">0.00 PLN</span>
+            </div>
+            <div
+              class="fee-breakdown"
+              style="
+                border-top: 1px solid #ddd;
+                padding-top: 0.5rem;
+                margin-top: 0.5rem;
+                font-weight: bold;
+              "
+            >
+              <span>Do otrzymania:</span>
+              <span id="finalAmount">0.00 PLN</span>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn" disabled>
+            Złóż wniosek o wypłatę
+          </button>
+        </form>
+      </div>
+
+      <!-- Payout History -->
+      <div class="payout-history">
+        <div class="history-header">
+          <div class="history-title">📋 Historia Wypłat</div>
+          <select class="filter-select" id="historyFilter">
+            <option value="all">Wszystkie</option>
+            <option value="completed">Zakończone</option>
+            <option value="pending">Oczekujące</option>
+            <option value="processing">W trakcie</option>
+          </select>
+        </div>
+
+        <div class="history-list" id="historyList">
+          <div class="history-item" data-status="completed">
+            <div class="history-details">
+              <div class="history-date">15 maja 2024</div>
+              <div class="history-method">
+                Przelew bankowy • PKO Bank Polski
+              </div>
+            </div>
+            <div class="history-amount">2,000.00 PLN</div>
+            <div class="history-status status-completed">Zakończone</div>
+          </div>
+
+          <div class="history-item" data-status="processing">
+            <div class="history-details">
+              <div class="history-date">28 maja 2024</div>
+              <div class="history-method">PayPal • marta@email.com</div>
+            </div>
+            <div class="history-amount">750.00 PLN</div>
+            <div class="history-status status-processing">W trakcie</div>
+          </div>
+
+          <div class="history-item" data-status="pending">
+            <div class="history-details">
+              <div class="history-date">2 czerwca 2024</div>
+              <div class="history-method">BLIK • +48 XXX XXX 123</div>
+            </div>
+            <div class="history-amount">300.00 PLN</div>
+            <div class="history-status status-pending">Oczekujące</div>
+          </div>
+
+          <div class="history-item" data-status="completed">
+            <div class="history-details">
+              <div class="history-date">8 czerwca 2024</div>
+              <div class="history-method">Przelew bankowy • mBank</div>
+            </div>
+            <div class="history-amount">1,200.00 PLN</div>
+            <div class="history-status status-completed">Zakończone</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="successNotification" class="notification success">
+      ✅ Wniosek o wypłatę został złożony pomyślnie!
+    </div>
+
+    <div id="errorNotification" class="notification error">
+      ❌ Wystąpił błąd podczas składania wniosku.
+    </div>
+
+    <div id="warningNotification" class="notification warning">
+      ⚠️ Sprawdź wprowadzone dane i spróbuj ponownie.
+    </div>
+
+    <script>
+      let selectedAmount = 0;
+
+      // Amount selection
+      document.querySelectorAll(".amount-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".amount-btn")
+            .forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+
+          const amount = btn.dataset.amount;
+          if (amount === "custom") {
+            document.getElementById("customAmountGroup").style.display =
+              "block";
+            selectedAmount = 0;
+          } else {
+            document.getElementById("customAmountGroup").style.display = "none";
+            selectedAmount = parseFloat(amount);
+          }
+
+          updateFeeInfo();
+          validateForm();
+        });
+      });
+
+      // Custom amount input
+      document.getElementById("customAmount").addEventListener("input", (e) => {
+        selectedAmount = parseFloat(e.target.value) || 0;
+        updateFeeInfo();
+        validateForm();
+      });
+
+      // Payment method selection
+      document
+        .getElementById("paymentMethod")
+        .addEventListener("change", (e) => {
+          // Hide all payment details
+          document.getElementById("bankDetails").style.display = "none";
+          document.getElementById("paypalDetails").style.display = "none";
+          document.getElementById("blikDetails").style.display = "none";
+
+          // Show selected payment method details
+          const method = e.target.value;
+          if (method === "bank_transfer") {
+            document.getElementById("bankDetails").style.display = "block";
+          } else if (method === "paypal") {
+            document.getElementById("paypalDetails").style.display = "block";
+          } else if (method === "blik") {
+            document.getElementById("blikDetails").style.display = "block";
+          }
+
+          validateForm();
+        });
+
+      // Update fee information
+      function updateFeeInfo() {
+        if (selectedAmount >= 50) {
+          const serviceFee = selectedAmount * 0.02;
+          const finalAmount = selectedAmount - serviceFee;
+
+          document.getElementById("payoutAmount").textContent =
+            selectedAmount.toFixed(2) + " PLN";
+          document.getElementById("serviceFee").textContent =
+            serviceFee.toFixed(2) + " PLN";
+          document.getElementById("finalAmount").textContent =
+            finalAmount.toFixed(2) + " PLN";
+          document.getElementById("feeInfo").style.display = "block";
+        } else {
+          document.getElementById("feeInfo").style.display = "none";
+        }
+      }
+
+      // Form validation
+      function validateForm() {
+        const paymentMethod = document.getElementById("paymentMethod").value;
+        const isAmountValid = selectedAmount >= 50 && selectedAmount <= 2847.5;
+        const isMethodSelected = paymentMethod !== "";
+
+        let isMethodDetailsValid = false;
+
+        if (paymentMethod === "bank_transfer") {
+          const accountNumber = document
+            .getElementById("accountNumber")
+            .value.trim();
+          const bankName = document.getElementById("bankName").value.trim();
+          const accountHolder = document
+            .getElementById("accountHolder")
+            .value.trim();
+          isMethodDetailsValid = accountNumber && bankName && accountHolder;
+        } else if (paymentMethod === "paypal") {
+          const paypalEmail = document
+            .getElementById("paypalEmail")
+            .value.trim();
+          isMethodDetailsValid = paypalEmail && paypalEmail.includes("@");
+        } else if (paymentMethod === "blik") {
+          const phoneNumber = document
+            .getElementById("phoneNumber")
+            .value.trim();
+          isMethodDetailsValid = phoneNumber && phoneNumber.length >= 9;
+        }
+
+        const submitBtn = document.getElementById("submitBtn");
+        const isValid =
+          isAmountValid && isMethodSelected && isMethodDetailsValid;
+
+        submitBtn.disabled = !isValid;
+        submitBtn.textContent = isValid
+          ? `Złóż wniosek o wypłatę ${selectedAmount.toFixed(2)} PLN`
+          : "Wypełnij wszystkie wymagane pola";
+      }
+
+      // Form submission
+      document.getElementById("payoutForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (selectedAmount < 50) {
+          showNotification("warning", "Minimalna kwota wypłaty to 50 PLN");
+          return;
+        }
+
+        if (selectedAmount > 2847.5) {
+          showNotification("warning", "Kwota przekracza dostępne środki");
+          return;
+        }
+
+        // Show loading state
+        const submitBtn = document.getElementById("submitBtn");
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = "Przetwarzanie...";
+        submitBtn.disabled = true;
+
+        // Simulate processing
+        setTimeout(() => {
+          const success = Math.random() > 0.1; // 90% success rate
+
+          if (success) {
+            showNotification(
+              "success",
+              "Wniosek o wypłatę został złożony pomyślnie!"
+            );
+
+            // Add to history
+            addToHistory();
+
+            // Reset form
+            document.getElementById("payoutForm").reset();
+            document
+              .querySelectorAll(".amount-btn")
+              .forEach((b) => b.classList.remove("selected"));
+            document.getElementById("customAmountGroup").style.display = "none";
+            document.getElementById("feeInfo").style.display = "none";
+            selectedAmount = 0;
+          } else {
+            showNotification(
+              "error",
+              "Wystąpił błąd podczas składania wniosku. Spróbuj ponownie."
+            );
+          }
+
+          submitBtn.textContent = originalText;
+          validateForm();
+        }, 2000);
+      });
+
+      // Add to history simulation
+      function addToHistory() {
+        const historyList = document.getElementById("historyList");
+        const newItem = document.createElement("div");
+        newItem.className = "history-item";
+        newItem.dataset.status = "pending";
+
+        const today = new Date().toLocaleDateString("pl-PL");
+        const paymentMethod = document.getElementById("paymentMethod").value;
+        let methodText = "";
+
+        if (paymentMethod === "bank_transfer") {
+          const bankName = document.getElementById("bankName").value;
+          methodText = `Przelew bankowy • ${bankName}`;
+        } else if (paymentMethod === "paypal") {
+          const email = document.getElementById("paypalEmail").value;
+          methodText = `PayPal • ${email}`;
+        } else if (paymentMethod === "blik") {
+          const phone = document.getElementById("phoneNumber").value;
+          methodText = `BLIK • ${phone.substring(0, 6)}XXX`;
+        }
+
+        newItem.innerHTML = `
+          <div class="history-details">
+            <div class="history-date">${today}</div>
+            <div class="history-method">${methodText}</div>
+          </div>
+          <div class="history-amount">${selectedAmount.toFixed(2)} PLN</div>
+          <div class="history-status status-pending">Oczekujące</div>
+        `;
+
+        historyList.insertBefore(newItem, historyList.firstChild);
+      }
+
+      // History filter
+      document
+        .getElementById("historyFilter")
+        .addEventListener("change", (e) => {
+          const filter = e.target.value;
+          const items = document.querySelectorAll(".history-item");
+
+          items.forEach((item) => {
+            if (filter === "all" || item.dataset.status === filter) {
+              item.style.display = "flex";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        });
+
+      // Notification system
+      function showNotification(type, message) {
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          if (message) {
+            notification.textContent =
+              notification.textContent.split(" ")[0] + " " + message;
+          }
+          notification.style.display = "block";
+
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 5000);
+        }
+      }
+
+      // Initialize form validation
+      validateForm();
+    </script>
+  </body>
+</html>
