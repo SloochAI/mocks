@@ -1,5 +1,7 @@
 # Screenshot Generator for HTML Mockups
 
+https://sloochai.github.io/mocks/
+
 This project generates screenshots of all HTML mockups using Playwright.
 
 ## Setup for NixOS
