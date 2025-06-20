@@ -37,7 +37,6 @@ pkgs.mkShell {
     freetype
     gdk-pixbuf
     mesa
-    mesa.drivers
     vulkan-loader
     udev
     libdrm
@@ -51,7 +50,6 @@ pkgs.mkShell {
     libGL
 
     # Additional mesa components for libgbm
-    mesa.osmesa
     wayland
   ];
 
@@ -96,8 +94,6 @@ pkgs.mkShell {
       pkgs.udev
       pkgs.libdrm
       pkgs.mesa
-      pkgs.mesa.drivers
-      pkgs.mesa.osmesa
       pkgs.wayland
       pkgs.libGL
       pkgs.gobject-introspection
@@ -109,7 +105,7 @@ pkgs.mkShell {
 
     # Additional environment variables for graphics
     export DISPLAY=:0
-    export LIBGL_DRIVERS_PATH="${pkgs.mesa.drivers}/lib/dri"
+    export LIBGL_DRIVERS_PATH="${pkgs.mesa}/lib/dri"
     export __GL_SHADER_DISK_CACHE_PATH="/tmp"
   '';
 }

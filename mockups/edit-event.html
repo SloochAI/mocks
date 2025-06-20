@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edytuj Wydarzenie - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-title h2 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-title p {
+        color: #666;
+        font-size: 1rem;
+      }
+
+      .breadcrumb {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .breadcrumb a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .form-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        text-align: center;
+      }
+
+      .form-header h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-header p {
+        opacity: 0.9;
+      }
+
+      .form-content {
+        padding: 2rem;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section h4 {
+        color: #333;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 1.2rem;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e1e8ed;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .image-upload {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .image-upload:hover {
+        border-color: #667eea;
+        background-color: #f8f9ff;
+      }
+
+      .image-upload.has-image {
+        border-style: solid;
+        border-color: #667eea;
+        background-color: #f8f9ff;
+      }
+
+      .image-upload img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+
+      .upload-text {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: auto;
+        transform: scale(1.2);
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+      }
+
+      .action-group {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .notification {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+
+      .notification.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .notification.warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .notification.show {
+        display: block;
+      }
+
+      .pricing-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .ticket-types {
+        display: grid;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .ticket-type {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 1rem;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+      }
+
+      .ticket-type input {
+        margin: 0;
+      }
+
+      .remove-ticket {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem;
+        cursor: pointer;
+      }
+
+      .add-ticket-type {
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .action-group {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .ticket-type {
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Panel</a>
+          <a href="events.html">Wydarzenia</a>
+          <a href="profile.html">Profil</a>
+          <a href="account-settings.html">Ustawienia</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Panel</a> /
+        <a href="events.html">Wydarzenia</a> / Edytuj wydarzenie
+      </div>
+
+      <div class="page-header">
+        <div class="page-title">
+          <h2>Edytuj Wydarzenie</h2>
+          <p>Zaktualizuj szczegóły swojego wydarzenia muzycznego</p>
+        </div>
+      </div>
+
+      <div id="notification" class="notification">
+        <span id="notification-text"></span>
+      </div>
+
+      <div class="form-container">
+        <div class="form-header">
+          <h3>🎤 Summer Music Festival 2025</h3>
+          <p>Edytuj informacje o wydarzeniu</p>
+        </div>
+
+        <div class="form-content">
+          <form id="editEventForm">
+            <!-- Basic Information -->
+            <div class="form-section">
+              <h4>📋 Podstawowe Informacje</h4>
+
+              <div class="form-group">
+                <label for="eventTitle">Nazwa Wydarzenia*</label>
+                <input
+                  type="text"
+                  id="eventTitle"
+                  name="eventTitle"
+                  value="Summer Music Festival 2025"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="eventDescription">Opis Wydarzenia*</label>
+                <textarea
+                  id="eventDescription"
+                  name="eventDescription"
+                  placeholder="Opisz swoje wydarzenie..."
+                  required
+                >
+Dołącz do nas na niezapomnianym letnim festiwalu muzycznym! Wystąpią najlepsi artyści z całego kraju, a atmosfera będzie niesamowita. Przygotowaliśmy dla Was wiele atrakcji, food trucki i strefę relaksu.</textarea
+                >
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="eventCategory">Kategoria*</label>
+                  <select id="eventCategory" name="eventCategory" required>
+                    <option value="">Wybierz kategorię</option>
+                    <option value="concert" selected>Koncert</option>
+                    <option value="festival">Festiwal</option>
+                    <option value="club">Klub</option>
+                    <option value="private">Prywatne</option>
+                    <option value="workshop">Warsztat</option>
+                    <option value="other">Inne</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="eventGenre">Gatunek Muzyczny</label>
+                  <select id="eventGenre" name="eventGenre">
+                    <option value="">Wybierz gatunek</option>
+                    <option value="pop" selected>Pop</option>
+                    <option value="rock">Rock</option>
+                    <option value="electronic">Elektroniczna</option>
+                    <option value="hip-hop">Hip-Hop</option>
+                    <option value="jazz">Jazz</option>
+                    <option value="classical">Klasyczna</option>
+                    <option value="mixed">Różne</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date and Location -->
+            <div class="form-section">
+              <h4>📅 Data i Lokalizacja</h4>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="eventDate">Data Wydarzenia*</label>
+                  <input
+                    type="date"
+                    id="eventDate"
+                    name="eventDate"
+                    value="2025-07-15"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="eventTime">Godzina Rozpoczęcia*</label>
+                  <input
+                    type="time"
+                    id="eventTime"
+                    name="eventTime"
+                    value="19:00"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="eventLocation">Miejsce Wydarzenia*</label>
+                <input
+                  type="text"
+                  id="eventLocation"
+                  name="eventLocation"
+                  value="Stadion Miejski, Kraków"
+                  placeholder="np. Klub XYZ, ul. Główna 123, Warszawa"
+                  required
+                />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="eventCapacity"
+                    >Maksymalna liczba uczestników</label
+                  >
+                  <input
+                    type="number"
+                    id="eventCapacity"
+                    name="eventCapacity"
+                    value="5000"
+                    min="1"
+                    placeholder="np. 100"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="eventDuration"
+                    >Przewidywany czas trwania (godziny)</label
+                  >
+                  <input
+                    type="number"
+                    id="eventDuration"
+                    name="eventDuration"
+                    value="4"
+                    min="0.5"
+                    step="0.5"
+                    placeholder="np. 2.5"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Event Image -->
+            <div class="form-section">
+              <h4>🖼️ Zdjęcie Wydarzenia</h4>
+
+              <div class="form-group">
+                <label>Aktualne zdjęcie</label>
+                <div
+                  class="image-upload has-image"
+                  onclick="document.getElementById('eventImage').click()"
+                >
+                  <img
+                    src="https://via.placeholder.com/300x200/667eea/ffffff?text=Summer+Festival"
+                    alt="Event poster"
+                  />
+                  <div class="upload-text">
+                    <strong>Kliknij aby zmienić zdjęcie</strong><br />
+                    Zalecany rozmiar: 1200x600px (JPG, PNG)
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  id="eventImage"
+                  name="eventImage"
+                  accept="image/*"
+                  style="display: none"
+                />
+              </div>
+            </div>
+
+            <!-- Pricing and Tickets -->
+            <div class="form-section">
+              <h4>🎫 Bilety i Ceny</h4>
+
+              <div class="checkbox-group">
+                <input type="checkbox" id="isFreeEvent" name="isFreeEvent" />
+                <label for="isFreeEvent">To jest darmowe wydarzenie</label>
+              </div>
+
+              <div class="pricing-section" id="pricingSection">
+                <h5>Rodzaje Biletów</h5>
+                <div class="ticket-types" id="ticketTypes">
+                  <div class="ticket-type">
+                    <input
+                      type="text"
+                      placeholder="Nazwa biletu"
+                      value="Early Bird"
+                    />
+                    <input type="number" placeholder="Cena (PLN)" value="150" />
+                    <input type="number" placeholder="Ilość" value="500" />
+                    <button
+                      type="button"
+                      class="remove-ticket"
+                      onclick="removeTicketType(this)"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div class="ticket-type">
+                    <input
+                      type="text"
+                      placeholder="Nazwa biletu"
+                      value="Normalny"
+                    />
+                    <input type="number" placeholder="Cena (PLN)" value="200" />
+                    <input type="number" placeholder="Ilość" value="2000" />
+                    <button
+                      type="button"
+                      class="remove-ticket"
+                      onclick="removeTicketType(this)"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div class="ticket-type">
+                    <input type="text" placeholder="Nazwa biletu" value="VIP" />
+                    <input type="number" placeholder="Cena (PLN)" value="500" />
+                    <input type="number" placeholder="Ilość" value="100" />
+                    <button
+                      type="button"
+                      class="remove-ticket"
+                      onclick="removeTicketType(this)"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="add-ticket-type"
+                  onclick="addTicketType()"
+                >
+                  + Dodaj rodzaj biletu
+                </button>
+              </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="form-section">
+              <h4>ℹ️ Dodatkowe Informacje</h4>
+
+              <div class="form-group">
+                <label for="eventArtists">Występujący Artyści</label>
+                <textarea
+                  id="eventArtists"
+                  name="eventArtists"
+                  placeholder="Wymień artystów, którzy wystąpią na wydarzeniu..."
+                >
+- DJ Mike Wilson
+- The Summer Band
+- Anna Kowalska
+- Rock Legends</textarea
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="eventRequirements"
+                  >Wymagania i Informacje Dodatkowe</label
+                >
+                <textarea
+                  id="eventRequirements"
+                  name="eventRequirements"
+                  placeholder="np. ograniczenia wiekowe, dress code, co zabrać..."
+                >
+- Wydarzenie 18+, wymagany dokument tożsamości
+- Zakaz wnoszenia własnych napojów alkoholowych
+- Dostępne food trucki na miejscu
+- Parking płatny 20 PLN/dzień</textarea
+                >
+              </div>
+
+              <div class="checkbox-group">
+                <input type="checkbox" id="isPublic" name="isPublic" checked />
+                <label for="isPublic"
+                  >Wydarzenie publiczne (widoczne dla wszystkich)</label
+                >
+              </div>
+
+              <div class="checkbox-group">
+                <input
+                  type="checkbox"
+                  id="allowComments"
+                  name="allowComments"
+                  checked
+                />
+                <label for="allowComments">Pozwól na komentarze</label>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-danger"
+                onclick="deleteEvent()"
+              >
+                🗑️ Usuń Wydarzenie
+              </button>
+
+              <div class="action-group">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="goBack()"
+                >
+                  Anuluj
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="saveAsDraft()"
+                >
+                  💾 Zapisz jako szkic
+                </button>
+                <button type="submit" class="btn btn-primary" id="updateBtn">
+                  ✅ Zaktualizuj Wydarzenie
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notification-text");
+
+        notificationText.textContent = message;
+        notification.className = `notification ${type} show`;
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 5000);
+      }
+
+      function goBack() {
+        if (
+          confirm(
+            "Czy na pewno chcesz anulować? Niezapisane zmiany zostaną utracone."
+          )
+        ) {
+          window.location.href = "events.html";
+        }
+      }
+
+      function saveAsDraft() {
+        showNotification("Wydarzenie zostało zapisane jako szkic.", "success");
+      }
+
+      function deleteEvent() {
+        if (
+          confirm(
+            "Czy na pewno chcesz usunąć to wydarzenie?\n\nTa akcja jest nieodwracalna. Wszyscy uczestnicy, którzy kupili bilety, zostaną powiadomieni o anulowaniu."
+          )
+        ) {
+          if (
+            confirm(
+              "Ostatnie ostrzeżenie!\n\nUsunięcie Wydarzenia spowoduje:\n- Anulowanie wszystkich biletów\n- Automatyczne zwroty pieniędzy\n- Powiadomienia do wszystkich uczestników\n\nCzy nadal chcesz kontynuować?"
+            )
+          ) {
+            // Simulate deletion
+            const updateBtn = document.getElementById("updateBtn");
+            updateBtn.textContent = "Usuwanie...";
+            updateBtn.disabled = true;
+
+            setTimeout(() => {
+              showNotification(
+                "Wydarzenie zostało usunięte. Przekierowywanie...",
+                "warning"
+              );
+              setTimeout(() => {
+                window.location.href = "events.html";
+              }, 2000);
+            }, 1500);
+          }
+        }
+      }
+
+      function addTicketType() {
+        const ticketTypes = document.getElementById("ticketTypes");
+        const newTicketType = document.createElement("div");
+        newTicketType.className = "ticket-type";
+        newTicketType.innerHTML = `
+          <input type="text" placeholder="Nazwa biletu" />
+          <input type="number" placeholder="Cena (PLN)" />
+          <input type="number" placeholder="Ilość" />
+          <button type="button" class="remove-ticket" onclick="removeTicketType(this)">✕</button>
+        `;
+        ticketTypes.appendChild(newTicketType);
+      }
+
+      function removeTicketType(button) {
+        if (document.querySelectorAll(".ticket-type").length > 1) {
+          button.parentElement.remove();
+        } else {
+          alert("Musisz mieć przynajmniej jeden rodzaj biletu!");
+        }
+      }
+
+      // Toggle pricing section based on free event checkbox
+      document
+        .getElementById("isFreeEvent")
+        .addEventListener("change", function () {
+          const pricingSection = document.getElementById("pricingSection");
+          pricingSection.style.display = this.checked ? "none" : "block";
+        });
+
+      // Handle image upload
+      document
+        .getElementById("eventImage")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const img = document.querySelector(".image-upload img");
+              img.src = e.target.result;
+              img.alt = "Uploaded event image";
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+      // Form validation and submission
+      document
+        .getElementById("editEventForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Basic validation
+          const title = document.getElementById("eventTitle").value.trim();
+          const description = document
+            .getElementById("eventDescription")
+            .value.trim();
+          const date = document.getElementById("eventDate").value;
+          const time = document.getElementById("eventTime").value;
+          const location = document
+            .getElementById("eventLocation")
+            .value.trim();
+          const category = document.getElementById("eventCategory").value;
+
+          if (
+            !title ||
+            !description ||
+            !date ||
+            !time ||
+            !location ||
+            !category
+          ) {
+            showNotification(
+              "Proszę wypełnić wszystkie wymagane pola oznaczone *",
+              "error"
+            );
+            return;
+          }
+
+          // Check if event date is in the future
+          const eventDateTime = new Date(date + "T" + time);
+          const now = new Date();
+          if (eventDateTime <= now) {
+            showNotification(
+              "Data wydarzenia musi być w przyszłości.",
+              "error"
+            );
+            return;
+          }
+
+          // Show loading state
+          const updateBtn = document.getElementById("updateBtn");
+          const originalText = updateBtn.textContent;
+          updateBtn.textContent = "Aktualizowanie...";
+          updateBtn.disabled = true;
+
+          // Simulate form submission
+          setTimeout(() => {
+            const success = Math.random() > 0.1; // 90% success rate
+
+            if (success) {
+              showNotification(
+                "Wydarzenie zostało pomyślnie zaktualizowane! 🎉",
+                "success"
+              );
+
+              setTimeout(() => {
+                window.location.href = "events.html";
+              }, 2000);
+            } else {
+              showNotification(
+                "Wystąpił błąd podczas aktualizacji wydarzenia. Spróbuj ponownie.",
+                "error"
+              );
+            }
+
+            updateBtn.textContent = originalText;
+            updateBtn.disabled = false;
+          }, 2000);
+        });
+
+      // Auto-save draft functionality (every 2 minutes)
+      setInterval(() => {
+        const title = document.getElementById("eventTitle").value.trim();
+        if (title) {
+          localStorage.setItem(
+            "eventDraft",
+            JSON.stringify({
+              title: title,
+              timestamp: new Date().toISOString(),
+            })
+          );
+          console.log("Auto-saved draft at", new Date().toLocaleTimeString());
+        }
+      }, 120000); // 2 minutes
+
+      // Load draft on page load
+      window.addEventListener("load", () => {
+        const draft = localStorage.getItem("eventDraft");
+        if (draft) {
+          const parsedDraft = JSON.parse(draft);
+          const draftTime = new Date(parsedDraft.timestamp);
+          const timeDiff = (new Date() - draftTime) / (1000 * 60); // minutes
+
+          if (timeDiff < 60) {
+            // Draft is less than 1 hour old
+            if (
+              confirm(
+                `Znaleziono szkic z ${Math.round(
+                  timeDiff
+                )} minut temu. Czy chcesz go przywrócić?`
+              )
+            ) {
+              // Restore draft logic would go here
+              showNotification("Szkic został przywrócony.", "success");
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
