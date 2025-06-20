@@ -72,9 +72,9 @@
         text-decoration: none;
       }
 
-      .purchase-grid {
-        display: grid;
-        grid-template-columns: 1fr 400px;
+      .purchase-container {
+        display: flex;
+        flex-direction: column;
         gap: 2rem;
         margin-bottom: 2rem;
       }
@@ -88,7 +88,7 @@
 
       .event-header {
         position: relative;
-        height: 300px;
+        height: 250px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         display: flex;
@@ -97,14 +97,14 @@
       }
 
       .event-poster {
-        width: 200px;
-        height: 200px;
+        width: 150px;
+        height: 150px;
         border-radius: 15px;
         background: rgba(255, 255, 255, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 4rem;
+        font-size: 3rem;
         margin-right: 2rem;
         flex-shrink: 0;
       }
@@ -114,7 +114,7 @@
       }
 
       .event-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: bold;
         margin-bottom: 1rem;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -122,9 +122,9 @@
 
       .event-meta {
         display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        font-size: 1.1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 1rem;
       }
 
       .meta-item {
@@ -149,25 +149,25 @@
 
       .event-features {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
       }
 
       .feature-item {
         background: #f8f9fa;
-        border-radius: 8px;
-        padding: 1rem;
+        border-radius: 6px;
+        padding: 0.75rem;
         text-align: center;
       }
 
       .feature-icon {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
       }
 
       .feature-label {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: #666;
       }
 
@@ -176,9 +176,6 @@
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         padding: 2rem;
-        height: fit-content;
-        position: sticky;
-        top: 120px;
       }
 
       .panel-header {
@@ -187,7 +184,7 @@
       }
 
       .panel-title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: bold;
         color: #333;
         margin-bottom: 0.5rem;
@@ -195,9 +192,33 @@
 
       .panel-subtitle {
         color: #666;
+        font-size: 1rem;
+      }
+
+      .purchase-content {
+        display: grid;
+        gap: 3rem;
+        align-items: start;
+      }
+
+      .ticket-selection {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .purchase-summary {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 2rem;
+        position: sticky;
+        top: 2rem;
+        height: fit-content;
       }
 
       .ticket-types {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
         margin-bottom: 2rem;
       }
 
@@ -205,10 +226,12 @@
         border: 2px solid #eee;
         border-radius: 10px;
         padding: 1.5rem;
-        margin-bottom: 1rem;
         cursor: pointer;
         transition: all 0.3s;
         position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
       }
 
       .ticket-type:hover {
@@ -221,22 +244,6 @@
         background: linear-gradient(45deg, #f8f9ff, #f0f2ff);
       }
 
-      .ticket-type.selected::after {
-        content: "✓";
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: #667eea;
-        color: white;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.8rem;
-        font-weight: bold;
-      }
 
       .ticket-header {
         display: flex;
@@ -267,6 +274,8 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
+        margin-top: auto;
+        padding-top: 1rem;
       }
 
       .ticket-feature {
@@ -283,6 +292,7 @@
 
       .quantity-label {
         font-weight: bold;
+        text-align: center;
         color: #333;
         margin-bottom: 1rem;
         display: block;
@@ -398,7 +408,7 @@
         border: 1px solid #ffeaa7;
         border-radius: 8px;
         padding: 1rem;
-        margin-bottom: 1rem;
+        margin: 1rem 0;
         text-align: center;
       }
 
@@ -459,12 +469,16 @@
       }
 
       @media (max-width: 768px) {
-        .purchase-grid {
+        .purchase-content {
           grid-template-columns: 1fr;
         }
 
-        .purchase-panel {
+        .purchase-summary {
           position: static;
+        }
+
+        .ticket-types {
+          grid-template-columns: 1fr;
         }
 
         .event-header {
@@ -475,24 +489,31 @@
         }
 
         .event-poster {
-          width: 150px;
-          height: 150px;
+          width: 120px;
+          height: 120px;
           margin-right: 0;
           margin-bottom: 1rem;
         }
 
         .event-title {
-          font-size: 2rem;
+          font-size: 1.5rem;
         }
 
         .event-meta {
-          align-items: center;
+          justify-content: center;
+          text-align: center;
         }
 
         .ticket-header {
           flex-direction: column;
           align-items: flex-start;
           gap: 0.5rem;
+        }
+      }
+
+      @media (max-width: 1024px) and (min-width: 769px) {
+        .ticket-types {
+          grid-template-columns: repeat(2, 1fr);
         }
       }
     </style>
@@ -518,7 +539,7 @@
         <a href="events.html">Wydarzenia</a> / Zakup biletu
       </div>
 
-      <div class="purchase-grid">
+      <div class="purchase-container">
         <!-- Event Information -->
         <div class="event-info">
           <div class="event-header">
@@ -596,8 +617,10 @@
             <div class="panel-subtitle">Wybierz typ biletu i ilość</div>
           </div>
 
-          <!-- Ticket Types -->
-          <div class="ticket-types">
+          <div class="purchase-content">
+            <div class="ticket-selection">
+              <!-- Ticket Types -->
+              <div class="ticket-types">
             <div
               class="ticket-type"
               data-type="early-bird"
@@ -628,7 +651,7 @@
               data-available="247"
             >
               <div class="ticket-header">
-                <div class="ticket-name">Standardowy</div>
+                <div class="ticket-name">Standard</div>
                 <div class="ticket-price">200 PLN</div>
               </div>
               <div class="ticket-description">
@@ -695,69 +718,74 @@
                 <div class="availability-text">
                   Ekskluzywne - tylko 23 biletów!
                 </div>
+                </div>
+              </div>
+
+              
+              
+            </div>
+<!-- Quantity Selector -->
+            <div class="quantity-selector">
+                <label class="quantity-label">Ilość biletów</label>
+                <div class="quantity-controls">
+                  <button
+                    class="quantity-btn"
+                    id="decreaseBtn"
+                    onclick="changeQuantity(-1)"
+                  >
+                    −
+                  </button>
+                  <div class="quantity-display" id="quantityDisplay">1</div>
+                  <button
+                    class="quantity-btn"
+                    id="increaseBtn"
+                    onclick="changeQuantity(1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+            <div class="purchase-summary">
+              <!-- Order Summary -->
+              <div class="order-summary">
+                <div class="summary-title">📋 Podsumowanie zamówienia</div>
+                <div class="summary-row">
+                  <span
+                    >Bilet: <span id="selectedTicketName">Standardowy</span></span
+                  >
+                  <span><span id="ticketPrice">200</span> PLN</span>
+                </div>
+                <div class="summary-row">
+                  <span>Ilość: <span id="summaryQuantity">1</span></span>
+                  <span><span id="subtotal">200</span> PLN</span>
+                </div>
+                <div class="summary-row">
+                  <span>Opłata serwisowa (8%)</span>
+                  <span><span id="serviceFee">16</span> PLN</span>
+                </div>
+                <div class="summary-row total">
+                  <span>Do zapłaty</span>
+                  <span><span id="totalPrice">216</span> PLN</span>
+                </div>
+              </div>
+
+              <!-- Purchase Button -->
+              <button
+                class="purchase-btn"
+                id="purchaseBtn"
+                onclick="proceedToPayment()"
+              >
+                💳 Przejdź do płatności - <span id="buttonTotal">216</span> PLN
+              </button>
+
+              <div class="purchase-info">
+                Klikając "Przejdź do płatności" akceptujesz
+                <a href="#">regulamin</a> i <a href="#">politykę prywatności</a>.
+                Bilety będą dostępne w <a href="my-tickets.html">Twoim panelu</a> po
+                zakończeniu płatności.
               </div>
             </div>
-          </div>
-
-          <!-- Quantity Selector -->
-          <div class="quantity-selector">
-            <label class="quantity-label">Ilość biletów</label>
-            <div class="quantity-controls">
-              <button
-                class="quantity-btn"
-                id="decreaseBtn"
-                onclick="changeQuantity(-1)"
-              >
-                −
-              </button>
-              <div class="quantity-display" id="quantityDisplay">1</div>
-              <button
-                class="quantity-btn"
-                id="increaseBtn"
-                onclick="changeQuantity(1)"
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <!-- Order Summary -->
-          <div class="order-summary">
-            <div class="summary-title">📋 Podsumowanie zamówienia</div>
-            <div class="summary-row">
-              <span
-                >Bilet: <span id="selectedTicketName">Standardowy</span></span
-              >
-              <span><span id="ticketPrice">200</span> PLN</span>
-            </div>
-            <div class="summary-row">
-              <span>Ilość: <span id="summaryQuantity">1</span></span>
-              <span><span id="subtotal">200</span> PLN</span>
-            </div>
-            <div class="summary-row">
-              <span>Opłata serwisowa (8%)</span>
-              <span><span id="serviceFee">16</span> PLN</span>
-            </div>
-            <div class="summary-row total">
-              <span>Do zapłaty</span>
-              <span><span id="totalPrice">216</span> PLN</span>
-            </div>
-          </div>
-
-          <!-- Purchase Button -->
-          <button
-            class="purchase-btn"
-            id="purchaseBtn"
-            onclick="proceedToPayment()"
-          >
-            💳 Przejdź do płatności - <span id="buttonTotal">216</span> PLN
-          </button>
-
-          <div class="purchase-info">
-            Klikając "Przejdź do płatności" akceptujesz
-            <a href="#">regulamin</a> i <a href="#">politykę prywatności</a>.
-            Bilety będą dostępne w <a href="my-tickets.html">Twoim panelu</a> po
-            zakończeniu płatności.
           </div>
         </div>
       </div>
