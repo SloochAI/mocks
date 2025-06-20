@@ -33,8 +33,70 @@ def setup_playwright():
         print("You may need to install browsers manually or use nix-shell")
 
 
-async def take_screenshot(html_file_path, output_path, viewport_width=1920, viewport_height=1080):
-    """Take a screenshot of an HTML file."""
+async def take_screenshot_with_page(page, html_file_path, output_path, viewport_width=1920, viewport_height=1080):
+    """Take a screenshot of an HTML file using an existing page."""
+    # Set viewport size
+    await page.set_viewport_size({"width": viewport_width, "height": viewport_height})
+
+    # Load the HTML file
+    file_url = f"file://{html_file_path}"
+    await page.goto(file_url, wait_until='load')
+
+    # Wait for the page to load completely and any potential animations
+    await page.wait_for_timeout(1000)  # Reduced from 2000ms to 1000ms
+
+    # Take screenshot
+    await page.screenshot(path=output_path, full_page=True)
+
+
+async def process_screenshot_batch(browser, html_files_batch, images_dir):
+    """Process a batch of screenshots using the same browser."""
+    tasks = []
+
+    for html_file in html_files_batch:
+        output_filename = html_file.stem + ".png"
+        output_path = images_dir / output_filename
+
+        # Create a new page for each screenshot (allows parallel processing)
+        page = await browser.new_page()
+
+        async def take_screenshot_task(page, html_file, output_path):
+            try:
+                await take_screenshot_with_page(page, str(html_file.absolute()), str(output_path))
+                print(f"✓ Screenshot saved: {output_path.name}")
+                return True
+            except Exception as e:
+                print(f"✗ Error processing {html_file.name}: {str(e)}")
+                return False
+            finally:
+                await page.close()
+
+        tasks.append(take_screenshot_task(page, html_file, output_path))
+
+    # Run all tasks in parallel
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    return results
+
+
+async def generate_all_screenshots():
+    """Generate screenshots for all HTML files in the mockups folder."""
+    script_dir = Path(__file__).parent
+    mockups_dir = script_dir / "mockups"
+    images_dir = script_dir / "images"
+
+    # Ensure images directory exists
+    images_dir.mkdir(exist_ok=True)
+
+    # Get all HTML files
+    html_files = list(mockups_dir.glob("*.html"))
+
+    if not html_files:
+        print("No HTML files found in mockups directory!")
+        return
+
+    print(f"Found {len(html_files)} HTML files to process...")
+
+    # Start Playwright and create browser once
     async with async_playwright() as p:
         # Try to use system Chromium first, fall back to Playwright's browser
         chromium_path = os.environ.get('PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH')
@@ -63,56 +125,27 @@ async def take_screenshot(html_file_path, output_path, viewport_width=1920, view
             print("Using Playwright's Chromium")
 
         browser = await p.chromium.launch(**launch_options)
-        page = await browser.new_page()
-
-        # Set viewport size
-        await page.set_viewport_size({"width": viewport_width, "height": viewport_height})
-
-        # Load the HTML file
-        file_url = f"file://{html_file_path}"
-        await page.goto(file_url, wait_until='load')
-
-        # Wait for the page to load completely and any potential animations
-        await page.wait_for_timeout(2000)
-
-        # Take screenshot
-        await page.screenshot(path=output_path, full_page=True)
-
-        await browser.close()
-
-
-async def generate_all_screenshots():
-    """Generate screenshots for all HTML files in the mockups folder."""
-    script_dir = Path(__file__).parent
-    mockups_dir = script_dir / "mockups"
-    images_dir = script_dir / "images"
-
-    # Ensure images directory exists
-    images_dir.mkdir(exist_ok=True)
-
-    # Get all HTML files
-    html_files = list(mockups_dir.glob("*.html"))
-
-    if not html_files:
-        print("No HTML files found in mockups directory!")
-        return
-
-    print(f"Found {len(html_files)} HTML files to process...")
-
-    # Process each HTML file
-    for html_file in html_files:
-        output_filename = html_file.stem + ".png"
-        output_path = images_dir / output_filename
-
-        print(f"Taking screenshot of {html_file.name}...")
 
         try:
-            await take_screenshot(str(html_file.absolute()), str(output_path))
-            print(f"✓ Screenshot saved: {output_filename}")
-        except Exception as e:
-            print(f"✗ Error processing {html_file.name}: {str(e)}")
+            # Process files in batches to control concurrency
+            # Max 4 concurrent screenshots
+            batch_size = min(4, len(html_files))
+            batches = [html_files[i:i + batch_size]
+                       for i in range(0, len(html_files), batch_size)]
 
-    print(f"\nScreenshots saved in: {images_dir.absolute()}")
+            total_processed = 0
+            for i, batch in enumerate(batches, 1):
+                print(
+                    f"\nProcessing batch {i}/{len(batches)} ({len(batch)} files)...")
+                await process_screenshot_batch(browser, batch, images_dir)
+                total_processed += len(batch)
+                print(
+                    f"Progress: {total_processed}/{len(html_files)} files completed")
+
+        finally:
+            await browser.close()
+
+    print(f"\nAll screenshots saved in: {images_dir.absolute()}")
 
 
 async def main():
