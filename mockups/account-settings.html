@@ -327,6 +327,64 @@
         margin-bottom: 1rem;
       }
 
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 15px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-header {
+        padding: 1.5rem 2rem 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        color: #333;
+      }
+
+      .close {
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.3s;
+      }
+
+      .close:hover {
+        color: #333;
+      }
+
+      .modal-body {
+        padding: 1.5rem 2rem;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+      }
+
       @media (max-width: 768px) {
         .form-row {
           grid-template-columns: 1fr;
@@ -362,6 +420,36 @@
         <span id="notification-text"></span>
       </div>
 
+      <!-- Email verification banner -->
+      <div
+        id="emailVerificationBanner"
+        class="notification warning"
+        style="display: block; margin-bottom: 1.5rem; position: relative"
+      >
+        ⚠️ Your email address is not verified.
+        <button
+          class="btn btn-primary"
+          style="margin-left: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem"
+          onclick="sendVerificationEmail()"
+        >
+          Verify Email
+        </button>
+        <span
+          class="close"
+          onclick="dismissVerificationBanner()"
+          style="
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #856404;
+          "
+          >&times;</span
+        >
+      </div>
+
       <!-- Account security notifications -->
       <div id="passwordChangeSuccessNotification" class="notification success">
         ✅ Hasło zostało pomyślnie zmienione. Zaloguj się ponownie na innych
@@ -388,6 +476,15 @@
       <div id="dataExportNotification" class="notification success">
         ✅ Zgłoszenie eksportu danych zostało przyjęte. Otrzymasz e-mail w ciągu
         48h.
+      </div>
+
+      <div id="emailVerificationSentNotification" class="notification success">
+        ✅ Email weryfikacyjny został wysłany. Sprawdź swoją skrzynkę odbiorczą.
+      </div>
+
+      <div id="subscriptionCancelledNotification" class="notification warning">
+        ⚠️ Subskrypcja została anulowana. Zachowasz dostęp do Premium do końca
+        okresu rozliczeniowego.
       </div>
 
       <div class="settings-nav">
@@ -564,6 +661,33 @@ Music lover and aspiring artist</textarea
               </label>
             </div>
           </div>
+
+          <div class="form-section">
+            <h3>Data Management</h3>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Request Data Copy</h4>
+                <p>Download a copy of all your data stored in Sloochai</p>
+              </div>
+              <button
+                class="btn btn-secondary"
+                onclick="openDataRequestModal()"
+              >
+                Request Data
+              </button>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Advanced Data Request</h4>
+                <p>Use detailed form to request your complete data export</p>
+              </div>
+              <a href="data-request.html" class="btn btn-secondary">
+                Go to Data Request
+              </a>
+            </div>
+          </div>
         </div>
 
         <!-- Notification Settings -->
@@ -675,13 +799,23 @@ Music lover and aspiring artist</textarea
         <div id="premium-section" class="settings-section">
           <div class="form-section">
             <h3>Subscription Status</h3>
-            <p><strong>Plan:</strong> Sloochai Free</p>
+            <p><strong>Plan:</strong> Sloochai Premium</p>
             <p><strong>Status:</strong> Active</p>
-            <p><strong>Next Billing:</strong> N/A</p>
+            <p><strong>Next Billing:</strong> March 15, 2025</p>
+            <p><strong>Amount:</strong> $9.99/month</p>
 
-            <button class="btn btn-primary" onclick="upgradeToPremium()">
-              Upgrade to Premium
-            </button>
+            <div style="margin-top: 1rem">
+              <button
+                class="btn btn-primary"
+                onclick="upgradeToPremium()"
+                style="margin-right: 1rem"
+              >
+                Manage Subscription
+              </button>
+              <button class="btn btn-danger" onclick="cancelSubscription()">
+                Cancel Subscription
+              </button>
+            </div>
           </div>
 
           <div class="form-section">
@@ -693,6 +827,50 @@ Music lover and aspiring artist</textarea
               <li>Offline downloads</li>
               <li>Exclusive content</li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Request Modal -->
+    <div id="dataRequestModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Request Data Copy</h3>
+          <span class="close" onclick="closeDataRequestModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <p>
+            We'll prepare a copy of all your data and send it to your registered
+            email address within 48 hours.
+          </p>
+          <p><strong>This includes:</strong></p>
+          <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem">
+            <li>Profile information and settings</li>
+            <li>Playlists and music preferences</li>
+            <li>Listening history and statistics</li>
+            <li>Social interactions and comments</li>
+            <li>Account activity logs</li>
+          </ul>
+
+          <div class="form-group">
+            <label for="confirmPassword"
+              >Confirm your password to proceed:</label
+            >
+            <input
+              type="password"
+              id="dataRequestPassword"
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeDataRequestModal()">
+              Cancel
+            </button>
+            <button class="btn btn-primary" onclick="submitDataRequest()">
+              Request Data
+            </button>
           </div>
         </div>
       </div>
@@ -795,12 +973,151 @@ Music lover and aspiring artist</textarea
         window.location.href = "premium.html";
       }
 
+      function sendVerificationEmail() {
+        showNotification(
+          "Verification email sent! Check your inbox.",
+          "success"
+        );
+        // Hide the banner after sending verification
+        setTimeout(() => {
+          document.getElementById("emailVerificationBanner").style.display =
+            "none";
+        }, 3000);
+      }
+
+      function dismissVerificationBanner() {
+        document.getElementById("emailVerificationBanner").style.display =
+          "none";
+      }
+
+      function openDataRequestModal() {
+        document.getElementById("dataRequestModal").style.display = "flex";
+      }
+
+      function closeDataRequestModal() {
+        document.getElementById("dataRequestModal").style.display = "none";
+        document.getElementById("dataRequestPassword").value = "";
+      }
+
+      function submitDataRequest() {
+        const password = document.getElementById("dataRequestPassword").value;
+
+        if (!password) {
+          showNotification("Please enter your password to confirm.", "error");
+          return;
+        }
+
+        // Simulate password verification
+        setTimeout(() => {
+          closeDataRequestModal();
+          showNotification(
+            "Data request submitted! You'll receive your data via email within 48 hours.",
+            "success"
+          );
+
+          // Show notification about the data export
+          setTimeout(() => {
+            document.getElementById("dataExportNotification").style.display =
+              "block";
+            setTimeout(() => {
+              document.getElementById("dataExportNotification").style.display =
+                "none";
+            }, 5000);
+          }, 1000);
+        }, 1000);
+      }
+
+      function cancelSubscription() {
+        if (
+          confirm(
+            "Are you sure you want to cancel your Premium subscription?\n\nYou'll lose access to Premium features at the end of your current billing period."
+          )
+        ) {
+          if (
+            confirm(
+              "Your subscription will remain active until March 15, 2025. After that, you'll be switched to the free plan.\n\nDo you want to proceed?"
+            )
+          ) {
+            showNotification(
+              "Subscription cancelled. You'll keep Premium features until March 15, 2025.",
+              "warning"
+            );
+
+            // Update the premium section to show cancelled status
+            setTimeout(() => {
+              const premiumSection = document.querySelector(
+                "#premium-section .form-section"
+              );
+              premiumSection.innerHTML = `
+                <h3>Subscription Status</h3>
+                <p><strong>Plan:</strong> Sloochai Premium (Cancelled)</p>
+                <p><strong>Status:</strong> Active until March 15, 2025</p>
+                <p><strong>Next Billing:</strong> Cancelled</p>
+                <p style="color: #856404; font-weight: 500; margin-top: 1rem;">
+                  ⚠️ Your subscription has been cancelled. You'll keep Premium features until the end of your current billing period.
+                </p>
+
+                <div style="margin-top: 1rem;">
+                  <button class="btn btn-primary" onclick="reactivateSubscription()">
+                    Reactivate Subscription
+                  </button>
+                </div>
+              `;
+            }, 2000);
+          }
+        }
+      }
+
+      function reactivateSubscription() {
+        if (
+          confirm(
+            "Reactivate your Premium subscription?\n\nYour subscription will continue at $9.99/month starting from your next billing date."
+          )
+        ) {
+          showNotification(
+            "Subscription reactivated! You'll continue to enjoy Premium features.",
+            "success"
+          );
+
+          // Restore the original premium section
+          setTimeout(() => {
+            const premiumSection = document.querySelector(
+              "#premium-section .form-section"
+            );
+            premiumSection.innerHTML = `
+              <h3>Subscription Status</h3>
+              <p><strong>Plan:</strong> Sloochai Premium</p>
+              <p><strong>Status:</strong> Active</p>
+              <p><strong>Next Billing:</strong> March 15, 2025</p>
+              <p><strong>Amount:</strong> $9.99/month</p>
+
+              <div style="margin-top: 1rem;">
+                <button class="btn btn-primary" onclick="upgradeToPremium()" style="margin-right: 1rem;">
+                  Manage Subscription
+                </button>
+                <button class="btn btn-danger" onclick="cancelSubscription()">
+                  Cancel Subscription
+                </button>
+              </div>
+            `;
+          }, 1500);
+        }
+      }
+
       // Settings navigation
       document.querySelectorAll(".settings-nav-item").forEach((item) => {
         item.addEventListener("click", function () {
           const section = this.dataset.section;
           switchSection(section);
         });
+      });
+
+      // Close modal when clicking outside
+      window.addEventListener("click", (e) => {
+        const modal = document.getElementById("dataRequestModal");
+        if (e.target === modal) {
+          closeDataRequestModal();
+        }
       });
     </script>
   </body>

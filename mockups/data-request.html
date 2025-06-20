@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Request Data Copy - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        width: 100%;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .header h1 {
+        color: #667eea;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .content {
+        margin-bottom: 2rem;
+      }
+
+      .content h2 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .content p {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .data-list {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .data-list h3 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .data-list ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .data-list li {
+        color: #666;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 1.5rem;
+      }
+
+      .data-list li:last-child {
+        border-bottom: none;
+      }
+
+      .data-list li::before {
+        content: "✓";
+        color: #667eea;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+      }
+
+      .notification {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+
+      .notification.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .notification.show {
+        display: block;
+      }
+
+      .back-link {
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      .back-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .back-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎵 Sloochai</h1>
+        <p>Request Your Data Copy</p>
+      </div>
+
+      <div id="notification" class="notification">
+        <span id="notification-text"></span>
+      </div>
+
+      <div class="content">
+        <h2>Data Export Request</h2>
+        <p>
+          We'll prepare a comprehensive copy of all your data and send it to
+          your registered email address within 48 hours. This ensures you have
+          access to all information associated with your Sloochai account.
+        </p>
+      </div>
+
+      <div class="data-list">
+        <h3>Your data export will include:</h3>
+        <ul>
+          <li>Profile information and account settings</li>
+          <li>Playlists and music preferences</li>
+          <li>Listening history and statistics</li>
+          <li>Social interactions and comments</li>
+          <li>Uploaded songs and albums</li>
+          <li>Following and followers lists</li>
+          <li>Account activity and login logs</li>
+          <li>Payment and subscription history</li>
+          <li>Support and moderation records</li>
+        </ul>
+      </div>
+
+      <form id="dataRequestForm">
+        <div class="form-group">
+          <label for="password">Confirm your password to proceed:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your current password"
+            required
+          />
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-secondary" onclick="goBack()">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" id="requestBtn">
+            Request Data Export
+          </button>
+        </div>
+      </form>
+
+      <div class="back-link">
+        <a href="account-settings.html">← Back to Account Settings</a>
+      </div>
+    </div>
+
+    <script>
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notification-text");
+
+        notificationText.textContent = message;
+        notification.className = `notification ${type} show`;
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 5000);
+      }
+
+      function goBack() {
+        window.location.href = "account-settings.html";
+      }
+
+      document
+        .getElementById("dataRequestForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const password = document.getElementById("password").value;
+          const requestBtn = document.getElementById("requestBtn");
+
+          if (!password) {
+            showNotification(
+              "Please enter your password to confirm the request.",
+              "error"
+            );
+            return;
+          }
+
+          // Show loading state
+          requestBtn.disabled = true;
+          requestBtn.textContent = "Processing...";
+
+          // Simulate password verification and request processing
+          setTimeout(() => {
+            // Simulate successful request
+            if (Math.random() > 0.1) {
+              // 90% success rate
+              showNotification(
+                "Data export request submitted successfully! You'll receive your data via email within 48 hours.",
+                "success"
+              );
+
+              // Clear form
+              document.getElementById("password").value = "";
+
+              // Redirect back to settings after showing success message
+              setTimeout(() => {
+                window.location.href = "account-settings.html";
+              }, 3000);
+            } else {
+              showNotification(
+                "Invalid password. Please check your password and try again.",
+                "error"
+              );
+            }
+
+            // Reset button
+            requestBtn.disabled = false;
+            requestBtn.textContent = "Request Data Export";
+          }, 2000);
+        });
+
+      // Auto-focus password field
+      document.getElementById("password").focus();
+    </script>
+  </body>
+</html>
