@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delete Song - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalAppear 0.3s ease-out;
+      }
+
+      @keyframes modalAppear {
+        from {
+          opacity: 0;
+          transform: scale(0.8) translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .modal-header .icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .modal-header p {
+        opacity: 0.9;
+        font-size: 1rem;
+      }
+
+      .modal-content {
+        padding: 2rem;
+      }
+
+      .song-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid #dc3545;
+      }
+
+      .song-details {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .song-cover {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        flex-shrink: 0;
+      }
+
+      .song-meta h3 {
+        color: #333;
+        font-size: 1.3rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .song-meta p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .song-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 0.25rem;
+      }
+
+      .warning-message {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+
+      .warning-message h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .warning-list {
+        list-style: none;
+        margin: 0.5rem 0;
+      }
+
+      .warning-list li {
+        padding: 0.25rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+
+      .warning-list li:before {
+        content: "⚠️";
+        position: absolute;
+        left: 0;
+      }
+
+      .confirmation-section {
+        margin-bottom: 2rem;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+        transition: border-color 0.3s;
+      }
+
+      .checkbox-group.checked {
+        border-color: #dc3545;
+        background: #fdf2f2;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        margin-top: 0.25rem;
+        transform: scale(1.2);
+      }
+
+      .checkbox-group label {
+        font-weight: 500;
+        color: #333;
+        cursor: pointer;
+        flex: 1;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        padding-top: 1.5rem;
+        border-top: 1px solid #dee2e6;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 120px;
+        text-align: center;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+      }
+
+      .btn-danger:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .deletion-progress {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .progress-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #dc3545;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .success-message {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+        color: #28a745;
+      }
+
+      .success-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 0.5rem;
+        }
+
+        .modal {
+          width: 100%;
+          max-width: 100%;
+          margin: 0;
+          border-radius: 10px;
+          max-height: 95vh;
+        }
+
+        .modal-content {
+          padding: 1.5rem;
+        }
+
+        .modal-actions {
+          flex-direction: column;
+        }
+
+        .song-details {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .song-stats {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="icon">🗑️</div>
+          <h2>Delete Song</h2>
+          <p>This action cannot be undone</p>
+        </div>
+
+        <div class="modal-content">
+          <div id="confirmation-content">
+            <div class="song-info">
+              <div class="song-details">
+                <div class="song-cover">🎵</div>
+                <div class="song-meta">
+                  <h3>My Awesome Song</h3>
+                  <p><strong>Artist:</strong> John Doe</p>
+                  <p><strong>Genre:</strong> Pop</p>
+                  <p><strong>Released:</strong> January 15, 2024</p>
+                  <p><strong>Duration:</strong> 3:45</p>
+                </div>
+              </div>
+
+              <div class="song-stats">
+                <div class="stat-item">
+                  <div class="stat-value">1,234</div>
+                  <div class="stat-label">Plays</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">89</div>
+                  <div class="stat-label">Likes</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">12</div>
+                  <div class="stat-label">Comments</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">5</div>
+                  <div class="stat-label">Playlists</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="warning-message">
+              <h4>⚠️ Warning: Permanent Deletion</h4>
+              <p>Deleting this song will permanently remove:</p>
+              <ul class="warning-list">
+                <li>The song file and all associated metadata</li>
+                <li>All user interactions (likes, comments, plays)</li>
+                <li>The song from all playlists that include it</li>
+                <li>All streaming statistics and analytics</li>
+                <li>Any associated lyrics, cover art, and videos</li>
+              </ul>
+              <p><strong>This action cannot be undone!</strong></p>
+            </div>
+
+            <div class="confirmation-section">
+              <div class="checkbox-group" id="confirmationBox">
+                <input type="checkbox" id="confirmDeletion" />
+                <label for="confirmDeletion">
+                  I understand that this song will be permanently deleted and
+                  this action cannot be undone. I confirm that I want to delete
+                  "My Awesome Song" and all associated data.
+                </label>
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <a href="profile.html" class="btn btn-secondary">Cancel</a>
+              <button
+                type="button"
+                class="btn btn-danger"
+                id="deleteBtn"
+                disabled
+                onclick="deleteSong()"
+              >
+                Delete Song
+              </button>
+            </div>
+          </div>
+
+          <div id="deletion-progress" class="deletion-progress">
+            <div class="progress-spinner"></div>
+            <h3>Deleting Song...</h3>
+            <p>
+              Please wait while we remove your song and all associated data.
+            </p>
+          </div>
+
+          <div id="success-message" class="success-message">
+            <div class="success-icon">✅</div>
+            <h3>Song Deleted Successfully</h3>
+            <p>Your song has been permanently removed from the platform.</p>
+            <div style="margin-top: 2rem">
+              <a href="profile.html" class="btn btn-secondary"
+                >Return to Profile</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const confirmCheckbox = document.getElementById("confirmDeletion");
+      const deleteBtn = document.getElementById("deleteBtn");
+      const confirmationBox = document.getElementById("confirmationBox");
+
+      confirmCheckbox.addEventListener("change", function () {
+        deleteBtn.disabled = !this.checked;
+
+        if (this.checked) {
+          confirmationBox.classList.add("checked");
+        } else {
+          confirmationBox.classList.remove("checked");
+        }
+      });
+
+      function deleteSong() {
+        if (!confirmCheckbox.checked) {
+          alert("Please confirm that you want to delete this song.");
+          return;
+        }
+
+        // Show deletion progress
+        document.getElementById("confirmation-content").style.display = "none";
+        document.getElementById("deletion-progress").style.display = "block";
+
+        // Simulate deletion process
+        setTimeout(() => {
+          // Hide progress and show success
+          document.getElementById("deletion-progress").style.display = "none";
+          document.getElementById("success-message").style.display = "block";
+        }, 3000);
+      }
+
+      // Close modal with Escape key
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          window.location.href = "profile.html";
+        }
+      });
+
+      // Close modal by clicking overlay
+      document
+        .querySelector(".modal-overlay")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            window.location.href = "profile.html";
+          }
+        });
+    </script>
+  </body>
+</html>

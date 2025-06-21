@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Song - Sloochai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-header h2 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .edit-form {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #667eea;
+        display: inline-block;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .lyrics-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .lyrics-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .tab-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        background: #e9ecef;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .tab-button.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .ai-generate {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+      }
+
+      .ai-generate:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-2px);
+      }
+
+      .file-upload {
+        border: 2px dashed #ddd;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+        margin-bottom: 1rem;
+      }
+
+      .file-upload:hover {
+        border-color: #667eea;
+        background-color: #f8f9ff;
+      }
+
+      .file-upload input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .upload-icon {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+      }
+
+      .upload-text {
+        color: #333;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .upload-hint {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .current-file {
+        background: #e8f5e8;
+        border: 1px solid #28a745;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .file-icon {
+        font-size: 1.5rem;
+        color: #28a745;
+      }
+
+      .file-details h4 {
+        color: #333;
+        margin-bottom: 0.25rem;
+      }
+
+      .file-details p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .remove-file {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        margin-left: auto;
+      }
+
+      .video-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .current-video {
+        background: #e1f5fe;
+        border: 1px solid #0288d1;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .video-preview {
+        width: 100%;
+        max-width: 400px;
+        height: 225px;
+        background: #000;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: auto;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+      }
+
+      .notification {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+
+      .notification.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .notification.show {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          padding: 1rem;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>🎵 Sloochai</h1>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+          <a href="music-player.html">Player</a>
+          <a href="account-settings.html">Settings</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="page-header">
+        <h2>Edit Song</h2>
+        <p>Update your song details and content</p>
+      </div>
+
+      <div id="notification" class="notification">
+        <span id="notification-text"></span>
+      </div>
+
+      <form class="edit-form" id="editForm">
+        <!-- Basic Song Information -->
+        <div class="form-section">
+          <h3>Song Information</h3>
+
+          <div class="form-group">
+            <label for="title">Song Title *</label>
+            <input
+              type="text"
+              id="title"
+              value="My Awesome Song"
+              placeholder="Enter song title"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="artist">Artist *</label>
+              <input
+                type="text"
+                id="artist"
+                value="John Doe"
+                placeholder="Enter artist name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="genre">Primary Genre *</label>
+              <select id="genre" required>
+                <option value="pop" selected>Pop</option>
+                <option value="rock">Rock</option>
+                <option value="hip-hop">Hip Hop</option>
+                <option value="electronic">Electronic</option>
+                <option value="jazz">Jazz</option>
+                <option value="classical">Classical</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="releaseDate">Release Date</label>
+              <input type="date" id="releaseDate" value="2024-01-15" />
+            </div>
+            <div class="form-group">
+              <label for="visibility">Visibility Status</label>
+              <select id="visibility">
+                <option value="public" selected>Public</option>
+                <option value="private">Private</option>
+                <option value="unlisted">Unlisted</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              placeholder="Describe your song..."
+              rows="4"
+            >
+A catchy pop song about love and dreams. This track features upbeat melodies and meaningful lyrics that resonate with listeners of all ages.</textarea
+            >
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="downloadable" checked />
+            <label for="downloadable">Allow users to download this song</label>
+          </div>
+        </div>
+
+        <!-- Lyrics Section -->
+        <div class="form-section">
+          <h3>Lyrics Management</h3>
+
+          <div class="lyrics-section">
+            <div class="lyrics-tabs">
+              <button
+                type="button"
+                class="tab-button active"
+                onclick="switchTab('manual')"
+              >
+                Manual Entry
+              </button>
+              <button
+                type="button"
+                class="tab-button"
+                onclick="switchTab('ai')"
+              >
+                AI Generate
+              </button>
+              <button
+                type="button"
+                class="tab-button"
+                onclick="switchTab('upload')"
+              >
+                Upload File
+              </button>
+            </div>
+
+            <div id="manual-tab" class="tab-content active">
+              <div class="form-group">
+                <label for="lyrics">Song Lyrics</label>
+                <textarea
+                  id="lyrics"
+                  placeholder="Enter song lyrics..."
+                  rows="10"
+                >
+[Verse 1]
+Walking down the street tonight
+Everything feels so right
+Stars are shining bright above
+This is the time for love
+
+[Chorus]
+We can make it through the night
+Everything will be alright
+Hold my hand and don't let go
+This is all we need to know
+
+[Verse 2]
+Morning comes with golden light
+Yesterday is out of sight
+Future's calling out our name
+Nothing will ever be the same
+
+[Chorus]
+We can make it through the night
+Everything will be alright
+Hold my hand and don't let go
+This is all we need to know</textarea
+                >
+              </div>
+            </div>
+
+            <div id="ai-tab" class="tab-content">
+              <button
+                type="button"
+                class="ai-generate"
+                onclick="generateLyrics()"
+              >
+                🤖 Generate Lyrics with AI
+              </button>
+              <div class="form-group">
+                <label for="aiPrompt"
+                  >Describe the theme or mood for AI generation</label
+                >
+                <textarea
+                  id="aiPrompt"
+                  placeholder="e.g., A happy song about friendship and good times..."
+                  rows="3"
+                ></textarea>
+              </div>
+              <div id="aiLyricsResult" style="display: none">
+                <div class="form-group">
+                  <label>Generated Lyrics (you can edit these)</label>
+                  <textarea id="aiLyrics" rows="10"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div id="upload-tab" class="tab-content">
+              <div class="file-upload" id="lyricsUpload">
+                <input type="file" id="lyricsFile" accept=".txt,.lrc,.srt" />
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Upload lyrics file</div>
+                <div class="upload-hint">Supported formats: TXT, LRC, SRT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Section -->
+        <div class="form-section">
+          <h3>Video Content</h3>
+
+          <div class="video-section">
+            <div class="current-video">
+              <h4>Current Video</h4>
+              <div class="video-preview">
+                🎬 Video Preview: my_awesome_song_mv.mp4
+              </div>
+              <div class="file-details">
+                <p><strong>File:</strong> my_awesome_song_mv.mp4</p>
+                <p><strong>Size:</strong> 45.2 MB</p>
+                <p><strong>Duration:</strong> 3:24</p>
+              </div>
+              <button
+                type="button"
+                class="btn btn-danger"
+                onclick="removeVideo()"
+              >
+                Remove Video
+              </button>
+            </div>
+
+            <div class="file-upload" id="videoUpload">
+              <input type="file" id="videoFile" accept="video/*" />
+              <div class="upload-icon">🎬</div>
+              <div class="upload-text">Upload new video or replace current</div>
+              <div class="upload-hint">
+                Max size: 100MB, formats: MP4, AVI, MOV
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cover Art Section -->
+        <div class="form-section">
+          <h3>Cover Art</h3>
+
+          <div class="current-file">
+            <div class="file-icon">🖼️</div>
+            <div class="file-details">
+              <h4>Current Cover</h4>
+              <p>my_song_cover.jpg • 2.1 MB</p>
+            </div>
+            <button type="button" class="remove-file" onclick="removeCover()">
+              Remove
+            </button>
+          </div>
+
+          <div class="file-upload" id="coverUpload">
+            <input type="file" id="coverFile" accept="image/*" />
+            <div class="upload-icon">🖼️</div>
+            <div class="upload-text">Upload new cover art</div>
+            <div class="upload-hint">
+              Max size: 10MB, formats: JPG, PNG, GIF
+            </div>
+          </div>
+        </div>
+
+        <!-- Audio File Section -->
+        <div class="form-section">
+          <h3>Audio File</h3>
+
+          <div class="current-file">
+            <div class="file-icon">🎵</div>
+            <div class="file-details">
+              <h4>Current Audio Track</h4>
+              <p>my_awesome_song.mp3 • 8.7 MB • 3:45</p>
+            </div>
+            <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem">
+              Note: Audio file replacement requires moderator approval. Contact
+              support if you need to change the audio file.
+            </p>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="profile.html" class="btn btn-secondary">Cancel</a>
+          <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+            Save Draft
+          </button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      function switchTab(tabName) {
+        // Hide all tab contents
+        document.querySelectorAll(".tab-content").forEach((content) => {
+          content.classList.remove("active");
+        });
+
+        // Remove active from all buttons
+        document.querySelectorAll(".tab-button").forEach((button) => {
+          button.classList.remove("active");
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + "-tab").classList.add("active");
+        event.target.classList.add("active");
+      }
+
+      function generateLyrics() {
+        const prompt = document.getElementById("aiPrompt").value;
+        if (!prompt) {
+          showNotification(
+            "Please describe the theme or mood for AI generation.",
+            "warning"
+          );
+          return;
+        }
+
+        // Simulate AI generation
+        const generateBtn = event.target;
+        generateBtn.textContent = "🤖 Generating...";
+        generateBtn.disabled = true;
+
+        setTimeout(() => {
+          const aiLyrics = `[AI Generated Lyrics based on: "${prompt}"]
+
+[Verse 1]
+Life is beautiful when we're together
+Dancing through the stormy weather
+Every moment feels like forever
+With you by my side
+
+[Chorus]
+This is our time to shine
+Everything's gonna be fine
+Take my hand, let's cross the line
+Into the light
+
+[Verse 2]
+Dreams are calling out our names
+Nothing will ever be the same
+We're not playing any games
+This is real love
+
+[Chorus]
+This is our time to shine
+Everything's gonna be fine
+Take my hand, let's cross the line
+Into the light`;
+
+          document.getElementById("aiLyrics").value = aiLyrics;
+          document.getElementById("aiLyricsResult").style.display = "block";
+
+          generateBtn.textContent = "🤖 Generate Lyrics with AI";
+          generateBtn.disabled = false;
+
+          showNotification(
+            "Lyrics generated successfully! You can edit them as needed.",
+            "success"
+          );
+        }, 2000);
+      }
+
+      function removeVideo() {
+        if (
+          confirm(
+            "Are you sure you want to remove the current video? This action cannot be undone."
+          )
+        ) {
+          document.querySelector(".current-video").style.display = "none";
+          showNotification("Video removed successfully.", "success");
+        }
+      }
+
+      function removeCover() {
+        if (confirm("Are you sure you want to remove the current cover art?")) {
+          document.querySelector(".current-file").style.display = "none";
+          showNotification("Cover art removed successfully.", "success");
+        }
+      }
+
+      function saveDraft() {
+        showNotification("Draft saved successfully!", "success");
+      }
+
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notification-text");
+
+        notificationText.textContent = message;
+        notification.className = `notification ${type} show`;
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 5000);
+      }
+
+      // File upload handlers
+      document
+        .getElementById("lyricsFile")
+        .addEventListener("change", function (e) {
+          if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              document.getElementById("lyrics").value = e.target.result;
+              switchTab("manual");
+              showNotification("Lyrics file uploaded successfully!", "success");
+            };
+            reader.readAsText(file);
+          }
+        });
+
+      document
+        .getElementById("videoFile")
+        .addEventListener("change", function (e) {
+          if (e.target.files.length > 0) {
+            showNotification("Video uploaded successfully!", "success");
+          }
+        });
+
+      document
+        .getElementById("coverFile")
+        .addEventListener("change", function (e) {
+          if (e.target.files.length > 0) {
+            showNotification("Cover art uploaded successfully!", "success");
+          }
+        });
+
+      // Form submission
+      document
+        .getElementById("editForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const saveBtn = document.getElementById("saveBtn");
+          saveBtn.disabled = true;
+          saveBtn.textContent = "Saving...";
+
+          // Simulate save process
+          setTimeout(() => {
+            showNotification("Song updated successfully!", "success");
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Changes";
+          }, 1500);
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sloochai - Strumieniuj Live</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      .header h1 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .streaming-container {
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-bottom: 30px;
+      }
+
+      .streaming-steps {
+        display: none;
+      }
+
+      .streaming-steps.active {
+        display: block;
+      }
+
+      .step-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .step-number {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-right: 20px;
+      }
+
+      .step-title {
+        font-size: 1.6rem;
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .image-upload {
+        border: 2px dashed #ddd;
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .image-upload:hover {
+        border-color: #667eea;
+        background: #f9f9ff;
+      }
+
+      .image-upload.dragover {
+        border-color: #667eea;
+        background: #f0f0ff;
+        transform: scale(1.02);
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 15px;
+      }
+
+      .upload-text {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .upload-preview {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin: 20px auto;
+        display: none;
+      }
+
+      .streaming-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin: 20px 0;
+      }
+
+      .streaming-info h4 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+      }
+
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+      }
+
+      .info-label {
+        font-weight: bold;
+        color: #555;
+      }
+
+      .info-value {
+        font-family: monospace;
+        background: #f1f3f4;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: #444;
+        word-break: break-all;
+      }
+
+      .copy-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        margin-left: 10px;
+        transition: background 0.3s ease;
+      }
+
+      .copy-btn:hover {
+        background: #218838;
+      }
+
+      .streaming-status {
+        text-align: center;
+        padding: 30px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .status-waiting {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-live {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .status-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+      }
+
+      .status-text {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .status-details {
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .live-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .stat-item {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid #e0e0e0;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 40px;
+      }
+
+      .btn {
+        padding: 15px 40px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #218838;
+        transform: translateY(-2px);
+      }
+
+      .notification {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        display: none;
+      }
+
+      .notification.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .notification.warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
+
+      .instructions {
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .instructions h5 {
+        color: #1976d2;
+        margin-bottom: 10px;
+      }
+
+      .instructions ol {
+        margin-left: 20px;
+        color: #333;
+      }
+
+      .instructions li {
+        margin-bottom: 8px;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        .streaming-container {
+          padding: 20px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+
+        .live-stats {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .info-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔴 Strumieniuj Live</h1>
+        <p>Rozpocznij transmisję na żywo dla swoich fanów</p>
+      </div>
+
+      <!-- Notifications -->
+      <div id="successNotification" class="notification success">
+        ✅ Transmisja została pomyślnie skonfigurowana!
+      </div>
+
+      <div id="errorNotification" class="notification error">
+        ❌ Wystąpił błąd podczas konfiguracji transmisji.
+      </div>
+
+      <div id="warningNotification" class="notification warning">
+        ⚠️ Niektóre pola wymagają uzupełnienia.
+      </div>
+
+      <div class="streaming-container">
+        <!-- Step 1: Stream Setup -->
+        <div class="streaming-steps active" id="step1">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Konfiguracja Transmisji</div>
+          </div>
+
+          <form id="streamSetupForm">
+            <div class="form-group">
+              <label for="streamTitle">Nazwa Transmisji *</label>
+              <input
+                type="text"
+                id="streamTitle"
+                name="streamTitle"
+                required
+                placeholder="Wpisz nazwę swojej transmisji live"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="streamDescription">Opis Transmisji</label>
+              <textarea
+                id="streamDescription"
+                name="streamDescription"
+                placeholder="Opisz o czym będzie Twoja transmisja, co przygotowałeś dla widzów..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Zdjęcie Transmisji (thumbnail)</label>
+              <div class="image-upload" id="imageUpload">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">
+                  Przeciągnij i upuść zdjęcie lub kliknij aby wybrać
+                </div>
+                <input
+                  type="file"
+                  id="imageFile"
+                  accept="image/*"
+                  style="display: none"
+                />
+                <img
+                  id="imagePreview"
+                  class="upload-preview"
+                  alt="Podgląd zdjęcia"
+                />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="window.history.back()"
+              >
+                Anuluj
+              </button>
+              <button type="submit" class="btn btn-primary">Kontynuuj</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 2: Streaming Settings -->
+        <div class="streaming-steps" id="step2">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Ustawienia Transmisji</div>
+          </div>
+
+          <div class="streaming-info">
+            <h4>Dane do konfiguracji oprogramowania</h4>
+            <p style="margin-bottom: 20px; color: #666">
+              Użyj poniższych danych w swoim oprogramowaniu do streamingu (np.
+              OBS Studio):
+            </p>
+
+            <div class="info-item">
+              <span class="info-label">Serwer główny (RTMPS):</span>
+              <div>
+                <span class="info-value">rtmps://live.sloochai.com/live</span>
+                <button
+                  class="copy-btn"
+                  onclick="copyToClipboard('rtmps://live.sloochai.com/live')"
+                >
+                  Kopiuj
+                </button>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Serwer zapasowy:</span>
+              <div>
+                <span class="info-value">rtmps://backup.sloochai.com/live</span>
+                <button
+                  class="copy-btn"
+                  onclick="copyToClipboard('rtmps://backup.sloochai.com/live')"
+                >
+                  Kopiuj
+                </button>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Klucz strumienia:</span>
+              <div>
+                <span class="info-value">sk_live_abc123def456ghi789jkl012</span>
+                <button
+                  class="copy-btn"
+                  onclick="copyToClipboard('sk_live_abc123def456ghi789jkl012')"
+                >
+                  Kopiuj
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="instructions">
+            <h5>Instrukcja konfiguracji OBS Studio:</h5>
+            <ol>
+              <li>Otwórz OBS Studio</li>
+              <li>Przejdź do Ustawienia → Transmisja</li>
+              <li>Wybierz "Niestandardowy..." jako serwis</li>
+              <li>Wklej adres serwera w pole "Serwer"</li>
+              <li>Wklej klucz strumienia w pole "Klucz strumienia"</li>
+              <li>Kliknij "OK" i rozpocznij transmisję w OBS</li>
+              <li>Następnie kliknij "Rozpocznij transmisję" poniżej</li>
+            </ol>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="goToStep(1)"
+            >
+              Powrót do ustawień
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              onclick="startStreaming()"
+            >
+              Rozpocznij transmisję
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Waiting for Stream -->
+        <div class="streaming-steps" id="step3">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Oczekiwanie na transmisję</div>
+          </div>
+
+          <div class="streaming-status status-waiting">
+            <div class="status-icon">⏳</div>
+            <div class="status-text">Oczekiwanie na sygnał...</div>
+            <div class="status-details">
+              Rozpocznij transmisję w swoim oprogramowaniu (np. OBS Studio)
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="waitingProgress"></div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="goToStep(2)"
+            >
+              Powrót do ustawień
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="cancelStream()"
+            >
+              Anuluj transmisję
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4: Live Streaming -->
+        <div class="streaming-steps" id="step4">
+          <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">Transmisja Live</div>
+          </div>
+
+          <div class="streaming-status status-live">
+            <div class="status-icon">🔴</div>
+            <div class="status-text">Na żywo!</div>
+            <div class="status-details">
+              Twoja transmisja jest aktywna i dostępna dla widzów
+            </div>
+          </div>
+
+          <div class="live-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="viewerCount">127</div>
+              <div class="stat-label">Widzowie</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="streamTime">00:15:23</div>
+              <div class="stat-label">Czas transmisji</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="streamQuality">1080p</div>
+              <div class="stat-label">Jakość</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="streamLatency">2.1s</div>
+              <div class="stat-label">Opóźnienie</div>
+            </div>
+          </div>
+
+          <div class="streaming-info">
+            <h4>Informacje o transmisji</h4>
+            <div class="info-item">
+              <span class="info-label">Link do transmisji:</span>
+              <div>
+                <span class="info-value"
+                  >https://sloochai.com/live/your-stream-id</span
+                >
+                <button
+                  class="copy-btn"
+                  onclick="copyToClipboard('https://sloochai.com/live/your-stream-id')"
+                >
+                  Kopiuj
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-danger" onclick="endStream()">
+              Zakończ transmisję
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 5: Stream Ended -->
+        <div class="streaming-steps" id="step5">
+          <div class="step-header">
+            <div class="step-number">5</div>
+            <div class="step-title">Transmisja zakończona</div>
+          </div>
+
+          <div class="streaming-status status-live">
+            <div class="status-icon">✅</div>
+            <div class="status-text">Transmisja zakończona!</div>
+            <div class="status-details">
+              Twoja transmisja została pomyślnie zarchiwizowana
+            </div>
+          </div>
+
+          <div class="streaming-info">
+            <h4>Podsumowanie transmisji</h4>
+            <div class="info-item">
+              <span class="info-label">Całkowity czas:</span>
+              <span class="info-value">1:23:45</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Maksymalna liczba widzów:</span>
+              <span class="info-value">234</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Średnia liczba widzów:</span>
+              <span class="info-value">187</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Link do nagrania:</span>
+              <div>
+                <span class="info-value"
+                  >https://sloochai.com/track/archived-stream-123</span
+                >
+                <button
+                  class="copy-btn"
+                  onclick="copyToClipboard('https://sloochai.com/track/archived-stream-123')"
+                >
+                  Kopiuj
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="window.location.href='profile.html'"
+            >
+              Przejdź do profilu
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="window.location.href='dashboard.html'"
+            >
+              Powrót do dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentStep = 1;
+      let streamingTimeout;
+      let waitingProgress = 0;
+      let streamTimer;
+      let streamStartTime;
+
+      // Image upload functionality
+      const imageUpload = document.getElementById("imageUpload");
+      const imageFile = document.getElementById("imageFile");
+      const imagePreview = document.getElementById("imagePreview");
+
+      imageUpload.addEventListener("click", () => imageFile.click());
+
+      imageUpload.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        imageUpload.classList.add("dragover");
+      });
+
+      imageUpload.addEventListener("dragleave", () => {
+        imageUpload.classList.remove("dragover");
+      });
+
+      imageUpload.addEventListener("drop", (e) => {
+        e.preventDefault();
+        imageUpload.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFileUpload(files[0]);
+        }
+      });
+
+      imageFile.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleFileUpload(e.target.files[0]);
+        }
+      });
+
+      function handleFileUpload(file) {
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Step navigation
+      function goToStep(step) {
+        document
+          .querySelectorAll(".streaming-steps")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(`step${step}`).classList.add("active");
+        currentStep = step;
+      }
+
+      // Form submission
+      document
+        .getElementById("streamSetupForm")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const streamTitle = document
+            .getElementById("streamTitle")
+            .value.trim();
+
+          if (!streamTitle) {
+            showNotification("error", "Nazwa transmisji jest wymagana");
+            return;
+          }
+
+          goToStep(2);
+        });
+
+      // Start streaming
+      function startStreaming() {
+        goToStep(3);
+        startWaitingProgress();
+
+        // Simulate waiting for stream to start
+        streamingTimeout = setTimeout(() => {
+          goToStep(4);
+          startLiveStats();
+        }, 5000);
+      }
+
+      // Cancel stream
+      function cancelStream() {
+        if (streamingTimeout) {
+          clearTimeout(streamingTimeout);
+        }
+        showNotification("warning", "Transmisja została anulowana");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 2000);
+      }
+
+      // End stream
+      function endStream() {
+        if (streamTimer) {
+          clearInterval(streamTimer);
+        }
+        goToStep(5);
+      }
+
+      // Waiting progress animation
+      function startWaitingProgress() {
+        const progressFill = document.getElementById("waitingProgress");
+        waitingProgress = 0;
+
+        const progressInterval = setInterval(() => {
+          waitingProgress += 2;
+          progressFill.style.width = waitingProgress + "%";
+
+          if (waitingProgress >= 100) {
+            clearInterval(progressInterval);
+            waitingProgress = 0;
+            progressFill.style.width = "0%";
+          }
+        }, 100);
+      }
+
+      // Live statistics
+      function startLiveStats() {
+        streamStartTime = Date.now();
+
+        streamTimer = setInterval(() => {
+          updateStreamTime();
+          updateViewerCount();
+        }, 1000);
+      }
+
+      function updateStreamTime() {
+        const elapsed = Date.now() - streamStartTime;
+        const hours = Math.floor(elapsed / 3600000);
+        const minutes = Math.floor((elapsed % 3600000) / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+
+        const timeString = `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        document.getElementById("streamTime").textContent = timeString;
+      }
+
+      function updateViewerCount() {
+        const baseCount = 127;
+        const variation = Math.floor(Math.random() * 20) - 10;
+        const newCount = Math.max(1, baseCount + variation);
+        document.getElementById("viewerCount").textContent = newCount;
+      }
+
+      // Copy to clipboard
+      function copyToClipboard(text) {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            showNotification("success", "Skopiowano do schowka!");
+          })
+          .catch(() => {
+            // Fallback for older browsers
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            showNotification("success", "Skopiowano do schowka!");
+          });
+      }
+
+      // Notification system
+      function showNotification(type, message) {
+        // Hide all notifications
+        document.querySelectorAll(".notification").forEach((notif) => {
+          notif.style.display = "none";
+        });
+
+        // Show specific notification
+        const notification = document.getElementById(type + "Notification");
+        if (notification) {
+          if (message) {
+            notification.innerHTML = message;
+          }
+          notification.style.display = "block";
+
+          // Auto-hide after 5 seconds
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 5000);
+        }
+      }
+    </script>
+  </body>
+</html>
