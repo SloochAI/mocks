@@ -107,5 +107,7 @@ pkgs.mkShell {
     export DISPLAY=:0
     export LIBGL_DRIVERS_PATH="${pkgs.mesa}/lib/dri"
     export __GL_SHADER_DISK_CACHE_PATH="/tmp"
+
+    python screenshot_generator.py
   '';
 }
